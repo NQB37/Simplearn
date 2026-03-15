@@ -11,49 +11,31 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Subject } from '../types';
 import { toast } from 'sonner';
-import axiosInstance from '@/api/axios.api';
+import { useSubjectMutations } from '@/hooks/use-academics';
 
-interface AddSubjectModalProps {
-  onSuccess: () => void;
-}
-
-export function AddSubjectModal({ onSuccess }: AddSubjectModalProps) {
+export function AddSubjectModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [subjectForm, setSubjectForm] = useState<{
-    name: string;
-    code: string;
-    credits: number;
-  }>({
+  const [subjectForm, setSubjectForm] = useState({
     name: '',
     code: '',
     credits: 3,
   });
 
+  const { createMutation } = useSubjectMutations();
+
   const handleSave = async () => {
-    if (!subjectForm.name || !subjectForm.code || subjectForm.credits <= 0) {
-      toast.error('Please provide a valid name, code, and credits');
+    if (!subjectForm.name || !subjectForm.code || subjectForm.credits < 0) {
+      toast.error('Please fill in all fields correctly');
       return;
     }
 
-    setLoading(true);
-    try {
-      await axiosInstance.post(
-        `${process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL}/api/academy/subjects`,
-        subjectForm,
-      );
-      toast.success('Subject created');
-      setSubjectForm({ name: '', code: '', credits: 3 });
-      setIsOpen(false);
-      onSuccess();
-    } catch (error) {
-      console.error('Error creating subject:', error);
-      toast.error('Failed to create subject');
-    } finally {
-      setLoading(false);
-    }
+    createMutation.mutate(subjectForm, {
+      onSuccess: () => {
+        setSubjectForm({ name: '', code: '', credits: 3 });
+        setIsOpen(false);
+      },
+    });
   };
 
   return (
@@ -68,25 +50,14 @@ export function AddSubjectModal({ onSuccess }: AddSubjectModalProps) {
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Add Subject</DialogTitle>
+          <DialogTitle>Add Subject to Catalog</DialogTitle>
         </DialogHeader>
         <div className='grid gap-4 py-4'>
           <div className='flex flex-col gap-2'>
-            <Label htmlFor='add-subject-code'>Subject Code</Label>
+            <Label htmlFor='subject-name'>Subject Name</Label>
             <Input
-              id='add-subject-code'
-              placeholder='e.g., CS101'
-              value={subjectForm.code}
-              onChange={(e) =>
-                setSubjectForm({ ...subjectForm, code: e.target.value })
-              }
-            />
-          </div>
-          <div className='flex flex-col gap-2'>
-            <Label htmlFor='add-subject-name'>Subject Name</Label>
-            <Input
-              id='add-subject-name'
-              placeholder='e.g., Intro to Computer Science'
+              id='subject-name'
+              placeholder='e.g., Mathematics I'
               value={subjectForm.name}
               onChange={(e) =>
                 setSubjectForm({ ...subjectForm, name: e.target.value })
@@ -94,15 +65,27 @@ export function AddSubjectModal({ onSuccess }: AddSubjectModalProps) {
             />
           </div>
           <div className='flex flex-col gap-2'>
-            <Label htmlFor='add-subject-credits'>Credits</Label>
+            <Label htmlFor='subject-code'>Subject Code</Label>
             <Input
-              id='add-subject-credits'
+              id='subject-code'
+              placeholder='e.g., MATH101'
+              value={subjectForm.code}
+              onChange={(e) =>
+                setSubjectForm({ ...subjectForm, code: e.target.value })
+              }
+            />
+          </div>
+          <div className='flex flex-col gap-2'>
+            <Label htmlFor='subject-credits'>Credits</Label>
+            <Input
+              id='subject-credits'
               type='number'
+              placeholder='e.g., 3'
               value={subjectForm.credits}
               onChange={(e) =>
                 setSubjectForm({
                   ...subjectForm,
-                  credits: Number(e.target.value),
+                  credits: parseInt(e.target.value) || 0,
                 })
               }
             />
@@ -114,10 +97,10 @@ export function AddSubjectModal({ onSuccess }: AddSubjectModalProps) {
           </Button>
           <Button
             onClick={handleSave}
-            disabled={loading}
+            disabled={createMutation.isPending}
             className='bg-blue-600 hover:bg-blue-700 text-white'
           >
-            {loading ? 'Saving...' : 'Save'}
+            {createMutation.isPending ? 'Saving...' : 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>

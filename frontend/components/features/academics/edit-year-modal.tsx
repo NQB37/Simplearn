@@ -11,24 +11,24 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Edit2 } from 'lucide-react';
-import { AcademicYear } from '../types';
+import { AcademicYear } from '@/types/academics.type';
 import { toast } from 'sonner';
-import axiosInstance from '@/api/axios.api';
+import { useAcademicYearMutations } from '@/hooks/use-academics';
 
 interface EditYearModalProps {
   year: AcademicYear;
-  onSuccess: () => void;
 }
 
-export function EditYearModal({ year, onSuccess }: EditYearModalProps) {
+export function EditYearModal({ year }: EditYearModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [yearForm, setYearForm] = useState({
     name: '',
     startDate: '',
     endDate: '',
     isActive: false,
   });
+
+  const { updateMutation } = useAcademicYearMutations();
 
   useEffect(() => {
     if (year) {
@@ -47,21 +47,14 @@ export function EditYearModal({ year, onSuccess }: EditYearModalProps) {
       return;
     }
 
-    setLoading(true);
-    try {
-      await axiosInstance.put(
-        `${process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL}/api/academy/academic-years/${year._id}`,
-        yearForm,
-      );
-      toast.success('Academic year updated');
-      setIsOpen(false);
-      onSuccess();
-    } catch (error) {
-      console.error('Error updating academic year:', error);
-      toast.error('Failed to update academic year');
-    } finally {
-      setLoading(false);
-    }
+    updateMutation.mutate(
+      { id: year._id, payload: yearForm },
+      {
+        onSuccess: () => {
+          setIsOpen(false);
+        },
+      }
+    );
   };
 
   return (
@@ -134,10 +127,10 @@ export function EditYearModal({ year, onSuccess }: EditYearModalProps) {
           </Button>
           <Button
             onClick={handleSave}
-            disabled={loading}
+            disabled={updateMutation.isPending}
             className='bg-blue-600 hover:bg-blue-700 text-white'
           >
-            {loading ? 'Saving...' : 'Save Changes'}
+            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -9,39 +9,26 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
-import { Subject } from '../types';
-import { toast } from 'sonner';
-import axiosInstance from '@/api/axios.api';
+import { Subject } from '@/types/academics.type';
+import { useSubjectMutations } from '@/hooks/use-academics';
 
 interface DeleteSubjectModalProps {
   subject: Subject;
-  onSuccess: () => void;
 }
 
-export function DeleteSubjectModal({
-  subject,
-  onSuccess,
-}: DeleteSubjectModalProps) {
+export function DeleteSubjectModal({ subject }: DeleteSubjectModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+
+  const { deleteMutation } = useSubjectMutations();
 
   const handleDelete = async () => {
     if (!subject) return;
 
-    setLoading(true);
-    try {
-      await axiosInstance.delete(
-        `${process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL}/api/academy/subjects/${subject._id}`,
-      );
-      toast.success('Subject deleted');
-      setIsOpen(false);
-      onSuccess();
-    } catch (error) {
-      console.error('Error deleting subject:', error);
-      toast.error('Failed to delete subject');
-    } finally {
-      setLoading(false);
-    }
+    deleteMutation.mutate(subject._id, {
+      onSuccess: () => {
+        setIsOpen(false);
+      },
+    });
   };
 
   return (
@@ -50,7 +37,7 @@ export function DeleteSubjectModal({
         <Button
           variant='ghost'
           size='sm'
-          className='h-8 w-8 p-0 text-red-600 hover:bg-red-50'
+          className='h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50'
         >
           <Trash2 className='h-4 w-4' />
         </Button>
@@ -70,9 +57,9 @@ export function DeleteSubjectModal({
           <Button
             variant='destructive'
             onClick={handleDelete}
-            disabled={loading}
+            disabled={deleteMutation.isPending}
           >
-            {loading ? 'Deleting...' : 'Delete'}
+            {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogFooter>
       </DialogContent>

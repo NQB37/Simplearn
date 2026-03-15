@@ -12,15 +12,10 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import axiosInstance from '@/api/axios.api';
+import { useAcademicYearMutations } from '@/hooks/use-academics';
 
-interface AddYearModalProps {
-  onSuccess: () => void;
-}
-
-export function AddYearModal({ onSuccess }: AddYearModalProps) {
+export function AddYearModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [yearForm, setYearForm] = useState({
     name: '',
     startDate: '',
@@ -28,28 +23,20 @@ export function AddYearModal({ onSuccess }: AddYearModalProps) {
     isActive: false,
   });
 
+  const { createMutation } = useAcademicYearMutations();
+
   const handleSave = async () => {
     if (!yearForm.name || !yearForm.startDate || !yearForm.endDate) {
       toast.error('Please fill in all fields');
       return;
     }
 
-    setLoading(true);
-    try {
-      await axiosInstance.post(
-        `${process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL}/api/academy/academic-years`,
-        yearForm,
-      );
-      toast.success('Academic year created');
-      setYearForm({ name: '', startDate: '', endDate: '', isActive: false });
-      setIsOpen(false);
-      onSuccess();
-    } catch (error) {
-      console.error('Error creating academic year:', error);
-      toast.error('Failed to create academic year');
-    } finally {
-      setLoading(false);
-    }
+    createMutation.mutate(yearForm, {
+      onSuccess: () => {
+        setYearForm({ name: '', startDate: '', endDate: '', isActive: false });
+        setIsOpen(false);
+      },
+    });
   };
 
   return (
@@ -121,10 +108,10 @@ export function AddYearModal({ onSuccess }: AddYearModalProps) {
           </Button>
           <Button
             onClick={handleSave}
-            disabled={loading}
+            disabled={createMutation.isPending}
             className='bg-blue-600 hover:bg-blue-700 text-white'
           >
-            {loading ? 'Saving...' : 'Save'}
+            {createMutation.isPending ? 'Saving...' : 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>

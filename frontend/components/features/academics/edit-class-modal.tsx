@@ -11,61 +11,48 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Edit2 } from 'lucide-react';
-import { ClassModel, Room, Subject, AcademicYear } from '../types';
 import { toast } from 'sonner';
-import axiosInstance from '@/api/axios.api';
+import { ClassModel, Subject, Room, AcademicYear } from '@/types/academics.type';
+import { useClassMutations, useRooms, useSubjects, useAcademicYears } from '@/hooks/use-academics';
 
 interface EditClassModalProps {
   classData: ClassModel;
-  onSuccess: () => void;
-  rooms: Room[];
-  subjects: Subject[];
-  academicYears: AcademicYear[];
 }
 
-export function EditClassModal({
-  classData,
-  onSuccess,
-  rooms,
-  subjects,
-  academicYears,
-}: EditClassModalProps) {
+export function EditClassModal({ classData }: EditClassModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [classForm, setClassForm] = useState<{
-    code: string;
-    roomId: string;
-    subjectId: string;
-    academicYearId: string;
-    maxCapacity: number;
-    status: ClassModel['status'];
-  }>({
+  const [classForm, setClassForm] = useState({
     code: '',
-    roomId: '',
     subjectId: '',
+    roomId: '',
     academicYearId: '',
-    maxCapacity: 30,
-    status: 'active',
+    maxCapacity: 0,
+    status: 'active' as const,
   });
+
+  const { data: rooms = [] } = useRooms();
+  const { data: subjects = [] } = useSubjects();
+  const { data: academicYears = [] } = useAcademicYears();
+  const { updateMutation } = useClassMutations();
 
   useEffect(() => {
     if (classData) {
       setClassForm({
         code: classData.code,
-        roomId:
-          typeof classData.roomId === 'string'
-            ? classData.roomId
-            : (classData.roomId as Room)._id,
         subjectId:
           typeof classData.subjectId === 'string'
             ? classData.subjectId
             : (classData.subjectId as Subject)._id,
+        roomId:
+          typeof classData.roomId === 'string'
+            ? classData.roomId
+            : (classData.roomId as Room)._id,
         academicYearId:
           typeof classData.academicYearId === 'string'
             ? classData.academicYearId
             : (classData.academicYearId as AcademicYear)._id,
         maxCapacity: classData.maxCapacity,
-        status: classData.status,
+        status: classData.status as any,
       });
     }
   }, [classData, isOpen]);
@@ -73,30 +60,22 @@ export function EditClassModal({
   const handleSave = async () => {
     if (
       !classForm.code ||
-      !classForm.roomId ||
       !classForm.subjectId ||
-      !classForm.academicYearId ||
-      classForm.maxCapacity <= 0
+      !classForm.roomId ||
+      !classForm.academicYearId
     ) {
-      toast.error('Please fill out all fields correctly');
+      toast.error('Please fill in all required fields');
       return;
     }
 
-    setLoading(true);
-    try {
-      await axiosInstance.put(
-        `${process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL}/api/academy/classes/${classData._id}`,
-        classForm,
-      );
-      toast.success('Class updated');
-      setIsOpen(false);
-      onSuccess();
-    } catch (error) {
-      console.error('Error updating class:', error);
-      toast.error('Failed to update class');
-    } finally {
-      setLoading(false);
-    }
+    updateMutation.mutate(
+      { id: classData._id, payload: classForm },
+      {
+        onSuccess: () => {
+          setIsOpen(false);
+        },
+      }
+    );
   };
 
   return (
@@ -105,16 +84,16 @@ export function EditClassModal({
         <Button
           variant='ghost'
           size='sm'
-          className='h-8 w-8 p-0 text-blue-600 hover:bg-blue-50'
+          className='h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50'
         >
           <Edit2 className='h-4 w-4' />
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px] overflow-visible'>
+      <DialogContent className='sm:max-w-[425px] overflow-y-auto max-h-[90vh]'>
         <DialogHeader>
-          <DialogTitle>Edit Class</DialogTitle>
+          <DialogTitle>Edit Class Details</DialogTitle>
         </DialogHeader>
-        <div className='grid gap-4 py-4 max-h-[60vh] overflow-y-auto px-1'>
+        <div className='grid gap-4 py-4'>
           <div className='flex flex-col gap-2'>
             <Label htmlFor='edit-class-code'>Class Code</Label>
             <Input
@@ -131,26 +110,16 @@ export function EditClassModal({
             <Label htmlFor='edit-class-subject'>Subject</Label>
             <select
               id='edit-class-subject'
-              className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
+              className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm'
               value={classForm.subjectId}
               onChange={(e) =>
                 setClassForm({ ...classForm, subjectId: e.target.value })
               }
             >
-              <option
-                value=''
-                disabled
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Select Subject
-              </option>
-              {subjects.map((sub) => (
-                <option
-                  key={sub._id}
-                  value={sub._id}
-                  className='dark:bg-slate-900 dark:text-slate-100'
-                >
-                  {sub.name} ({sub.code})
+              <option value=''>Select Subject</option>
+              {subjects.map((s) => (
+                <option key={s._id} value={s._id}>
+                  {s.name} ({s.code})
                 </option>
               ))}
             </select>
@@ -160,26 +129,16 @@ export function EditClassModal({
             <Label htmlFor='edit-class-room'>Room</Label>
             <select
               id='edit-class-room'
-              className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
+              className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm'
               value={classForm.roomId}
               onChange={(e) =>
                 setClassForm({ ...classForm, roomId: e.target.value })
               }
             >
-              <option
-                value=''
-                disabled
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Select Room
-              </option>
-              {rooms.map((room) => (
-                <option
-                  key={room._id}
-                  value={room._id}
-                  className='dark:bg-slate-900 dark:text-slate-100'
-                >
-                  {room.name}
+              <option value=''>Select Room</option>
+              {rooms.map((r) => (
+                <option key={r._id} value={r._id}>
+                  {r.name} (Cap: {r.capacity})
                 </option>
               ))}
             </select>
@@ -189,26 +148,16 @@ export function EditClassModal({
             <Label htmlFor='edit-class-year'>Academic Year</Label>
             <select
               id='edit-class-year'
-              className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
+              className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm'
               value={classForm.academicYearId}
               onChange={(e) =>
                 setClassForm({ ...classForm, academicYearId: e.target.value })
               }
             >
-              <option
-                value=''
-                disabled
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Select Year
-              </option>
-              {academicYears.map((year) => (
-                <option
-                  key={year._id}
-                  value={year._id}
-                  className='dark:bg-slate-900 dark:text-slate-100'
-                >
-                  {year.name}
+              <option value=''>Select Year</option>
+              {academicYears.map((y) => (
+                <option key={y._id} value={y._id}>
+                  {y.name}
                 </option>
               ))}
             </select>
@@ -223,7 +172,7 @@ export function EditClassModal({
               onChange={(e) =>
                 setClassForm({
                   ...classForm,
-                  maxCapacity: Number(e.target.value),
+                  maxCapacity: parseInt(e.target.value) || 0,
                 })
               }
             />
@@ -233,46 +182,28 @@ export function EditClassModal({
             <Label htmlFor='edit-class-status'>Status</Label>
             <select
               id='edit-class-status'
-              className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
+              className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm'
               value={classForm.status}
               onChange={(e) =>
-                setClassForm({
-                  ...classForm,
-                  status: e.target.value as ClassModel['status'],
-                })
+                setClassForm({ ...classForm, status: e.target.value as any })
               }
             >
-              <option
-                value='active'
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Active
-              </option>
-              <option
-                value='inactive'
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Inactive
-              </option>
-              <option
-                value='archived'
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Archived
-              </option>
+              <option value='active'>Active</option>
+              <option value='inactive'>Inactive</option>
+              <option value='archived'>Archived</option>
             </select>
           </div>
         </div>
-        <DialogFooter className='pt-2'>
+        <DialogFooter>
           <Button variant='outline' onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            disabled={loading}
+            disabled={updateMutation.isPending}
             className='bg-blue-600 hover:bg-blue-700 text-white'
           >
-            {loading ? 'Saving...' : 'Save Changes'}
+            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

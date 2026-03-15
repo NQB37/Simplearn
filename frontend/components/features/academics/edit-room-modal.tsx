@@ -11,27 +11,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Edit2 } from 'lucide-react';
-import { Room } from '../types';
+import { Room } from '@/types/academics.type';
 import { toast } from 'sonner';
-import axiosInstance from '@/api/axios.api';
+import { useRoomMutations } from '@/hooks/use-academics';
 
 interface EditRoomModalProps {
   room: Room;
-  onSuccess: () => void;
 }
 
-export function EditRoomModal({ room, onSuccess }: EditRoomModalProps) {
+export function EditRoomModal({ room }: EditRoomModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [roomForm, setRoomForm] = useState<{
-    name: string;
-    capacity: number;
-    status: Room['status'];
-  }>({
+  const [roomForm, setRoomForm] = useState({
     name: '',
-    capacity: 30,
-    status: 'active',
+    capacity: 0,
+    status: 'active' as const,
   });
+
+  const { updateMutation } = useRoomMutations();
 
   useEffect(() => {
     if (room) {
@@ -49,21 +45,14 @@ export function EditRoomModal({ room, onSuccess }: EditRoomModalProps) {
       return;
     }
 
-    setLoading(true);
-    try {
-      await axiosInstance.put(
-        `${process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL}/api/academy/rooms/${room._id}`,
-        roomForm,
-      );
-      toast.success('Room updated');
-      setIsOpen(false);
-      onSuccess();
-    } catch (error) {
-      console.error('Error updating room:', error);
-      toast.error('Failed to update room');
-    } finally {
-      setLoading(false);
-    }
+    updateMutation.mutate(
+      { id: room._id, payload: roomForm },
+      {
+        onSuccess: () => {
+          setIsOpen(false);
+        },
+      }
+    );
   };
 
   return (
@@ -72,14 +61,14 @@ export function EditRoomModal({ room, onSuccess }: EditRoomModalProps) {
         <Button
           variant='ghost'
           size='sm'
-          className='h-8 w-8 p-0 text-blue-600 hover:bg-blue-50'
+          className='h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50'
         >
           <Edit2 className='h-4 w-4' />
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Edit Room</DialogTitle>
+          <DialogTitle>Edit Class Room</DialogTitle>
         </DialogHeader>
         <div className='grid gap-4 py-4'>
           <div className='flex flex-col gap-2'>
@@ -94,47 +83,30 @@ export function EditRoomModal({ room, onSuccess }: EditRoomModalProps) {
             />
           </div>
           <div className='flex flex-col gap-2'>
-            <Label htmlFor='edit-capacity'>Capacity</Label>
+            <Label htmlFor='edit-room-capacity'>Capacity</Label>
             <Input
-              id='edit-capacity'
+              id='edit-room-capacity'
               type='number'
+              placeholder='e.g., 30'
               value={roomForm.capacity}
               onChange={(e) =>
-                setRoomForm({ ...roomForm, capacity: Number(e.target.value) })
+                setRoomForm({ ...roomForm, capacity: parseInt(e.target.value) || 0 })
               }
             />
           </div>
           <div className='flex flex-col gap-2'>
-            <Label htmlFor='edit-status'>Status</Label>
+            <Label htmlFor='edit-room-status'>Status</Label>
             <select
-              id='edit-status'
-              className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
+              id='edit-room-status'
+              className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
               value={roomForm.status}
               onChange={(e) =>
-                setRoomForm({
-                  ...roomForm,
-                  status: e.target.value as Room['status'],
-                })
+                setRoomForm({ ...roomForm, status: e.target.value as any })
               }
             >
-              <option
-                value='active'
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Active
-              </option>
-              <option
-                value='inactive'
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Inactive
-              </option>
-              <option
-                value='maintenance'
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Maintenance
-              </option>
+              <option value='active'>Active</option>
+              <option value='inactive'>Inactive</option>
+              <option value='maintenance'>Maintenance</option>
             </select>
           </div>
         </div>
@@ -144,10 +116,10 @@ export function EditRoomModal({ room, onSuccess }: EditRoomModalProps) {
           </Button>
           <Button
             onClick={handleSave}
-            disabled={loading}
+            disabled={updateMutation.isPending}
             className='bg-blue-600 hover:bg-blue-700 text-white'
           >
-            {loading ? 'Saving...' : 'Save Changes'}
+            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

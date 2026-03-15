@@ -11,26 +11,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Room } from '../types';
 import { toast } from 'sonner';
-import axiosInstance from '@/api/axios.api';
+import { useRoomMutations } from '@/hooks/use-academics';
 
-interface AddRoomModalProps {
-  onSuccess: () => void;
-}
-
-export function AddRoomModal({ onSuccess }: AddRoomModalProps) {
+export function AddRoomModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [roomForm, setRoomForm] = useState<{
-    name: string;
-    capacity: number;
-    status: Room['status'];
-  }>({
+  const [roomForm, setRoomForm] = useState({
     name: '',
-    capacity: 30,
-    status: 'active',
+    capacity: 0,
+    status: 'active' as const,
   });
+
+  const { createMutation } = useRoomMutations();
 
   const handleSave = async () => {
     if (!roomForm.name || roomForm.capacity <= 0) {
@@ -38,22 +30,12 @@ export function AddRoomModal({ onSuccess }: AddRoomModalProps) {
       return;
     }
 
-    setLoading(true);
-    try {
-      await axiosInstance.post(
-        `${process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL}/api/academy/rooms`,
-        roomForm,
-      );
-      toast.success('Room created');
-      setRoomForm({ name: '', capacity: 30, status: 'active' });
-      setIsOpen(false);
-      onSuccess();
-    } catch (error) {
-      console.error('Error creating room:', error);
-      toast.error('Failed to create room');
-    } finally {
-      setLoading(false);
-    }
+    createMutation.mutate(roomForm, {
+      onSuccess: () => {
+        setRoomForm({ name: '', capacity: 0, status: 'active' });
+        setIsOpen(false);
+      },
+    });
   };
 
   return (
@@ -68,13 +50,13 @@ export function AddRoomModal({ onSuccess }: AddRoomModalProps) {
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Add Room</DialogTitle>
+          <DialogTitle>Add Class Room</DialogTitle>
         </DialogHeader>
         <div className='grid gap-4 py-4'>
           <div className='flex flex-col gap-2'>
-            <Label htmlFor='add-room-name'>Room Name</Label>
+            <Label htmlFor='room-name'>Room Name</Label>
             <Input
-              id='add-room-name'
+              id='room-name'
               placeholder='e.g., Room 101'
               value={roomForm.name}
               onChange={(e) =>
@@ -83,47 +65,30 @@ export function AddRoomModal({ onSuccess }: AddRoomModalProps) {
             />
           </div>
           <div className='flex flex-col gap-2'>
-            <Label htmlFor='add-capacity'>Capacity</Label>
+            <Label htmlFor='room-capacity'>Capacity</Label>
             <Input
-              id='add-capacity'
+              id='room-capacity'
               type='number'
+              placeholder='e.g., 30'
               value={roomForm.capacity}
               onChange={(e) =>
-                setRoomForm({ ...roomForm, capacity: Number(e.target.value) })
+                setRoomForm({ ...roomForm, capacity: parseInt(e.target.value) || 0 })
               }
             />
           </div>
           <div className='flex flex-col gap-2'>
-            <Label htmlFor='add-status'>Status</Label>
+            <Label htmlFor='room-status'>Status</Label>
             <select
-              id='add-status'
-              className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
+              id='room-status'
+              className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
               value={roomForm.status}
               onChange={(e) =>
-                setRoomForm({
-                  ...roomForm,
-                  status: e.target.value as Room['status'],
-                })
+                setRoomForm({ ...roomForm, status: e.target.value as any })
               }
             >
-              <option
-                value='active'
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Active
-              </option>
-              <option
-                value='inactive'
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Inactive
-              </option>
-              <option
-                value='maintenance'
-                className='dark:bg-slate-900 dark:text-slate-100'
-              >
-                Maintenance
-              </option>
+              <option value='active'>Active</option>
+              <option value='inactive'>Inactive</option>
+              <option value='maintenance'>Maintenance</option>
             </select>
           </div>
         </div>
@@ -133,10 +98,10 @@ export function AddRoomModal({ onSuccess }: AddRoomModalProps) {
           </Button>
           <Button
             onClick={handleSave}
-            disabled={loading}
+            disabled={createMutation.isPending}
             className='bg-blue-600 hover:bg-blue-700 text-white'
           >
-            {loading ? 'Saving...' : 'Save'}
+            {createMutation.isPending ? 'Saving...' : 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -9,36 +9,26 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
-import { AcademicYear } from '../types';
-import { toast } from 'sonner';
-import axiosInstance from '@/api/axios.api';
+import { AcademicYear } from '@/types/academics.type';
+import { useAcademicYearMutations } from '@/hooks/use-academics';
 
 interface DeleteYearModalProps {
   year: AcademicYear;
-  onSuccess: () => void;
 }
 
-export function DeleteYearModal({ year, onSuccess }: DeleteYearModalProps) {
+export function DeleteYearModal({ year }: DeleteYearModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+
+  const { deleteMutation } = useAcademicYearMutations();
 
   const handleDelete = async () => {
     if (!year) return;
 
-    setLoading(true);
-    try {
-      await axiosInstance.delete(
-        `${process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL}/api/academy/academic-years/${year._id}`,
-      );
-      toast.success('Academic year deleted');
-      setIsOpen(false);
-      onSuccess();
-    } catch (error) {
-      console.error('Error deleting academic year:', error);
-      toast.error('Failed to delete academic year');
-    } finally {
-      setLoading(false);
-    }
+    deleteMutation.mutate(year._id, {
+      onSuccess: () => {
+        setIsOpen(false);
+      },
+    });
   };
 
   return (
@@ -67,9 +57,9 @@ export function DeleteYearModal({ year, onSuccess }: DeleteYearModalProps) {
           <Button
             variant='destructive'
             onClick={handleDelete}
-            disabled={loading}
+            disabled={deleteMutation.isPending}
           >
-            {loading ? 'Deleting...' : 'Delete'}
+            {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogFooter>
       </DialogContent>
