@@ -75,6 +75,6 @@
 
 - Create: `frontend/tests/e2e/admin-academics.spec.ts`
 
-- [ ] **Step 1: Write E2E Test**
-- [ ] **Step 2: Run and Verify**
-- [ ] **Step 3: Commit**
+- [x] **Step 1: Write E2E Test**
+- [x] **Step 2: Run and Verify**
+- [x] **Step 3: Commit**
