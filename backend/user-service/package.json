@@ -1,22 +1,26 @@
 {
   "name": "auth-service",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "start": "tsx src/index.ts"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.3.0",
-    "@types/cookie-parser": "^1.4.7",
+    "@vitest/coverage-v8": "^4.1.0",
     "nodemon": "^3.1.11",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "vitest": "^4.1.0"
   },
   "dependencies": {
     "@simplearn/logger": "file:../shared/logger",
@@ -31,7 +35,6 @@
     "mongodb": "^7.1.0",
     "mongoose": "^9.2.3",
     "morgan": "^1.10.1",
-    "pg": "^8.18.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "winston": "^3.19.0",

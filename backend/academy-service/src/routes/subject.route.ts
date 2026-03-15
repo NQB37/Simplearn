@@ -7,9 +7,10 @@ import {
   deleteSubject,
 } from '../controllers/subject.controller.js';
 import { requireAuth, requireRole } from '@simplearn/middlewares';
+import { config } from '../config/env.config.js';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+const JWT_SECRET = config.jwtSecret;
 
 // Public / Protected Routes
 router.get('/', getSubjects);

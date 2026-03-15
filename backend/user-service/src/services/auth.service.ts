@@ -5,13 +5,13 @@ import { generateTokens } from '../middlewares/auth.middleware.js';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/env.config.js';
 
-export const register = async (name: string, email: string, password: string, role?: string) => {
+export const register = async (name: string, email: string, password: string) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new Error('User already exists');
   }
 
-  const user = new User({ name, email, password, role });
+  const user = new User({ name, email, password });
   await user.save();
   return user;
 };

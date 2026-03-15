@@ -6,8 +6,8 @@ import { User } from '../models/user.model.js';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, role } = req.body;
-    const user = await authService.register(name, email, password, role);
+    const { name, email, password } = req.body;
+    const user = await authService.register(name, email, password);
     res.status(201).json({ message: 'User registered successfully', user });
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -21,7 +21,7 @@ export const login = async (req: Request, res: Response) => {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: config.env === 'production',
+      secure: config.env !== 'development',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -50,7 +50,7 @@ export const refresh = async (req: Request, res: Response) => {
 
     res.cookie('refreshToken', newRefreshToken, {
       httpOnly: true,
-      secure: config.env === 'production',
+      secure: config.env !== 'development',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
