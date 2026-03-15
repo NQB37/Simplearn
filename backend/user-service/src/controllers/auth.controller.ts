@@ -32,6 +32,24 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+export const googleLogin = async (req: Request, res: Response) => {
+  try {
+    const { code } = req.body;
+    const { user, accessToken, refreshToken } = await authService.googleLogin(code);
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: config.env !== 'development',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.json({ user, accessToken });
+  } catch (error: any) {
+    res.status(401).json({ message: error.message });
+  }
+};
+
 export const logout = async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.cookies;

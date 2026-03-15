@@ -21,26 +21,23 @@ export function middleware(request: NextRequest) {
   // Use refreshToken since it's an HTTP-Only cookie sent to our frontend server automatically
   const token = request.cookies.get('refreshToken')?.value;
   const decodedToken = token ? parseJwt(token) : null;
-  const userRole = decodedToken?.role;
+  const userRole = decodedToken?.role?.toUpperCase();
   const { pathname } = request.nextUrl;
 
   // Protected: /student and /courses (All authenticated users)
-  if (
-    (pathname.startsWith('/student') || pathname.startsWith('/courses')) &&
-    !token
-  ) {
+  if (pathname.startsWith('/student') && !token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Handle legacy /dashboard redirect
-  if (pathname === '/dashboard') {
-    return NextResponse.redirect(new URL('/student/dashboard', request.url));
+  // Admin bypass for all protected routes
+  if (token && userRole === 'ADMIN') {
+    return NextResponse.next();
   }
 
-  // Protected: /instructor (Admin, Instructor)
+  // Protected: /instructor (Instructor only, Admin bypassed above)
   if (pathname.startsWith('/instructor')) {
     if (!token) return NextResponse.redirect(new URL('/login', request.url));
-    if (userRole !== 'INSTRUCTOR' && userRole !== 'ADMIN') {
+    if (userRole !== 'INSTRUCTOR') {
       return NextResponse.redirect(new URL('/forbidden', request.url));
     }
   }
@@ -57,11 +54,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/student/:path*',
-    '/courses/:path*',
-    '/instructor/:path*',
-    '/admin/:path*',
-    '/dashboard',
-  ],
+  matcher: ['/student/:path*', '/instructor/:path*', '/admin/:path*'],
 };

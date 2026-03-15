@@ -32,6 +32,12 @@ export const requireRole = (
       req.user = user;
 
       const userRoleLower = user.role.toLowerCase();
+      
+      // Admin always has access to all routes
+      if (userRoleLower === 'admin') {
+        return next();
+      }
+
       const hasPermission = allowedRoles.some(
         (role) => role.toLowerCase() === userRoleLower,
       );
