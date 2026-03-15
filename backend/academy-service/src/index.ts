@@ -7,9 +7,10 @@ import academyRoutes from './routes/academy.route.js';
 import roomRoutes from './routes/room.route.js';
 import classRoutes from './routes/class.route.js';
 import subjectRoutes from './routes/subject.route.js';
+
 import dns from 'node:dns/promises';
 
-dns.setServers(['1.1.1.1', '1.0.0.1']);
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const app: Express = express();
 const PORT = process.env.PORT || 8002;

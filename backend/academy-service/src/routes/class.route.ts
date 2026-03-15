@@ -12,9 +12,6 @@ import { config } from '../config/env.config.js';
 const router = express.Router();
 const JWT_SECRET = config.jwtSecret;
 
-// Public / Protected Routes
-router.get('/', getClasses);
-
 // Admin / Teacher routes
 router.get('/', getClasses);
 router.get('/:id', getClass);

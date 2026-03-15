@@ -6,9 +6,10 @@ import adminRoutes from './routes/admin.route.js';
 import userRoutes from './routes/user.route.js';
 import { connectDB } from './config/database.config.js';
 import { config } from './config/env.config.js';
+
 import dns from 'node:dns/promises';
 
-dns.setServers(['1.1.1.1', '1.0.0.1']);
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 connectDB();
 

@@ -17,20 +17,7 @@ export const requireRole = (
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) {
-      res.status(401).json({ message: 'Unauthorized: No token provided' });
-      return;
-    }
-
-    jwt.verify(token, secretOrPublicKey, (err: any, decoded: any) => {
-      if (err) {
-        res.status(403).json({ message: 'Forbidden: Invalid token' });
-        return;
-      }
-
-      const user = decoded as { id: string; email: string; role: string };
-      req.user = user;
-
+    const checkRole = (user: any) => {
       const userRoleLower = user.role.toLowerCase();
       
       // Admin always has access to all routes
@@ -50,6 +37,26 @@ export const requireRole = (
       }
 
       next();
+    };
+
+    if (req.user) {
+      return checkRole(req.user);
+    }
+
+    if (!token) {
+      res.status(401).json({ message: 'Unauthorized: No token provided' });
+      return;
+    }
+
+    jwt.verify(token, secretOrPublicKey, (err: any, decoded: any) => {
+      if (err) {
+        res.status(401).json({ message: 'Unauthorized: Invalid token' });
+        return;
+      }
+
+      const user = decoded as { id: string; email: string; role: string };
+      req.user = user;
+      checkRole(user);
     });
   };
 };
@@ -66,7 +73,7 @@ export const requireAuth = (secretOrPublicKey: string) => {
 
     jwt.verify(token, secretOrPublicKey, (err: any, decoded: any) => {
       if (err) {
-        res.status(403).json({ message: 'Forbidden: Invalid token' });
+        res.status(401).json({ message: 'Unauthorized: Invalid token' });
         return;
       }
 
