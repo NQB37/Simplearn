@@ -1,10 +1,18 @@
 export interface Course {
-  id: string;
+  _id: string;
   title: string;
-  description: string;
-  author: string;
-  thumbnailUrl: string;
-  lessonsCount: number;
-  price?: number;
   slug: string;
+  description: string;
+  subjectId: string;
+  instructorId: string;
+  status: 'draft' | 'published';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCoursePayload {
+  title: string;
+  slug: string;
+  description: string;
+  subjectId: string;
 }

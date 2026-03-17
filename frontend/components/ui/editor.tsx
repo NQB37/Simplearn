@@ -23,6 +23,7 @@ interface EditorProps {
 
 export function Editor({ value, onChange, placeholder }: EditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         bulletList:

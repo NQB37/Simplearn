@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,8 +10,15 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { PlusCircle, BookOpen, Users, TrendingUp } from 'lucide-react';
+import { useCourses } from '@/hooks/use-courses';
+import { useUserStore } from '@/store/user.store';
 
 export default function DashboardPage() {
+  const { data: courses } = useCourses();
+  const user = useUserStore((state) => state.user);
+
+  const myCourses = courses?.filter((c) => c.instructorId === user?.id) ?? [];
+
   return (
     <div className='min-h-screen bg-slate-50 dark:bg-slate-950'>
       <div className='container mx-auto px-6 py-10 max-w-7xl space-y-10'>
@@ -49,11 +58,11 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className='text-4xl font-black text-slate-900 dark:text-slate-50'>
-                12
+                {myCourses.length}
               </div>
               <p className='flex items-center text-sm font-semibold text-teal-600 dark:text-teal-400 mt-2'>
                 <TrendingUp className='h-4 w-4 mr-1' />
-                +2 this month
+                Your authored courses
               </p>
             </CardContent>
           </Card>
@@ -174,33 +183,34 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className='space-y-4'>
-                <div className='flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-teal-200 dark:hover:border-teal-900/50 bg-slate-50 dark:bg-slate-800/30 transition-all cursor-pointer group'>
-                  <div className='font-bold text-slate-800 dark:text-slate-200 group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors'>
-                    Mastering Next.js 14
-                  </div>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className='rounded-full text-slate-500 hover:text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30'
-                  >
-                    Edit
-                  </Button>
+              {myCourses.length === 0 ? (
+                <p className='text-sm text-slate-500 dark:text-slate-400 text-center py-4'>
+                  No courses yet.
+                </p>
+              ) : (
+                <div className='space-y-4'>
+                  {myCourses.slice(0, 5).map((course) => (
+                    <div
+                      key={course._id}
+                      className='flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-teal-200 dark:hover:border-teal-900/50 bg-slate-50 dark:bg-slate-800/30 transition-all cursor-pointer group'
+                    >
+                      <div className='font-bold text-slate-800 dark:text-slate-200 group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors'>
+                        {course.title}
+                      </div>
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        className='rounded-full text-slate-500 hover:text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30'
+                        asChild
+                      >
+                        <Link href={`/instructor/courses/${course.slug}/edit`}>
+                          Edit
+                        </Link>
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-
-                <div className='flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-teal-200 dark:hover:border-teal-900/50 bg-slate-50 dark:bg-slate-800/30 transition-all cursor-pointer group'>
-                  <div className='font-bold text-slate-800 dark:text-slate-200 group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors'>
-                    React Design Patterns
-                  </div>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className='rounded-full text-slate-500 hover:text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30'
-                  >
-                    Edit
-                  </Button>
-                </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </div>

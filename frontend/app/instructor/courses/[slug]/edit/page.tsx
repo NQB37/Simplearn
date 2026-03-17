@@ -19,66 +19,45 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Editor } from '@/components/ui/editor';
-import { toast } from 'sonner';
-import axiosInstance from '@/api/axios.api';
+import { useCourseBySlug, useCourseMutations } from '@/hooks/use-courses';
 
 const EditCoursePage = () => {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
 
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [courseId, setCourseId] = React.useState<string | null>(null);
+  const { data: course, isLoading } = useCourseBySlug(slug);
+  const { updateMutation, deleteMutation } = useCourseMutations();
+
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [curriculum, setCurriculum] = React.useState<Module[]>([]);
 
   React.useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        const res = await axiosInstance.get(`/api/courses/${slug}`);
-        const data = res.data;
-        const course = data.course || data; // Assuming data.course or data itself depending on API
-
-        if (!course) throw new Error('Course not found');
-
-        setCourseId(course._id);
-        setTitle(course.title);
-        setDescription(course.description);
-        setCurriculum(course.curriculum || []);
-      } catch (error) {
-        toast.error('Error loading course');
-        // router.push('/dashboard');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchCourse();
-  }, [slug]);
-
-  const handleSave = async () => {
-    if (!courseId) return;
-
-    try {
-      // Update Details
-      await axiosInstance.put(`/api/courses/${courseId}`, {
-        title,
-        description,
-      });
-
-      // Update Curriculum
-      await axiosInstance.put(`/api/courses/${courseId}/curriculum`, {
-        modules: curriculum,
-      });
-
-      toast.success('Course changes saved');
-    } catch (error) {
-      toast.error('Failed to save changes');
+    if (course) {
+      setTitle(course.title);
+      setDescription(course.description);
     }
+  }, [course]);
+
+  const handleSave = () => {
+    if (!course) return;
+    updateMutation.mutate({ id: course._id, payload: { title, description } });
+  };
+
+  const handleDelete = () => {
+    if (!course) return;
+    if (!confirm('Are you sure you want to delete this course?')) return;
+    deleteMutation.mutate(course._id, {
+      onSuccess: () => router.push('/instructor/courses'),
+    });
   };
 
   if (isLoading)
     return <div className='p-8 text-center'>Loading course...</div>;
+
+  if (!course)
+    return <div className='p-8 text-center'>Course not found.</div>;
 
   return (
     <div className='container mx-auto py-6 px-4 max-w-5xl'>
@@ -101,7 +80,9 @@ const EditCoursePage = () => {
           >
             Preview
           </Button>
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleSave} disabled={updateMutation.isPending}>
+            Save Changes
+          </Button>
         </div>
       </div>
 
@@ -157,7 +138,13 @@ const EditCoursePage = () => {
                 <p className='text-sm mt-1'>
                   Deleting a course is permanent and cannot be undone.
                 </p>
-                <Button variant='destructive' size='sm' className='mt-4'>
+                <Button
+                  variant='destructive'
+                  size='sm'
+                  className='mt-4'
+                  onClick={handleDelete}
+                  disabled={deleteMutation.isPending}
+                >
                   Delete Course
                 </Button>
               </div>

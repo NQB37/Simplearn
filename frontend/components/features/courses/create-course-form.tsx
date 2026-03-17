@@ -5,9 +5,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import axiosInstance from '@/api/axios.api';
+import { courseService } from '@/lib/services/course.service';
+import { useSubjects } from '@/hooks/use-academics';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +29,7 @@ import {
   CardDescription,
   CardContent,
 } from '@/components/ui/card';
+import { useCourseMutations } from '@/hooks/use-courses';
 
 const formSchema = z.object({
   title: z.string().min(5, {
@@ -45,8 +46,8 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.',
   }),
-  price: z.coerce.number().min(0, {
-    message: 'Price must be a positive number.',
+  subjectId: z.string().min(1, {
+    message: 'Subject is required.',
   }),
 });
 
@@ -54,7 +55,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 export const CreateCourseForm = () => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const { createMutation } = useCourseMutations();
+  const { data: subjects } = useSubjects();
 
   const form = useForm<FormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,7 +65,7 @@ export const CreateCourseForm = () => {
       title: '',
       slug: '',
       description: '',
-      price: 0,
+      subjectId: '',
     },
   });
 
@@ -79,30 +81,12 @@ export const CreateCourseForm = () => {
     }
   }, [titleValue, form]);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
-
-    try {
-      const res = await axiosInstance.post('/api/courses', values);
-      const data = res.data;
-
-      toast.success('Course created successfully!');
-
-      // Redirect to curriculum editor for the new course
-      if (data.course && data.course.slug) {
-        router.push(`/instructor/courses/${data.course.slug}/edit`);
-      } else {
-        router.push('/instructor/courses');
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      toast.error(
-        error.response?.data?.message ||
-          error.message ||
-          'Failed to create course',
-      );
-    } finally {
-      setIsLoading(false);
+  const onSubmit = async (values: FormValues) => {
+    const result = await createMutation.mutateAsync(values).catch(() => null);
+    if (result?.course?.slug) {
+      router.push(`/instructor/courses/${result.course.slug}/edit`);
+    } else if (result) {
+      router.push('/instructor/courses');
     }
   };
 
@@ -159,21 +143,23 @@ export const CreateCourseForm = () => {
 
             <FormField
               control={form.control}
-              name='description'
+              name='subjectId'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Subject</FormLabel>
                   <FormControl>
-                    {/* Use our custom Editor here */}
-                    {/* We need to use render props from hook form to control the editor */}
-                    <div className='min-h-[200px]'>
-                      {/* Editor doesn't use ref, so we don't pass ref */}
-                      <Editor value={field.value} onChange={field.onChange} />
-                    </div>
+                    <select
+                      {...field}
+                      className='w-full border border-input rounded-md px-3 py-2 text-sm bg-background'
+                    >
+                      <option value=''>Select a subject</option>
+                      {subjects?.map((subject) => (
+                        <option key={subject._id} value={subject._id}>
+                          {subject.name} ({subject.code})
+                        </option>
+                      ))}
+                    </select>
                   </FormControl>
-                  <FormDescription>
-                    A detailed overview of what students will learn.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -181,18 +167,18 @@ export const CreateCourseForm = () => {
 
             <FormField
               control={form.control}
-              name='price'
+              name='description'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price ($)</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input
-                      type='number'
-                      step='0.01'
-                      placeholder='49.99'
-                      {...field}
-                    />
+                    <div className='min-h-[200px]'>
+                      <Editor value={field.value} onChange={field.onChange} />
+                    </div>
                   </FormControl>
+                  <FormDescription>
+                    A detailed overview of what students will learn.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -206,14 +192,17 @@ export const CreateCourseForm = () => {
               >
                 Cancel
               </Button>
-              <Button type='submit' disabled={isLoading}>
-                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+              <Button type='submit' disabled={createMutation.isPending}>
+                {createMutation.isPending && (
+                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                )}
                 Create Course
               </Button>
             </div>
           </form>
         </Form>
       </CardContent>
+      <CardFooter />
     </Card>
   );
 };
