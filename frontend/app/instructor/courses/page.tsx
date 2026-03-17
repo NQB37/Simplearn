@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { PlusCircle, Pencil, Trash2 } from 'lucide-react';
@@ -22,18 +23,25 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useCourses, useCourseMutations } from '@/hooks/use-courses';
 import { useUserStore } from '@/store/user.store';
+import { DeleteCourseModal } from '@/components/features/courses/delete-course-modal';
 
 export default function CoursesPage() {
   const router = useRouter();
   const { data: courses, isLoading } = useCourses();
   const { deleteMutation } = useCourseMutations();
   const user = useUserStore((state) => state.user);
+  const [pendingDelete, setPendingDelete] = React.useState<{
+    id: string;
+    slug: string;
+  } | null>(null);
 
   const myCourses = courses?.filter((c) => c.instructorId === user?.id) ?? [];
 
-  const handleDelete = (id: string) => {
-    if (!confirm('Are you sure you want to delete this course?')) return;
-    deleteMutation.mutate(id);
+  const handleDelete = () => {
+    if (!pendingDelete) return;
+    deleteMutation.mutate(pendingDelete.id, {
+      onSuccess: () => setPendingDelete(null),
+    });
   };
 
   return (
@@ -113,8 +121,12 @@ export default function CoursesPage() {
                           variant='ghost'
                           size='sm'
                           className='text-destructive hover:text-destructive'
-                          onClick={() => handleDelete(course._id)}
-                          disabled={deleteMutation.isPending}
+                          onClick={() =>
+                            setPendingDelete({
+                              id: course._id,
+                              slug: course.slug,
+                            })
+                          }
                         >
                           <Trash2 className='h-4 w-4' />
                           <span className='sr-only'>Delete</span>
@@ -128,6 +140,14 @@ export default function CoursesPage() {
           )}
         </CardContent>
       </Card>
+
+      <DeleteCourseModal
+        open={!!pendingDelete}
+        onOpenChange={(open) => !open && setPendingDelete(null)}
+        slug={pendingDelete?.slug ?? ''}
+        isPending={deleteMutation.isPending}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

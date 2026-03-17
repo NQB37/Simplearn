@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Editor } from '@/components/ui/editor';
 import { useCourseBySlug, useCourseMutations } from '@/hooks/use-courses';
+import { DeleteCourseModal } from '@/components/features/courses/delete-course-modal';
 
 const EditCoursePage = () => {
   const params = useParams();
@@ -32,6 +33,7 @@ const EditCoursePage = () => {
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [curriculum, setCurriculum] = React.useState<Module[]>([]);
+  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (course) {
@@ -47,7 +49,6 @@ const EditCoursePage = () => {
 
   const handleDelete = () => {
     if (!course) return;
-    if (!confirm('Are you sure you want to delete this course?')) return;
     deleteMutation.mutate(course._id, {
       onSuccess: () => router.push('/instructor/courses'),
     });
@@ -142,8 +143,7 @@ const EditCoursePage = () => {
                   variant='destructive'
                   size='sm'
                   className='mt-4'
-                  onClick={handleDelete}
-                  disabled={deleteMutation.isPending}
+                  onClick={() => setDeleteModalOpen(true)}
                 >
                   Delete Course
                 </Button>
@@ -152,6 +152,14 @@ const EditCoursePage = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <DeleteCourseModal
+        open={deleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        slug={course.slug}
+        isPending={deleteMutation.isPending}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };
