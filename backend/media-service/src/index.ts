@@ -27,6 +27,7 @@ app.get('/', (_req: Request, res: Response) => {
   res.json({ message: 'Media Service is running' });
 });
 
+
 // Error handling for multer errors
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   if (err.code === 'LIMIT_FILE_SIZE') {

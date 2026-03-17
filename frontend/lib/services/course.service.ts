@@ -1,5 +1,5 @@
 import axiosInstance from '@/api/axios.api';
-import { Course, CreateCoursePayload, Module } from '@/types/course.type';
+import { Course, CreateCoursePayload, Module, Lesson, ContentBlock } from '@/types/course.type';
 
 const COURSE_BASE_URL = process.env.NEXT_PUBLIC_COURSE_SERVICE_URL;
 
@@ -52,5 +52,26 @@ export const courseService = {
   reorderModules: async (courseId: string, orderedIds: string[]): Promise<Module[]> => {
     const { data } = await axiosInstance.put(`${COURSE_BASE_URL}/api/courses/${courseId}/modules/reorder`, { orderedIds });
     return data.modules;
+  },
+
+  // Lesson methods
+  getLessons: async (courseId: string, moduleId: string): Promise<Lesson[]> => {
+    const { data } = await axiosInstance.get(`${COURSE_BASE_URL}/api/courses/${courseId}/modules/${moduleId}/lessons`);
+    return data.lessons;
+  },
+
+  createLesson: async (courseId: string, moduleId: string, title: string): Promise<Lesson> => {
+    const { data } = await axiosInstance.post(`${COURSE_BASE_URL}/api/courses/${courseId}/modules/${moduleId}/lessons`, { title });
+    return data.lesson;
+  },
+
+  updateLesson: async (courseId: string, moduleId: string, lessonId: string, payload: { title?: string; contents?: ContentBlock[] }): Promise<Lesson> => {
+    const { data } = await axiosInstance.put(`${COURSE_BASE_URL}/api/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}`, payload);
+    return data.lesson;
+  },
+
+  deleteLesson: async (courseId: string, moduleId: string, lessonId: string): Promise<{ message: string }> => {
+    const { data } = await axiosInstance.delete(`${COURSE_BASE_URL}/api/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}`);
+    return data;
   },
 };

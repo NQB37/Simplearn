@@ -25,3 +25,18 @@ export interface Module {
   createdAt: string;
   updatedAt: string;
 }
+
+export type ContentBlock =
+  | { _id: string; type: 'text'; body: string }
+  | { _id: string; type: 'image'; url: string; altText?: string }
+  | { _id: string; type: 'document'; path: string; fullPath: string; originalName: string; size: number; mimeType: string };
+
+export interface Lesson {
+  _id: string;
+  moduleId: string;
+  title: string;
+  order: number;
+  contents: ContentBlock[];
+  createdAt: string;
+  updatedAt: string;
+}

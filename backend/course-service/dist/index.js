@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './config/database.config.js';
 import courseRoutes from './routes/course.route.js';
 import moduleRoutes from './routes/module.route.js';
+import lessonRoutes from './routes/lesson.route.js';
 import dns from 'node:dns/promises';
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 const app = express();
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
 });
 app.use('/api/courses', courseRoutes);
 app.use('/api/courses/:courseId/modules', moduleRoutes);
+app.use('/api/courses/:courseId/modules/:moduleId/lessons', lessonRoutes);
 app.get('/', (req, res) => {
     res.json({ message: 'Course Service is running' });
 });

@@ -7,10 +7,12 @@ export const mediaService = {
   uploadImage: async (file: File): Promise<ImageUploadResponse> => {
     const formData = new FormData();
     formData.append('image', file);
+    // Do NOT set Content-Type manually — axios auto-sets multipart/form-data with the
+    // required boundary when it detects FormData. Manually setting it strips the boundary
+    // and breaks multer's body parsing on the server.
     const { data } = await axiosInstance.post(
       `${MEDIA_BASE_URL}/api/media/images/upload`,
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } },
     );
     return data;
   },
@@ -29,7 +31,6 @@ export const mediaService = {
     const { data } = await axiosInstance.post(
       `${MEDIA_BASE_URL}/api/media/documents/upload`,
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } },
     );
     return data;
   },

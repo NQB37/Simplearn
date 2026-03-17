@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { courseService } from '@/lib/services/course.service';
-import { Course, CreateCoursePayload, Module } from '@/types/course.type';
+import { Course, CreateCoursePayload, Module, ContentBlock } from '@/types/course.type';
 import { toast } from 'sonner';
 
 export function useCourses() {
@@ -101,4 +101,47 @@ export function useModuleMutations(courseId: string) {
   });
 
   return { createMutation, updateMutation, deleteMutation, reorderMutation };
+}
+
+// Lesson hooks
+export function useLessons(courseId: string, moduleId: string) {
+  return useQuery({
+    queryKey: ['lessons', courseId, moduleId],
+    queryFn: () => courseService.getLessons(courseId, moduleId),
+    enabled: !!courseId && !!moduleId,
+  });
+}
+
+export function useLessonMutations(courseId: string, moduleId: string) {
+  const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: (title: string) => courseService.createLesson(courseId, moduleId, title),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lessons', courseId, moduleId] });
+      toast.success('Lesson added');
+    },
+    onError: () => toast.error('Failed to create lesson'),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ lessonId, data }: { lessonId: string; data: { title?: string; contents?: ContentBlock[] } }) =>
+      courseService.updateLesson(courseId, moduleId, lessonId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lessons', courseId, moduleId] });
+      toast.success('Lesson saved');
+    },
+    onError: () => toast.error('Failed to save lesson'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (lessonId: string) => courseService.deleteLesson(courseId, moduleId, lessonId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lessons', courseId, moduleId] });
+      toast.success('Lesson deleted');
+    },
+    onError: () => toast.error('Failed to delete lesson'),
+  });
+
+  return { createMutation, updateMutation, deleteMutation };
 }
