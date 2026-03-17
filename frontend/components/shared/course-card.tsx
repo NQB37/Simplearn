@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Course } from '@/types/course.type';
+import { MockCourse } from '@/lib/mock-data';
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export function CourseCard({ course }: { course: Course }) {
+export function CourseCard({ course }: { course: MockCourse }) {
   return (
     <Card className='flex flex-col h-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:shadow-teal-500/10 dark:hover:shadow-teal-400/10 hover:-translate-y-1 transition-all duration-300 group overflow-hidden rounded-2xl cursor-pointer'>
       <Link

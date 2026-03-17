@@ -1,0 +1,10 @@
+import express from 'express';
+import { uploadImage, deleteImage } from '../controllers/image.controller.js';
+import { requireAuth, requireRole } from '@simplearn/middlewares';
+import { config } from '../config/env.config.js';
+import { imageUpload } from '../middleware/upload.middleware.js';
+const router = express.Router();
+const JWT_SECRET = config.jwtSecret;
+router.post('/upload', requireAuth(JWT_SECRET), requireRole(['instructor', 'admin'], JWT_SECRET), imageUpload, uploadImage);
+router.delete('/', requireAuth(JWT_SECRET), requireRole(['instructor', 'admin'], JWT_SECRET), deleteImage);
+export default router;

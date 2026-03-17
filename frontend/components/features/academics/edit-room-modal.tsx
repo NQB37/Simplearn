@@ -21,10 +21,14 @@ interface EditRoomModalProps {
 
 export function EditRoomModal({ room }: EditRoomModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [roomForm, setRoomForm] = useState({
+  const [roomForm, setRoomForm] = useState<{
+    name: string;
+    capacity: number;
+    status: 'active' | 'inactive' | 'maintenance';
+  }>({
     name: '',
     capacity: 0,
-    status: 'active' as const,
+    status: 'active',
   });
 
   const { updateMutation } = useRoomMutations();

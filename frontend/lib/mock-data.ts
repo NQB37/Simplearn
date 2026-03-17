@@ -1,5 +1,15 @@
-import { Course } from '@/types/course.type';
 import { User } from '@/types/index.type';
+
+export interface MockCourse {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  thumbnailUrl?: string;
+  lessonsCount: number;
+  price?: number;
+  slug: string;
+}
 
 export const MOCK_USER: User = {
   id: "user-1",
@@ -9,7 +19,7 @@ export const MOCK_USER: User = {
   avatarUrl: "https://github.com/shadcn.png",
 }
 
-export const MOCK_COURSES: Course[] = [
+export const MOCK_COURSES: MockCourse[] = [
   {
     id: "c1",
     title: "Mastering Next.js 14",

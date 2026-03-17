@@ -22,6 +22,10 @@ vi.mock('@/store/user.store', () => ({
   useUserStore: vi.fn(),
 }));
 
+vi.mock('@/hooks/use-academics', () => ({
+  useSubjects: vi.fn(() => ({ data: [], isLoading: false })),
+}));
+
 import { useCourses, useCourseMutations } from '@/hooks/use-courses';
 import { useUserStore } from '@/store/user.store';
 
