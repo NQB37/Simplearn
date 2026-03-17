@@ -43,6 +43,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
+import { Module } from '@/types/course.type';
+import { useModules, useModuleMutations } from '@/hooks/use-courses';
 
 export interface Lesson {
   id: string;
@@ -51,19 +53,23 @@ export interface Lesson {
   freePreview: boolean;
 }
 
-export interface Module {
-  id: string;
+// Local interface for UI display - modules now have lessons as local state
+interface ModuleWithLessons {
+  _id: string;
+  courseId: string;
   title: string;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
   lessons: Lesson[];
 }
 
 interface CurriculumEditorProps {
-  modules: Module[];
-  onChange: (modules: Module[]) => void;
+  courseId: string;
 }
 
 interface SortableModuleProps {
-  module: Module;
+  module: ModuleWithLessons;
   isEditing: boolean;
   newTitle: string;
   onTitleChange: (title: string) => void;
@@ -94,7 +100,7 @@ function SortableModule({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: module.id });
+  } = useSortable({ id: module._id });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -107,7 +113,7 @@ function SortableModule({
   return (
     <div ref={setNodeRef} style={style}>
       <AccordionItem
-        value={module.id}
+        value={module._id}
         className='border rounded-lg px-4 bg-muted/10'
       >
         <AccordionTrigger className='hover:no-underline py-4'>
@@ -238,11 +244,15 @@ function SortableModule({
   );
 }
 
-export function CurriculumEditor({ modules, onChange }: CurriculumEditorProps) {
-  const [isEditingModule, setIsEditingModule] = React.useState<string | null>(
-    null,
-  );
+export function CurriculumEditor({ courseId }: CurriculumEditorProps) {
+  const { data: modules = [], isLoading } = useModules(courseId);
+  const { createMutation, updateMutation, deleteMutation, reorderMutation } = useModuleMutations(courseId);
+
+  const [isEditingModule, setIsEditingModule] = React.useState<string | null>(null);
   const [newModuleTitle, setNewModuleTitle] = React.useState('');
+
+  // Local state for lessons (not persisted)
+  const [moduleLessons, setModuleLessons] = React.useState<Record<string, Lesson[]>>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -250,40 +260,40 @@ export function CurriculumEditor({ modules, onChange }: CurriculumEditorProps) {
     }),
   );
 
+  // Create modules with lessons for display
+  const modulesWithLessons: ModuleWithLessons[] = modules.map((module) => ({
+    ...module,
+    lessons: moduleLessons[module._id] || [],
+  }));
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const oldIndex = modules.findIndex((m) => m.id === active.id);
-      const newIndex = modules.findIndex((m) => m.id === over.id);
-      onChange(arrayMove(modules, oldIndex, newIndex));
+      const oldIndex = modules.findIndex((m) => m._id === active.id);
+      const newIndex = modules.findIndex((m) => m._id === over.id);
+      const reorderedModules = arrayMove(modules, oldIndex, newIndex);
+      const orderedIds = reorderedModules.map((m) => m._id);
+      reorderMutation.mutate(orderedIds);
     }
   };
 
   const handleAddModule = () => {
-    const newModule: Module = {
-      id: `mod-${Date.now()}`,
-      title: 'New Module',
-      lessons: [],
-    };
-    onChange([...modules, newModule]);
-    setIsEditingModule(newModule.id);
-    setNewModuleTitle('New Module');
-    toast.success('Module added');
+    createMutation.mutate({ title: 'New Module' });
   };
 
   const handleDeleteModule = (moduleId: string) => {
-    onChange(modules.filter((m) => m.id !== moduleId));
-    toast.success('Module deleted');
+    deleteMutation.mutate(moduleId);
+    // Clean up lessons for deleted module
+    setModuleLessons(prev => {
+      const updated = { ...prev };
+      delete updated[moduleId];
+      return updated;
+    });
   };
 
   const handleUpdateModuleTitle = (moduleId: string) => {
-    onChange(
-      modules.map((m) =>
-        m.id === moduleId ? { ...m, title: newModuleTitle } : m,
-      ),
-    );
+    updateMutation.mutate({ moduleId, data: { title: newModuleTitle } });
     setIsEditingModule(null);
-    toast.success('Module updated');
   };
 
   const handleAddLesson = (moduleId: string, type: Lesson['type']) => {
@@ -293,24 +303,24 @@ export function CurriculumEditor({ modules, onChange }: CurriculumEditorProps) {
       type,
       freePreview: false,
     };
-    onChange(
-      modules.map((m) =>
-        m.id === moduleId ? { ...m, lessons: [...m.lessons, newLesson] } : m,
-      ),
-    );
+    setModuleLessons(prev => ({
+      ...prev,
+      [moduleId]: [...(prev[moduleId] || []), newLesson],
+    }));
     toast.success(`Added ${type} lesson`);
   };
 
   const handleDeleteLesson = (moduleId: string, lessonId: string) => {
-    onChange(
-      modules.map((m) =>
-        m.id === moduleId
-          ? { ...m, lessons: m.lessons.filter((l) => l.id !== lessonId) }
-          : m,
-      ),
-    );
+    setModuleLessons(prev => ({
+      ...prev,
+      [moduleId]: (prev[moduleId] || []).filter(l => l.id !== lessonId),
+    }));
     toast.success('Lesson deleted');
   };
+
+  if (isLoading) {
+    return <div className="text-center py-8">Loading curriculum...</div>;
+  }
 
   return (
     <div className='space-y-4'>
@@ -327,27 +337,27 @@ export function CurriculumEditor({ modules, onChange }: CurriculumEditorProps) {
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={modules.map((m) => m.id)}
+          items={modulesWithLessons.map((m) => m._id)}
           strategy={verticalListSortingStrategy}
         >
           <Accordion type='multiple' className='w-full space-y-4'>
-            {modules.map((module) => (
+            {modulesWithLessons.map((module) => (
               <SortableModule
-                key={module.id}
+                key={module._id}
                 module={module}
-                isEditing={isEditingModule === module.id}
+                isEditing={isEditingModule === module._id}
                 newTitle={newModuleTitle}
                 onTitleChange={setNewModuleTitle}
-                onSaveTitle={() => handleUpdateModuleTitle(module.id)}
+                onSaveTitle={() => handleUpdateModuleTitle(module._id)}
                 onCancelEdit={() => setIsEditingModule(null)}
                 onStartEdit={() => {
-                  setIsEditingModule(module.id);
+                  setIsEditingModule(module._id);
                   setNewModuleTitle(module.title);
                 }}
-                onDelete={() => handleDeleteModule(module.id)}
-                onAddLesson={(type) => handleAddLesson(module.id, type)}
+                onDelete={() => handleDeleteModule(module._id)}
+                onAddLesson={(type) => handleAddLesson(module._id, type)}
                 onDeleteLesson={(lessonId) =>
-                  handleDeleteLesson(module.id, lessonId)
+                  handleDeleteLesson(module._id, lessonId)
                 }
               />
             ))}
@@ -355,7 +365,7 @@ export function CurriculumEditor({ modules, onChange }: CurriculumEditorProps) {
         </SortableContext>
       </DndContext>
 
-      {modules.length === 0 && (
+      {modulesWithLessons.length === 0 && (
         <div className='text-center py-12 border-2 border-dashed rounded-lg bg-muted/5'>
           <p className='text-muted-foreground mb-4'>
             Start building your course structure

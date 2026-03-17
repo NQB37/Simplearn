@@ -2,10 +2,7 @@
 
 import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import {
-  CurriculumEditor,
-  Module,
-} from '@/components/features/courses/curriculum-editor';
+import { CurriculumEditor } from '@/components/features/courses/curriculum-editor';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -32,7 +29,6 @@ const EditCoursePage = () => {
 
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
-  const [curriculum, setCurriculum] = React.useState<Module[]>([]);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -120,7 +116,7 @@ const EditCoursePage = () => {
         </TabsContent>
 
         <TabsContent value='curriculum' className='mt-6'>
-          <CurriculumEditor modules={curriculum} onChange={setCurriculum} />
+          <CurriculumEditor courseId={course._id} />
         </TabsContent>
 
         <TabsContent value='settings' className='mt-6'>

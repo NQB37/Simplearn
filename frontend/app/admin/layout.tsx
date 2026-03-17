@@ -3,10 +3,8 @@ import { AdminSidebarFooter } from '@/components/shared/admin-sidebar-footer';
 import {
   LayoutDashboard,
   Users,
-  Settings,
-  ShieldAlert,
   LibraryBig,
-  Tags,
+  BookOpen,
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -42,6 +40,13 @@ export default function AdminLayout({
             >
               <LibraryBig className='h-4 w-4' />
               Academics
+            </Link>
+            <Link
+              href='/admin/catalog'
+              className='flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-200 dark:text-slate-300 dark:hover:text-slate-50 dark:hover:bg-slate-800 transition-colors'
+            >
+              <BookOpen className='h-4 w-4' />
+              Courses
             </Link>
           </nav>
         </div>

@@ -16,3 +16,12 @@ export interface CreateCoursePayload {
   description: string;
   subjectId: string;
 }
+
+export interface Module {
+  _id: string;
+  courseId: string;
+  title: string;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}

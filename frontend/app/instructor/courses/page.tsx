@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useCourses, useCourseMutations } from '@/hooks/use-courses';
+import { useSubjects } from '@/hooks/use-academics';
 import { useUserStore } from '@/store/user.store';
 import { DeleteCourseModal } from '@/components/features/courses/delete-course-modal';
 
@@ -29,6 +30,7 @@ export default function CoursesPage() {
   const router = useRouter();
   const { data: courses, isLoading } = useCourses();
   const { deleteMutation } = useCourseMutations();
+  const { data: subjects = [] } = useSubjects();
   const user = useUserStore((state) => state.user);
   const [pendingDelete, setPendingDelete] = React.useState<{
     id: string;
@@ -92,7 +94,7 @@ export default function CoursesPage() {
                   <TableRow key={course._id}>
                     <TableCell className='font-medium'>{course.title}</TableCell>
                     <TableCell className='text-muted-foreground text-sm'>
-                      {course.subjectId}
+                      {subjects.find((s) => s._id === course.subjectId)?.name ?? course.subjectId}
                     </TableCell>
                     <TableCell>
                       <Badge
