@@ -39,6 +39,13 @@ export default function InstructorLayout({
                 My Courses
               </Link>
               <Link
+                href='/instructor/profile'
+                className='flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-200 dark:text-slate-300 dark:hover:text-slate-50 dark:hover:bg-slate-800 transition-colors'
+              >
+                <Settings className='h-4 w-4' />
+                Profile
+              </Link>
+              <Link
                 href='/instructor/courses/create'
                 className='flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-bold text-teal-700 bg-teal-100 hover:bg-teal-200 dark:text-teal-400 dark:bg-teal-900/30 dark:hover:bg-teal-900/50 transition-colors mt-4'
               >

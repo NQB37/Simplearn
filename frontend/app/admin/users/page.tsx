@@ -24,6 +24,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 type User = {
   id: string;
@@ -37,6 +38,7 @@ type User = {
 import axiosInstance from '@/api/axios.api';
 
 export default function AdminUsersPage() {
+  const router = useRouter();
   const [data, setData] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -159,6 +161,12 @@ export default function AdminUsersPage() {
               align='end'
               className='rounded-xl border-slate-200 shadow-xl dark:border-slate-800 dark:bg-slate-900'
             >
+              <DropdownMenuItem
+                className='font-medium cursor-pointer focus:bg-slate-100 dark:focus:bg-slate-800'
+                onClick={() => router.push(`/admin/users/${user.id}/profile`)}
+              >
+                Edit Profile
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className='font-medium cursor-pointer focus:bg-slate-100 dark:focus:bg-slate-800'
                 onClick={() =>

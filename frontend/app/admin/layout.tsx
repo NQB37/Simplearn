@@ -5,6 +5,7 @@ import {
   Users,
   LibraryBig,
   BookOpen,
+  Settings,
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -40,6 +41,13 @@ export default function AdminLayout({
             >
               <LibraryBig className='h-4 w-4' />
               Academics
+            </Link>
+            <Link
+              href='/admin/vocabulary'
+              className='flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-200 dark:text-slate-300 dark:hover:text-slate-50 dark:hover:bg-slate-800 transition-colors'
+            >
+              <Settings className='h-4 w-4' />
+              Vocabulary
             </Link>
             <Link
               href='/admin/catalog'

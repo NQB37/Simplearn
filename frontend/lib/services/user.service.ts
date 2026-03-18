@@ -2,9 +2,9 @@ import axiosInstance from '@/api/axios.api';
 
 const AUTH_BASE_URL = process.env.NEXT_PUBLIC_AUTH_SERVICE_URL;
 
-export type Sex = 'male' | 'female' | 'other';
-export type FormOfStudy = 'full-time' | 'part-time' | 'online' | 'hybrid';
-export type TypeOfStudy = 'bachelor' | 'master' | 'phd' | 'associate' | 'certificate';
+export type Sex = 'male' | 'female' | 'other' | '';
+export type FormOfStudy = 'full-time' | 'part-time' | 'online' | 'hybrid' | '';
+export type TypeOfStudy = 'bachelor' | 'master' | 'phd' | 'associate' | 'certificate' | '';
 
 export interface ExtendedProfile {
   dateOfBirth?: string;
@@ -63,11 +63,11 @@ export const userService = {
   // Vocabulary: Fields of Study
   getFieldsOfStudy: async (): Promise<FieldOfStudy[]> => {
     const { data } = await axiosInstance.get(`${AUTH_BASE_URL}/api/admin/vocabulary/fields`);
-    return data.fields;
+    return data;
   },
   createFieldOfStudy: async (name: string): Promise<FieldOfStudy> => {
     const { data } = await axiosInstance.post(`${AUTH_BASE_URL}/api/admin/vocabulary/fields`, { name });
-    return data.field;
+    return data;
   },
   deleteFieldOfStudy: async (id: string): Promise<void> => {
     await axiosInstance.delete(`${AUTH_BASE_URL}/api/admin/vocabulary/fields/${id}`);
@@ -77,11 +77,11 @@ export const userService = {
   getMajors: async (fieldOfStudyId?: string): Promise<Major[]> => {
     const params = fieldOfStudyId ? { fieldOfStudyId } : {};
     const { data } = await axiosInstance.get(`${AUTH_BASE_URL}/api/admin/vocabulary/majors`, { params });
-    return data.majors;
+    return data;
   },
   createMajor: async (name: string, fieldOfStudyId: string): Promise<Major> => {
     const { data } = await axiosInstance.post(`${AUTH_BASE_URL}/api/admin/vocabulary/majors`, { name, fieldOfStudyId });
-    return data.major;
+    return data;
   },
   deleteMajor: async (id: string): Promise<void> => {
     await axiosInstance.delete(`${AUTH_BASE_URL}/api/admin/vocabulary/majors/${id}`);
