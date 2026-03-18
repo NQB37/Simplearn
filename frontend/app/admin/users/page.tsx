@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -25,6 +24,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAdminUsers } from '@/hooks/use-user';
 
 type User = {
   id: string;
@@ -35,41 +36,15 @@ type User = {
   createdAt: string;
 };
 
-import axiosInstance from '@/api/axios.api';
-
 export default function AdminUsersPage() {
   const router = useRouter();
-  const [data, setData] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data = [], isLoading: loading } = useAdminUsers();
 
-  const fetchUsers = async () => {
-    try {
-      const res = await axiosInstance.get(
-        `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/api/admin/users`,
-      );
-      setData(res.data);
-    } catch (e) {
-      toast.error('Failed to fetch users');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const handleRoleChange = (id: string, newRole: string) => {
-    setData((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, role: newRole } : u)),
-    );
+  const handleRoleChange = (_id: string, newRole: string) => {
     toast.success(`Role updated to ${newRole}`);
   };
 
-  const handleStatusChange = (id: string, newStatus: string) => {
-    setData((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, status: newStatus } : u)),
-    );
+  const handleStatusChange = (_id: string, newStatus: string) => {
     toast.success(`Status updated to ${newStatus}`);
   };
 
@@ -212,13 +187,18 @@ export default function AdminUsersPage() {
 
   return (
     <div className='max-w-7xl mx-auto space-y-8'>
-      <div>
-        <h1 className='text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50'>
-          User Management
-        </h1>
-        <p className='text-slate-500 dark:text-slate-400 font-medium'>
-          Overview of all members and access controls.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className='text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50'>
+            User Management
+          </h1>
+          <p className='text-slate-500 dark:text-slate-400 font-medium'>
+            Overview of all members and access controls.
+          </p>
+        </div>
+        <Link href="/admin/users/new">
+          <Button>Create Student</Button>
+        </Link>
       </div>
 
       <Card className='rounded-2xl shadow-sm border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900'>

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { userService, ExtendedProfile, FormOfStudy, TypeOfStudy, Sex } from '@/lib/services/user.service';
+import { userService, ExtendedProfile, FormOfStudy, TypeOfStudy, Sex, CreateStudentPayload } from '@/lib/services/user.service';
 import { toast } from 'sonner';
 
 export type { FormOfStudy, TypeOfStudy, Sex };
@@ -104,4 +104,26 @@ export function useVocabularyMutations() {
   });
 
   return { createFieldMutation, deleteFieldMutation, createMajorMutation, deleteMajorMutation };
+}
+
+export function useAdminUsers() {
+  return useQuery({
+    queryKey: ['admin-users'],
+    queryFn: async () => {
+      const { data } = await (await import('@/api/axios.api')).default.get(
+        `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/api/admin/users`,
+      );
+      return data;
+    },
+  });
+}
+
+export function useCreateStudent() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateStudentPayload) => userService.createStudent(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+  });
 }

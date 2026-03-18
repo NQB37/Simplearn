@@ -39,6 +39,18 @@ export interface Major {
   fieldOfStudyId: string;
 }
 
+export interface CreateStudentPayload {
+  name: string;
+  email: string;
+  studentData?: {
+    formOfStudy?: FormOfStudy;
+    fieldOfStudyId?: string;
+    majorId?: string;
+    typeOfStudy?: TypeOfStudy;
+    startYear?: number;
+  };
+}
+
 export const userService = {
   // Own extended profile
   getExtendedProfile: async (): Promise<ExtendedProfile> => {
@@ -85,5 +97,11 @@ export const userService = {
   },
   deleteMajor: async (id: string): Promise<void> => {
     await axiosInstance.delete(`${AUTH_BASE_URL}/api/admin/vocabulary/majors/${id}`);
+  },
+
+  // Admin: create student account
+  createStudent: async (payload: CreateStudentPayload) => {
+    const { data } = await axiosInstance.post(`${AUTH_BASE_URL}/api/admin/users`, payload);
+    return data;
   },
 };
