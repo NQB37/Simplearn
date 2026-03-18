@@ -4,10 +4,12 @@ import * as adminProfileController from '../controllers/admin.profile.controller
 import { isAuthenticated, isAdmin } from '../middlewares/auth.middleware.js';
 import { validateRequest } from '../middlewares/validation.middleware.js';
 import { updateProfileSchema } from '../validators/profile.validator.js';
+import { createUserSchema } from '../validators/create-user.validator.js';
 
 const router = Router();
 
 router.get('/users', isAuthenticated, isAdmin, adminController.getAllUsers);
+router.post('/users', isAuthenticated, isAdmin, validateRequest(createUserSchema), adminController.createUser);
 router.patch('/users/:id/role', isAuthenticated, isAdmin, adminController.updateUserRole);
 router.delete('/users/:id', isAuthenticated, isAdmin, adminController.deleteUser);
 

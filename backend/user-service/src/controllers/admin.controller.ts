@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import * as adminService from '../services/admin.service.js';
+import type { CreateUserInput } from '../validators/create-user.validator.js';
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -39,5 +40,18 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting user' });
+  }
+};
+
+export const createUser = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const data: CreateUserInput = req.body;
+    const user = await adminService.createUser(data);
+    res.status(201).json(user);
+  } catch (error: any) {
+    if (error.code === 'DUPLICATE_EMAIL') {
+      return res.status(409).json({ message: 'User already exists' });
+    }
+    res.status(500).json({ message: 'Error creating user' });
   }
 };
