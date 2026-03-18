@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-18T22:18:57.954Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-18T22:23:07.066Z"
 last_activity: "2026-03-18 — Phase 1 completed: backend models/services, role-specific forms, and admin vocabulary UI implemented."
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
   percent: 20
 ---
 
@@ -51,6 +51,7 @@ Progress: [▓▓░░░░░░░░] 20%
 *Updated after each plan completion*
 | Phase 01 P01 | 25 | 5 tasks | 11 files |
 | Phase 02-student-account-creation P01 | 8 | 2 tasks | 4 files |
+| Phase 02-student-account-creation P02 | 15 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Vocabulary reads open to all authenticated roles; writes restricted to admin
 - [Phase 02-student-account-creation]: Use err.code = 'DUPLICATE_EMAIL' pattern for cross-layer error signaling; controller maps code to HTTP 409
 - [Phase 02-student-account-creation]: Profile upsert only when studentData provided and non-empty — avoids empty profile documents
+- [Phase 02-student-account-creation]: useAdminUsers hook uses useQuery with queryKey ['admin-users'] enabling query invalidation on student creation
+- [Phase 02-student-account-creation]: Duplicate email mapped to inline form.setError on email field, not toast, per UX spec
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T22:18:57.951Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-03-18T22:23:07.064Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
