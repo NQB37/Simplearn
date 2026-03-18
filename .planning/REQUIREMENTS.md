@@ -15,8 +15,8 @@
 
 ### Student Account Management
 
-- [ ] **ACCT-01**: Admin can create a student account via a form (name, email, full profile fields, academic year, class); account is created with a fixed default password
-- [ ] **ACCT-02**: Newly created student can log in with their email and default password
+- [x] **ACCT-01**: Admin can create a student account via a form (name, email, full profile fields, academic year, class); account is created with a fixed default password
+- [x] **ACCT-02**: Newly created student can log in with their email and default password
 
 ### Enrollment
 
@@ -70,8 +70,8 @@
 | PROF-03 | Phase 1 | Complete |
 | PROF-04 | Phase 1 | Complete |
 | PROF-05 | Phase 1 | Complete |
-| ACCT-01 | Phase 2 | Pending |
-| ACCT-02 | Phase 2 | Pending |
+| ACCT-01 | Phase 2 | Complete |
+| ACCT-02 | Phase 2 | Complete |
 | ENRL-01 | Phase 3 | Pending |
 | ENRL-02 | Phase 3 | Pending |
 | ENRL-03 | Phase 3 | Pending |

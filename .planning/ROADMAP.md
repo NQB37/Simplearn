@@ -40,7 +40,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. Admin can fill and submit a "Create Student" form that includes name, email, profile fields, academic year, and class assignment
   2. The created student account appears in the user list immediately after creation
   3. The new student can log in using their email and the default password without any additional setup
-**Plans**: TBD
+**Plans:** 1/2 plans executed
+Plans:
+- [ ] 02-01-PLAN.md — Backend endpoint for admin student account creation (POST /api/admin/users)
+- [ ] 02-02-PLAN.md — Frontend create student form page and user list conversion
 
 ### Phase 3: Enrollment
 **Goal**: Admins can suggest subjects to students and students can enroll within a defined deadline
@@ -82,7 +85,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. User Profiles | 2/2 | Completed | 2026-03-18 |
-| 2. Student Account Creation | 0/TBD | Not started | - |
+| 2. Student Account Creation | 1/2 | In Progress|  |
 | 3. Enrollment | 0/TBD | Not started | - |
 | 4. Schedule | 0/TBD | Not started | - |
 | 5. Assignments and Grading | 0/TBD | Not started | - |
