@@ -10,30 +10,49 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAcademicYearMutations } from '@/hooks/use-academics';
+import { Semester } from '@/types/academics.type';
 
 export function AddYearModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [yearForm, setYearForm] = useState({
     name: '',
+    semester: '' as Semester | '',
     startDate: '',
     endDate: '',
+    enrollmentDeadline: '',
     isActive: false,
   });
 
   const { createMutation } = useAcademicYearMutations();
 
   const handleSave = async () => {
-    if (!yearForm.name || !yearForm.startDate || !yearForm.endDate) {
-      toast.error('Please fill in all fields');
+    if (!yearForm.name || !yearForm.semester || !yearForm.startDate || !yearForm.endDate) {
+      toast.error('Please fill in all required fields');
       return;
     }
 
-    createMutation.mutate(yearForm, {
+    const payload = {
+      name: yearForm.name,
+      semester: yearForm.semester as Semester,
+      startDate: yearForm.startDate,
+      endDate: yearForm.endDate,
+      isActive: yearForm.isActive,
+      ...(yearForm.enrollmentDeadline && { enrollmentDeadline: yearForm.enrollmentDeadline }),
+    };
+
+    createMutation.mutate(payload, {
       onSuccess: () => {
-        setYearForm({ name: '', startDate: '', endDate: '', isActive: false });
+        setYearForm({ name: '', semester: '', startDate: '', endDate: '', enrollmentDeadline: '', isActive: false });
         setIsOpen(false);
       },
     });
@@ -60,10 +79,24 @@ export function AddYearModal() {
               id='add-year-name'
               placeholder='e.g., 2025-2026'
               value={yearForm.name}
-              onChange={(e) =>
-                setYearForm({ ...yearForm, name: e.target.value })
-              }
+              onChange={(e) => setYearForm({ ...yearForm, name: e.target.value })}
             />
+          </div>
+          <div className='flex flex-col gap-2'>
+            <Label htmlFor='add-semester'>Semester</Label>
+            <Select
+              value={yearForm.semester}
+              onValueChange={(val) => setYearForm({ ...yearForm, semester: val as Semester })}
+            >
+              <SelectTrigger id='add-semester'>
+                <SelectValue placeholder='Select semester' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='first'>First Semester</SelectItem>
+                <SelectItem value='second'>Second Semester</SelectItem>
+                <SelectItem value='summer'>Summer Semester</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className='flex flex-col gap-2'>
             <Label htmlFor='add-startDate'>Start Date</Label>
@@ -71,9 +104,7 @@ export function AddYearModal() {
               id='add-startDate'
               type='date'
               value={yearForm.startDate}
-              onChange={(e) =>
-                setYearForm({ ...yearForm, startDate: e.target.value })
-              }
+              onChange={(e) => setYearForm({ ...yearForm, startDate: e.target.value })}
             />
           </div>
           <div className='flex flex-col gap-2'>
@@ -82,9 +113,16 @@ export function AddYearModal() {
               id='add-endDate'
               type='date'
               value={yearForm.endDate}
-              onChange={(e) =>
-                setYearForm({ ...yearForm, endDate: e.target.value })
-              }
+              onChange={(e) => setYearForm({ ...yearForm, endDate: e.target.value })}
+            />
+          </div>
+          <div className='flex flex-col gap-2'>
+            <Label htmlFor='add-enrollmentDeadline'>Enrollment Deadline <span className='text-slate-400 font-normal'>(optional)</span></Label>
+            <Input
+              id='add-enrollmentDeadline'
+              type='datetime-local'
+              value={yearForm.enrollmentDeadline}
+              onChange={(e) => setYearForm({ ...yearForm, enrollmentDeadline: e.target.value })}
             />
           </div>
           <div className='flex items-center gap-2'>
@@ -92,9 +130,7 @@ export function AddYearModal() {
               type='checkbox'
               id='add-isActive'
               checked={yearForm.isActive}
-              onChange={(e) =>
-                setYearForm({ ...yearForm, isActive: e.target.checked })
-              }
+              onChange={(e) => setYearForm({ ...yearForm, isActive: e.target.checked })}
               className='w-4 h-4 mt-0.5'
             />
             <Label htmlFor='add-isActive' className='cursor-pointer'>

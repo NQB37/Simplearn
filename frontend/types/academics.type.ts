@@ -1,8 +1,12 @@
+export type Semester = 'first' | 'second' | 'summer';
+
 export interface AcademicYear {
   _id: string;
   name: string;
+  semester: Semester;
   startDate: string;
   endDate: string;
+  enrollmentDeadline?: string;
   isActive: boolean;
 }
 
@@ -18,6 +22,29 @@ export interface Subject {
   name: string;
   code: string;
   credits: number;
+}
+
+export interface MajorSubject {
+  _id: string;
+  majorId: string;
+  subjectId: Subject;
+  studyYear: number;
+  semester: 'first' | 'second' | 'summer';
+  isMandatory: boolean;
+}
+
+export interface EligibleSubjectsResponse {
+  enrollmentDeadline: string | null;
+  academicYearId: string;
+  subjects: MajorSubject[];
+}
+
+export interface Enrollment {
+  _id: string;
+  userId: string;
+  subjectId: Subject;
+  academicYearId: AcademicYear;
+  createdAt: string;
 }
 
 export interface ClassModel {
