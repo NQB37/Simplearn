@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready for execution
-stopped_at: Completed 03-enrollment-02-PLAN.md
-last_updated: "2026-03-19T21:35:00.000Z"
-last_activity: 2026-03-19 — Completed 03-02 enrollment backend (model refactor + eligibility + bulk enroll endpoints).
+stopped_at: Completed 03-04-PLAN.md
+last_updated: "2026-03-19T21:23:18.752Z"
+last_activity: 2026-03-19 — Completed 03-02 enrollment backend.
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 10
-  completed_plans: 7
+  completed_plans: 8
   percent: 44
 ---
 
@@ -56,6 +56,7 @@ Progress: [▓▓▓▓░░░░░░] 44%
 | Phase 02-student-account-creation P04 | 8 | 2 tasks | 3 files |
 | Phase 03-enrollment P01 | 15 | 4 tasks | 8 files |
 | Phase 03-enrollment P02 | 15 | 3 tasks | 5 files |
+| Phase 03-enrollment P04 | 20 | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,7 @@ Recent decisions affecting current work:
 - [Phase 03-enrollment]: Enrollment model refactored from classId to subjectId+academicYearId; no status or role fields needed
 - [Phase 03-enrollment]: Node.js built-in fetch used for user-service profile call — avoids adding axios dependency to academy-service
 - [Phase 03-enrollment]: bulkEnroll uses deleteMany+insertMany for clean semester replacement semantics
+- [Phase 03-enrollment]: Native HTML checkbox used for enrollment page (Shadcn Checkbox not installed); isMandatory subjects default-checked but remain toggleable per UI-SPEC
 
 ### Pending Todos
 
@@ -94,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T21:35:00.000Z
-Stopped at: Completed 03-enrollment-02-PLAN.md
+Last session: 2026-03-19T21:23:18.749Z
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
