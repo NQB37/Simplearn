@@ -1,5 +1,11 @@
 import { z } from 'zod';
 
+const addressSchema = z.object({
+  street: z.string().optional(),
+  city: z.string().optional(),
+  country: z.string().optional(),
+}).optional();
+
 const studentDataSchema = z.object({
   formOfStudy: z.enum(['full-time', 'part-time', 'online', 'hybrid']).optional(),
   fieldOfStudyId: z.string().optional(),
@@ -9,8 +15,13 @@ const studentDataSchema = z.object({
 });
 
 export const createUserSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email address'),
+  dateOfBirth: z.string().optional(),
+  phone: z.string().optional(),
+  address: addressSchema,
+  picture: z.string().url().optional(),
   studentData: studentDataSchema.optional(),
 });
 

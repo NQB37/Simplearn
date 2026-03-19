@@ -4,7 +4,7 @@ import type { CreateUserInput } from '../validators/create-user.validator.js';
 
 export const getAllUsers = async () => {
   return User.find()
-    .select('id email name role status createdAt')
+    .select('id email firstName lastName role status createdAt')
     .sort({ createdAt: -1 });
 };
 
@@ -31,17 +31,28 @@ export const createUser = async (data: CreateUserInput) => {
   }
 
   const user = new User({
-    name: data.name,
+    firstName: data.firstName,
+    lastName: data.lastName,
     email: data.email,
     password: DEFAULT_PASSWORD,
     role: 'STUDENT',
+    picture: data.picture,
   });
   await user.save();
 
+  // Build profile data from personal fields + studentData
+  const profileData: Record<string, any> = {};
+  if (data.dateOfBirth) profileData.dateOfBirth = data.dateOfBirth;
+  if (data.phone) profileData.phone = data.phone;
+  if (data.address) profileData.address = data.address;
   if (data.studentData && Object.keys(data.studentData).length > 0) {
+    profileData.studentData = data.studentData;
+  }
+
+  if (Object.keys(profileData).length > 0) {
     await Profile.findOneAndUpdate(
       { userId: user._id },
-      { $set: { studentData: data.studentData } },
+      { $set: profileData },
       { upsert: true, new: true },
     );
   }
