@@ -79,7 +79,7 @@ export default function CreateStudentPage() {
         typeOfStudy: '',
         fieldOfStudyId: '',
         majorId: '',
-        startYear: undefined,
+        startYear: '' as unknown as number,
       },
     },
   });
@@ -448,7 +448,10 @@ export default function CreateStudentPage() {
                         type="number"
                         placeholder="e.g. 2023"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          field.onChange(val === '' ? '' : Number(val));
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

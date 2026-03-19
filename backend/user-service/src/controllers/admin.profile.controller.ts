@@ -63,11 +63,10 @@ export const deleteFieldOfStudy = async (req: Request, res: Response): Promise<a
 // Vocabulary: Majors
 export const getMajors = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { fieldId } = req.query;
-    if (!fieldId || typeof fieldId !== 'string') {
-      return res.status(400).json({ message: 'fieldId query param is required' });
-    }
-    const majors = await profileService.getMajorsByField(fieldId);
+    const { fieldOfStudyId } = req.query;
+    const majors = await profileService.getMajorsByField(
+      typeof fieldOfStudyId === 'string' ? fieldOfStudyId : undefined,
+    );
     res.json(majors);
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error' });

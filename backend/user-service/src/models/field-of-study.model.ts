@@ -14,11 +14,7 @@ const fieldOfStudySchema = new Schema<IFieldOfStudy>(
     timestamps: true,
     toJSON: {
       virtuals: true,
-      transform: (_doc, ret: any) => {
-        ret.id = ret._id.toString();
-        delete ret._id;
-        delete ret.__v;
-      },
+      versionKey: false,
     },
   },
 );

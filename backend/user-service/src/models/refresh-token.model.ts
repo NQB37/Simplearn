@@ -18,11 +18,7 @@ const refreshTokenSchema = new Schema<IRefreshToken>(
     timestamps: { createdAt: true, updatedAt: false },
     toJSON: {
       virtuals: true,
-      transform: function (doc, ret: any) {
-        ret.id = ret._id.toString();
-        delete ret._id;
-        delete ret.__v;
-      },
+      versionKey: false,
     },
     toObject: {
       virtuals: true,

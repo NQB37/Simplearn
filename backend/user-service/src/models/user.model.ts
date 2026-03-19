@@ -45,11 +45,7 @@ const userSchema = new Schema<IUser>(
     timestamps: true,
     toJSON: {
       virtuals: true,
-      transform: function (doc, ret: any) {
-        ret.id = ret._id.toString();
-        delete ret._id;
-        delete ret.__v;
-      },
+      versionKey: false,
     },
     toObject: {
       virtuals: true,
@@ -57,14 +53,9 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-userSchema.pre('save', async function (next: any) {
-  if (!this.isModified('password') || !this.password) return next();
-  try {
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-  } catch (err: any) {
-    next(err);
-  }
+userSchema.pre('save', async function () {
+  if (!this.isModified('password') || !this.password) return;
+  this.password = await bcrypt.hash(this.password, 10);
 });
 
 userSchema.methods.comparePassword = async function (password: string) {

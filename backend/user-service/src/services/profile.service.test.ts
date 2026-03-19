@@ -113,5 +113,17 @@ describe('ProfileService', () => {
       expect(Major.create).toHaveBeenCalledWith({ name: 'Software Engineering', fieldOfStudyId: 'fid' });
       expect(result).toEqual({ name: 'Software Engineering', fieldOfStudyId: 'fid' });
     });
+
+    it('getMajorsByField with fieldOfStudyId should filter by field', async () => {
+      (Major.find as any).mockReturnValue({ sort: vi.fn().mockReturnValue({ lean: () => [] }) });
+      await profileService.getMajorsByField('fid');
+      expect(Major.find).toHaveBeenCalledWith({ fieldOfStudyId: 'fid' });
+    });
+
+    it('getMajorsByField without fieldOfStudyId should return all majors', async () => {
+      (Major.find as any).mockReturnValue({ sort: vi.fn().mockReturnValue({ lean: () => [] }) });
+      await profileService.getMajorsByField();
+      expect(Major.find).toHaveBeenCalledWith({});
+    });
   });
 });

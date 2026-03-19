@@ -41,8 +41,9 @@ export const deleteFieldOfStudy = async (id: string) => {
   return FieldOfStudy.findByIdAndDelete(id);
 };
 
-export const getMajorsByField = async (fieldOfStudyId: string) => {
-  return Major.find({ fieldOfStudyId }).sort({ name: 1 }).lean();
+export const getMajorsByField = async (fieldOfStudyId?: string) => {
+  const filter = fieldOfStudyId ? { fieldOfStudyId } : {};
+  return Major.find(filter).sort({ name: 1 }).lean();
 };
 
 export const createMajor = async (name: string, fieldOfStudyId: string) => {

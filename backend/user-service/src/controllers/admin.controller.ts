@@ -52,6 +52,7 @@ export const createUser = async (req: Request, res: Response): Promise<any> => {
     if (error.code === 'DUPLICATE_EMAIL') {
       return res.status(409).json({ message: 'User already exists' });
     }
+    console.error('[createUser] Error:', error?.message, error?.stack);
     res.status(500).json({ message: 'Error creating user' });
   }
 };
