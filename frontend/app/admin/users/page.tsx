@@ -29,7 +29,6 @@ import {
 import {
   MoreHorizontal,
   AlertCircle,
-  ShieldAlert,
   CheckCircle2,
   Search,
 } from 'lucide-react';
@@ -130,18 +129,14 @@ function StatusCell({ status }: { status: string }) {
     <div className='flex items-center gap-1.5'>
       {status === 'ACTIVE' ? (
         <CheckCircle2 className='h-4 w-4 text-emerald-500' />
-      ) : status === 'SUSPENDED' ? (
-        <AlertCircle className='h-4 w-4 text-amber-500' />
       ) : (
-        <ShieldAlert className='h-4 w-4 text-red-500' />
+        <AlertCircle className='h-4 w-4 text-amber-500' />
       )}
       <span
         className={`text-xs font-bold uppercase ${
           status === 'ACTIVE'
             ? 'text-emerald-600 dark:text-emerald-400'
-            : status === 'SUSPENDED'
-              ? 'text-amber-600 dark:text-amber-400'
-              : 'text-red-600 dark:text-red-400'
+            : 'text-amber-600 dark:text-amber-400'
         }`}
       >
         {status}

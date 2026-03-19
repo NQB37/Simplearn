@@ -14,10 +14,17 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, password } = req.body;
     const { user, accessToken, refreshToken } = await authService.login(email, password);
+
+    if (user.status === 'SUSPENDED') {
+      return res.status(403).json({
+        code: 'ACCOUNT_SUSPENDED',
+        message: 'This account has been disabled by an administrator.',
+      });
+    }
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -32,10 +39,17 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const googleLogin = async (req: Request, res: Response) => {
+export const googleLogin = async (req: Request, res: Response): Promise<any> => {
   try {
     const { code } = req.body;
     const { user, accessToken, refreshToken } = await authService.googleLogin(code);
+
+    if (user.status === 'SUSPENDED') {
+      return res.status(403).json({
+        code: 'ACCOUNT_SUSPENDED',
+        message: 'This account has been disabled by an administrator.',
+      });
+    }
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,

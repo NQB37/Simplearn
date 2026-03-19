@@ -49,6 +49,10 @@ const AuthCallbackContent = () => {
           }
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
+          if (err.response?.data?.code === 'ACCOUNT_SUSPENDED') {
+            window.location.href = '/account-disabled';
+            return;
+          }
           console.error(err);
           toast.error(err.message || 'Failed to verify Google login');
           router.push('/login');

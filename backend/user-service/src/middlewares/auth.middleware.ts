@@ -48,6 +48,22 @@ export const requireRole = (allowedRoles: string[]) => {
   };
 };
 
+export const checkSuspended = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { User } = await import('../models/user.model.js');
+    const user = await User.findById(req.user.id).select('status');
+    if (user?.status === 'SUSPENDED') {
+      return res.status(403).json({
+        code: 'ACCOUNT_SUSPENDED',
+        message: 'This account has been disabled by an administrator.',
+      });
+    }
+    next();
+  } catch {
+    next();
+  }
+};
+
 export const generateTokens = (user: any) => {
   const accessToken = jwt.sign(
     { id: user._id, email: user.email, role: user.role },

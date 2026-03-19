@@ -69,6 +69,10 @@ export const LoginForm = ({ className, ...props }: LoginFormProps) => {
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
+        if (error.response?.data?.code === 'ACCOUNT_SUSPENDED') {
+          window.location.href = '/account-disabled';
+          return;
+        }
         toast.error(
           error.response?.data?.message ||
             error.message ||
