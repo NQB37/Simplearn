@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready for execution
-stopped_at: Completed 03-enrollment-01-PLAN.md
-last_updated: "2026-03-19T21:14:07.039Z"
-last_activity: 2026-03-19 — Phase 3 planned with 4 execution plans.
+stopped_at: Completed 03-enrollment-02-PLAN.md
+last_updated: "2026-03-19T21:35:00.000Z"
+last_activity: 2026-03-19 — Completed 03-02 enrollment backend (model refactor + eligibility + bulk enroll endpoints).
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 10
-  completed_plans: 6
-  percent: 40
+  completed_plans: 7
+  percent: 44
 ---
 
 # Project State
@@ -28,9 +28,9 @@ See: .planning/PROJECT.md (updated 2026-03-18)
 Phase: 3 of 5 (Enrollment)
 Plan: 4 of 4 in current phase
 Status: Ready for execution
-Last activity: 2026-03-19 — Phase 3 planned with 4 execution plans.
+Last activity: 2026-03-19 — Completed 03-02 enrollment backend.
 
-Progress: [▓▓▓▓░░░░░░] 40%
+Progress: [▓▓▓▓░░░░░░] 44%
 ## Performance Metrics
 
 **Velocity:**
@@ -55,6 +55,7 @@ Progress: [▓▓▓▓░░░░░░] 40%
 | Phase 02-student-account-creation P03 | 8 | 2 tasks | 4 files |
 | Phase 02-student-account-creation P04 | 8 | 2 tasks | 3 files |
 | Phase 03-enrollment P01 | 15 | 4 tasks | 8 files |
+| Phase 03-enrollment P02 | 15 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,9 @@ Recent decisions affecting current work:
 - [Phase 02-student-account-creation]: Photo upload is separate state outside Zod schema — uploaded to Cloudinary on submit, URL added to CreateStudentPayload.picture
 - [Phase 03-enrollment]: AcademicYear uniqueness changed from name-only to composite name+semester since same year name can have multiple semesters
 - [Phase 03-enrollment]: Curriculum routes mounted at /api/v1/curriculum alongside existing /api/academy/* routes as specified
+- [Phase 03-enrollment]: Enrollment model refactored from classId to subjectId+academicYearId; no status or role fields needed
+- [Phase 03-enrollment]: Node.js built-in fetch used for user-service profile call — avoids adding axios dependency to academy-service
+- [Phase 03-enrollment]: bulkEnroll uses deleteMany+insertMany for clean semester replacement semantics
 
 ### Pending Todos
 
@@ -90,6 +94,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T21:14:07.036Z
-Stopped at: Completed 03-enrollment-01-PLAN.md
+Last session: 2026-03-19T21:35:00.000Z
+Stopped at: Completed 03-enrollment-02-PLAN.md
 Resume file: None
