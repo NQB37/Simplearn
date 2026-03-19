@@ -127,3 +127,18 @@ export function useCreateStudent() {
     },
   });
 }
+
+export function useUpdateUserStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, status }: { userId: string; status: string }) =>
+      userService.updateUserStatus(userId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      toast.success('User status updated.');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to update status');
+    },
+  });
+}

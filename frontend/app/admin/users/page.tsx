@@ -9,7 +9,7 @@ import {
   getPaginationRowModel,
 } from '@tanstack/react-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -33,10 +33,15 @@ import {
   CheckCircle2,
   Search,
 } from 'lucide-react';
-import { toast } from 'sonner';
+
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAdminUsers, useFieldsOfStudy, useMajors } from '@/hooks/use-user';
+import {
+  useAdminUsers,
+  useFieldsOfStudy,
+  useMajors,
+  useUpdateUserStatus,
+} from '@/hooks/use-user';
 
 export type User = {
   id: string;
@@ -64,6 +69,7 @@ export function filterUsers(
   users: User[],
   filters: {
     search?: string;
+    status?: string;
     fieldOfStudyId?: string;
     majorId?: string;
     typeOfStudy?: string;
@@ -73,6 +79,10 @@ export function filterUsers(
 ): User[] {
   return users
     .filter((u) => u.role === role)
+    .filter((u) => {
+      if (!filters.status) return true;
+      return u.status === filters.status;
+    })
     .filter((u) => {
       if (!filters.search) return true;
       const q = filters.search.toLowerCase();
@@ -140,9 +150,11 @@ function StatusCell({ status }: { status: string }) {
   );
 }
 
-function ActionsCell({ user, onRoleChange, onStatusChange }: {
+function ActionsCell({
+  user,
+  onStatusChange,
+}: {
   user: User;
-  onRoleChange: (id: string, role: string) => void;
   onStatusChange: (id: string, status: string) => void;
 }) {
   const router = useRouter();
@@ -168,17 +180,6 @@ function ActionsCell({ user, onRoleChange, onStatusChange }: {
           Edit Profile
         </DropdownMenuItem>
         <DropdownMenuItem
-          className='font-medium cursor-pointer focus:bg-slate-100 dark:focus:bg-slate-800'
-          onClick={() =>
-            onRoleChange(
-              user.id,
-              user.role === 'INSTRUCTOR' ? 'STUDENT' : 'INSTRUCTOR',
-            )
-          }
-        >
-          Toggle Role ({user.role === 'INSTRUCTOR' ? 'Demote' : 'Promote'})
-        </DropdownMenuItem>
-        <DropdownMenuItem
           className='font-medium text-amber-600 focus:text-amber-700 cursor-pointer focus:bg-amber-50 dark:focus:bg-amber-900/20'
           onClick={() =>
             onStatusChange(
@@ -188,12 +189,6 @@ function ActionsCell({ user, onRoleChange, onStatusChange }: {
           }
         >
           {user.status === 'ACTIVE' ? 'Suspend User' : 'Reactivate User'}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className='font-bold text-red-600 focus:text-red-700 cursor-pointer focus:bg-red-50 dark:focus:bg-red-900/20'
-          onClick={() => onStatusChange(user.id, 'BANNED')}
-        >
-          Ban User
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -245,13 +240,19 @@ function UserTable({
         <tbody className='divide-y divide-slate-100 dark:divide-slate-800/80'>
           {isLoading ? (
             <tr>
-              <td colSpan={colCount} className='px-6 py-12 text-center text-slate-400'>
+              <td
+                colSpan={colCount}
+                className='px-6 py-12 text-center text-slate-400'
+              >
                 Loading...
               </td>
             </tr>
           ) : data.length === 0 ? (
             <tr>
-              <td colSpan={colCount} className='px-6 py-12 text-center text-slate-400'>
+              <td
+                colSpan={colCount}
+                className='px-6 py-12 text-center text-slate-400'
+              >
                 {emptyMessage}
               </td>
             </tr>
@@ -262,10 +263,7 @@ function UserTable({
                 className='hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
               >
                 {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className='px-6 py-4 whitespace-nowrap'
-                  >
+                  <td key={cell.id} className='px-6 py-4 whitespace-nowrap'>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -347,32 +345,36 @@ export default function AdminUsersPage() {
 
   // Admin tab filters
   const [adminSearch, setAdminSearch] = useState('');
+  const [adminStatus, setAdminStatus] = useState('');
 
   // Instructor tab filters
   const [instructorSearch, setInstructorSearch] = useState('');
+  const [instructorStatus, setInstructorStatus] = useState('');
   const [instructorField, setInstructorField] = useState('');
   const [instructorMajor, setInstructorMajor] = useState('');
-  const { data: instructorMajors = [] } = useMajors(instructorField || undefined);
+  const { data: instructorMajors = [] } = useMajors(
+    instructorField || undefined,
+  );
 
   // Student tab filters
   const [studentSearch, setStudentSearch] = useState('');
+  const [studentStatus, setStudentStatus] = useState('');
   const [studentField, setStudentField] = useState('');
   const [studentMajor, setStudentMajor] = useState('');
   const [studentTypeOfStudy, setStudentTypeOfStudy] = useState('');
   const [studentStartYear, setStudentStartYear] = useState('');
   const { data: studentMajors = [] } = useMajors(studentField || undefined);
 
-  const handleRoleChange = (_id: string, newRole: string) => {
-    toast.success(`Role updated to ${newRole}`);
-  };
+  const statusMutation = useUpdateUserStatus();
 
-  const handleStatusChange = (_id: string, newStatus: string) => {
-    toast.success(`Status updated to ${newStatus}`);
+  const handleStatusChange = (id: string, newStatus: string) => {
+    statusMutation.mutate({ userId: id, status: newStatus });
   };
 
   const allAdmins = useMemo(
-    () => filterUsers(data, { search: adminSearch }, 'ADMIN'),
-    [data, adminSearch],
+    () =>
+      filterUsers(data, { search: adminSearch, status: adminStatus }, 'ADMIN'),
+    [data, adminSearch, adminStatus],
   );
 
   const allInstructors = useMemo(
@@ -381,12 +383,19 @@ export default function AdminUsersPage() {
         data,
         {
           search: instructorSearch,
+          status: instructorStatus,
           fieldOfStudyId: instructorField,
           majorId: instructorMajor,
         },
         'INSTRUCTOR',
       ),
-    [data, instructorSearch, instructorField, instructorMajor],
+    [
+      data,
+      instructorSearch,
+      instructorStatus,
+      instructorField,
+      instructorMajor,
+    ],
   );
 
   const allStudents = useMemo(
@@ -395,6 +404,7 @@ export default function AdminUsersPage() {
         data,
         {
           search: studentSearch,
+          status: studentStatus,
           fieldOfStudyId: studentField,
           majorId: studentMajor,
           typeOfStudy: studentTypeOfStudy,
@@ -405,6 +415,7 @@ export default function AdminUsersPage() {
     [
       data,
       studentSearch,
+      studentStatus,
       studentField,
       studentMajor,
       studentTypeOfStudy,
@@ -426,6 +437,11 @@ export default function AdminUsersPage() {
   );
 
   const fieldOptions = fields.map((f) => ({ value: f._id, label: f.name }));
+
+  const statusOptions = [
+    { value: 'ACTIVE', label: 'Active' },
+    { value: 'SUSPENDED', label: 'Suspended' },
+  ];
 
   const typeOfStudyOptions = [
     { value: 'bachelor', label: 'Bachelor' },
@@ -465,19 +481,13 @@ export default function AdminUsersPage() {
   const statusColumn: ColumnDef<User> = {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => (
-      <StatusCell status={row.getValue('status') as string} />
-    ),
+    cell: ({ row }) => <StatusCell status={row.getValue('status') as string} />,
   };
 
   const actionsColumn: ColumnDef<User> = {
     id: 'actions',
     cell: ({ row }) => (
-      <ActionsCell
-        user={row.original}
-        onRoleChange={handleRoleChange}
-        onStatusChange={handleStatusChange}
-      />
+      <ActionsCell user={row.original} onStatusChange={handleStatusChange} />
     ),
   };
 
@@ -588,12 +598,18 @@ export default function AdminUsersPage() {
         {/* Admin Tab */}
         <TabsContent value='admin'>
           <Card className='rounded-2xl shadow-sm border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900'>
-            <CardHeader className='pb-4 border-b border-slate-100 dark:border-slate-800'>
-              <div className='flex items-center justify-between'>
-                <CardTitle className='text-lg font-bold'>
-                  Administrators
-                </CardTitle>
-                <div className='relative w-64'>
+            <CardHeader className='pb-4 border-b border-slate-100 dark:border-slate-800 space-y-3'>
+              <CardTitle className='text-lg font-bold'>
+                Administrators
+              </CardTitle>
+              <div className='flex flex-wrap items-center gap-3'>
+                <FilterSelect
+                  placeholder='All Status'
+                  value={adminStatus}
+                  onChange={setAdminStatus}
+                  options={statusOptions}
+                />
+                <div className='relative flex-1 min-w-[200px] max-w-xs'>
                   <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400' />
                   <Input
                     placeholder='Search name or email…'
@@ -605,7 +621,12 @@ export default function AdminUsersPage() {
               </div>
             </CardHeader>
             <CardContent className='p-0'>
-              <UserTable data={allAdmins} columns={adminColumns} isLoading={loading} emptyMessage='No administrators found.' />
+              <UserTable
+                data={allAdmins}
+                columns={adminColumns}
+                isLoading={loading}
+                emptyMessage='No administrators found.'
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -616,6 +637,12 @@ export default function AdminUsersPage() {
             <CardHeader className='pb-4 border-b border-slate-100 dark:border-slate-800 space-y-3'>
               <CardTitle className='text-lg font-bold'>Instructors</CardTitle>
               <div className='flex flex-wrap items-center gap-3'>
+                <FilterSelect
+                  placeholder='All Status'
+                  value={instructorStatus}
+                  onChange={setInstructorStatus}
+                  options={statusOptions}
+                />
                 <FilterSelect
                   placeholder='All Fields'
                   value={instructorField}
@@ -647,7 +674,12 @@ export default function AdminUsersPage() {
               </div>
             </CardHeader>
             <CardContent className='p-0'>
-              <UserTable data={allInstructors} columns={instructorColumns} isLoading={loading} emptyMessage='No instructors found.' />
+              <UserTable
+                data={allInstructors}
+                columns={instructorColumns}
+                isLoading={loading}
+                emptyMessage='No instructors found.'
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -658,6 +690,12 @@ export default function AdminUsersPage() {
             <CardHeader className='pb-4 border-b border-slate-100 dark:border-slate-800 space-y-3'>
               <CardTitle className='text-lg font-bold'>Students</CardTitle>
               <div className='flex flex-wrap items-center gap-3'>
+                <FilterSelect
+                  placeholder='All Status'
+                  value={studentStatus}
+                  onChange={setStudentStatus}
+                  options={statusOptions}
+                />
                 <FilterSelect
                   placeholder='All Fields'
                   value={studentField}
@@ -701,7 +739,12 @@ export default function AdminUsersPage() {
               </div>
             </CardHeader>
             <CardContent className='p-0'>
-              <UserTable data={allStudents} columns={studentColumns} isLoading={loading} emptyMessage='No students found.' />
+              <UserTable
+                data={allStudents}
+                columns={studentColumns}
+                isLoading={loading}
+                emptyMessage='No students found.'
+              />
             </CardContent>
           </Card>
         </TabsContent>

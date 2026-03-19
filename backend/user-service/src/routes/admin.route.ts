@@ -11,6 +11,7 @@ const router = Router();
 router.get('/users', isAuthenticated, isAdmin, adminController.getAllUsers);
 router.post('/users', isAuthenticated, isAdmin, validateRequest(createUserSchema), adminController.createUser);
 router.patch('/users/:id/role', isAuthenticated, isAdmin, adminController.updateUserRole);
+router.patch('/users/:id/status', isAuthenticated, isAdmin, adminController.updateUserStatus);
 router.delete('/users/:id', isAuthenticated, isAdmin, adminController.deleteUser);
 
 // Admin: manage any user's extended profile

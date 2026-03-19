@@ -108,6 +108,12 @@ export const userService = {
     await axiosInstance.delete(`${AUTH_BASE_URL}/api/admin/vocabulary/majors/${id}`);
   },
 
+  // Admin: update user status
+  updateUserStatus: async (userId: string, status: string) => {
+    const { data } = await axiosInstance.patch(`${AUTH_BASE_URL}/api/admin/users/${userId}/status`, { status });
+    return data;
+  },
+
   // Admin: create student account
   createStudent: async (payload: CreateStudentPayload) => {
     const { data } = await axiosInstance.post(`${AUTH_BASE_URL}/api/admin/users`, payload);
