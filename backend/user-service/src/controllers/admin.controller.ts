@@ -4,7 +4,8 @@ import type { CreateUserInput } from '../validators/create-user.validator.js';
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await adminService.getAllUsers();
+    const { role, fieldOfStudyId, majorId, typeOfStudy, startYear } = req.query as Record<string, string>;
+    const users = await adminService.getAllUsers({ role, fieldOfStudyId, majorId, typeOfStudy, startYear });
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching users' });

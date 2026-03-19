@@ -2,10 +2,143 @@ import { User } from '../models/user.model.js';
 import { Profile } from '../models/profile.model.js';
 import type { CreateUserInput } from '../validators/create-user.validator.js';
 
-export const getAllUsers = async () => {
-  return User.find()
-    .select('id email firstName lastName role status createdAt')
-    .sort({ createdAt: -1 });
+export interface GetAllUsersFilters {
+  role?: string;
+  fieldOfStudyId?: string;
+  majorId?: string;
+  typeOfStudy?: string;
+  startYear?: string;
+}
+
+export const getAllUsers = async (filters: GetAllUsersFilters = {}) => {
+  const matchStage: Record<string, any> = {};
+  if (filters.role) matchStage.role = filters.role.toUpperCase();
+
+  const results = await User.aggregate([
+    { $match: matchStage },
+    { $sort: { createdAt: -1 } },
+    {
+      $lookup: {
+        from: 'profiles',
+        localField: '_id',
+        foreignField: 'userId',
+        as: 'profile',
+      },
+    },
+    { $unwind: { path: '$profile', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'fieldofstudies',
+        localField: 'profile.studentData.fieldOfStudyId',
+        foreignField: '_id',
+        as: 'studentFieldOfStudy',
+      },
+    },
+    {
+      $lookup: {
+        from: 'majors',
+        localField: 'profile.studentData.majorId',
+        foreignField: '_id',
+        as: 'studentMajor',
+      },
+    },
+    {
+      $lookup: {
+        from: 'fieldofstudies',
+        localField: 'profile.instructorData.fieldOfStudyId',
+        foreignField: '_id',
+        as: 'instructorFieldOfStudy',
+      },
+    },
+    {
+      $lookup: {
+        from: 'majors',
+        localField: 'profile.instructorData.majorId',
+        foreignField: '_id',
+        as: 'instructorMajor',
+      },
+    },
+    {
+      $project: {
+        id: { $toString: '$_id' },
+        email: 1,
+        firstName: 1,
+        lastName: 1,
+        role: 1,
+        status: 1,
+        createdAt: 1,
+        picture: 1,
+        studentData: {
+          $cond: {
+            if: { $ifNull: ['$profile.studentData', false] },
+            then: {
+              formOfStudy: '$profile.studentData.formOfStudy',
+              typeOfStudy: '$profile.studentData.typeOfStudy',
+              startYear: '$profile.studentData.startYear',
+              fieldOfStudyId: {
+                $cond: {
+                  if: { $gt: [{ $size: '$studentFieldOfStudy' }, 0] },
+                  then: { $arrayElemAt: [{ $map: { input: '$studentFieldOfStudy', as: 'f', in: { _id: '$$f._id', name: '$$f.name' } } }, 0] },
+                  else: '$$REMOVE',
+                },
+              },
+              majorId: {
+                $cond: {
+                  if: { $gt: [{ $size: '$studentMajor' }, 0] },
+                  then: { $arrayElemAt: [{ $map: { input: '$studentMajor', as: 'm', in: { _id: '$$m._id', name: '$$m.name' } } }, 0] },
+                  else: '$$REMOVE',
+                },
+              },
+            },
+            else: '$$REMOVE',
+          },
+        },
+        instructorData: {
+          $cond: {
+            if: { $ifNull: ['$profile.instructorData', false] },
+            then: {
+              fieldOfStudyId: {
+                $cond: {
+                  if: { $gt: [{ $size: '$instructorFieldOfStudy' }, 0] },
+                  then: { $arrayElemAt: [{ $map: { input: '$instructorFieldOfStudy', as: 'f', in: { _id: '$$f._id', name: '$$f.name' } } }, 0] },
+                  else: '$$REMOVE',
+                },
+              },
+              majorId: {
+                $cond: {
+                  if: { $gt: [{ $size: '$instructorMajor' }, 0] },
+                  then: { $arrayElemAt: [{ $map: { input: '$instructorMajor', as: 'm', in: { _id: '$$m._id', name: '$$m.name' } } }, 0] },
+                  else: '$$REMOVE',
+                },
+              },
+            },
+            else: '$$REMOVE',
+          },
+        },
+      },
+    },
+  ]);
+
+  // Apply profile-level filters post-aggregation (simple approach)
+  return results.filter((u) => {
+    const sd = u.studentData;
+    const id = u.instructorData;
+    if (filters.typeOfStudy && sd?.typeOfStudy !== filters.typeOfStudy) return false;
+    if (filters.startYear && sd?.startYear !== Number(filters.startYear)) return false;
+    if (filters.fieldOfStudyId) {
+      const fid = filters.fieldOfStudyId;
+      const studentMatch = sd?.fieldOfStudyId?._id?.toString() === fid;
+      const instructorMatch = id?.fieldOfStudyId?._id?.toString() === fid;
+      if (!studentMatch && !instructorMatch) return false;
+    }
+    if (filters.majorId) {
+      const mid = filters.majorId;
+      const studentMatch = sd?.majorId?._id?.toString() === mid;
+      const instructorMatch = id?.majorId?._id?.toString() === mid;
+      if (!studentMatch && !instructorMatch) return false;
+    }
+    return true;
+  });
 };
 
 export const updateUserRole = async (id: string, role: string) => {
