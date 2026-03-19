@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import * as z from 'zod';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
@@ -33,10 +33,19 @@ import {
 } from '@/components/ui/card';
 import { useCreateStudent, useFieldsOfStudy, useMajors } from '@/hooks/use-user';
 import { CreateStudentPayload } from '@/lib/services/user.service';
+import axiosInstance from '@/api/axios.api';
 
 const createStudentSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email address'),
+  dateOfBirth: z.string().optional(),
+  phone: z.string().optional(),
+  address: z.object({
+    street: z.string().optional(),
+    city: z.string().optional(),
+    country: z.string().optional(),
+  }).optional(),
   studentData: z.object({
     formOfStudy: z.enum(['full-time', 'part-time', 'online', 'hybrid', '']).optional(),
     fieldOfStudyId: z.string().optional(),
@@ -59,8 +68,12 @@ export default function CreateStudentPage() {
   const form = useForm<CreateStudentFormValues>({
     resolver: zodResolver(createStudentSchema) as any,
     defaultValues: {
-      name: '',
+      firstName: '',
+      lastName: '',
       email: '',
+      dateOfBirth: '',
+      phone: '',
+      address: { street: '', city: '', country: '' },
       studentData: {
         formOfStudy: '',
         typeOfStudy: '',
@@ -86,11 +99,84 @@ export default function CreateStudentPage() {
     }
   }, [selectedFieldId, majors, isMajorsLoading, form]);
 
-  function onSubmit(data: CreateStudentFormValues) {
+  const [emailManuallyEdited, setEmailManuallyEdited] = useState(false);
+  const generatedEmailRef = useRef('');
+
+  const watchedFirstName = useWatch({ control: form.control, name: 'firstName' });
+  const watchedLastName = useWatch({ control: form.control, name: 'lastName' });
+
+  function generateEmail(firstName: string, lastName: string): string {
+    const ln = lastName.toLowerCase().replace(/[^a-z]/g, '');
+    const fn = firstName.toLowerCase().replace(/[^a-z]/g, '');
+    let prefix = ln.slice(0, 3);
+    if (prefix.length < 3) {
+      prefix += fn.slice(0, 3 - prefix.length);
+    }
+    if (prefix.length === 0) return '';
+    const digits = String(Math.floor(1000 + Math.random() * 9000));
+    return `${prefix}${digits}@simplearn.com`;
+  }
+
+  useEffect(() => {
+    if (!emailManuallyEdited && (watchedLastName || watchedFirstName)) {
+      const generated = generateEmail(watchedFirstName || '', watchedLastName || '');
+      generatedEmailRef.current = generated;
+      if (generated) {
+        form.setValue('email', generated);
+      }
+    }
+  }, [watchedFirstName, watchedLastName, emailManuallyEdited, form]);
+
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhotoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setPhotoPreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  }
+
+  async function onSubmit(data: CreateStudentFormValues) {
+    let pictureUrl: string | undefined;
+
+    if (photoFile) {
+      setIsUploading(true);
+      try {
+        const formData = new FormData();
+        formData.append('image', photoFile);
+        const { data: uploadResult } = await axiosInstance.post(
+          `${process.env.NEXT_PUBLIC_MEDIA_SERVICE_URL}/api/media/images/upload`,
+          formData,
+        );
+        pictureUrl = uploadResult.url;
+      } catch {
+        toast.error('Failed to upload photo. Please try again.');
+        setIsUploading(false);
+        return;
+      }
+      setIsUploading(false);
+    }
+
     const payload: CreateStudentPayload = {
-      name: data.name,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
     };
+    if (data.dateOfBirth) payload.dateOfBirth = data.dateOfBirth;
+    if (data.phone) payload.phone = data.phone;
+    if (data.address) {
+      const addr: Record<string, string> = {};
+      if (data.address.street) addr.street = data.address.street;
+      if (data.address.city) addr.city = data.address.city;
+      if (data.address.country) addr.country = data.address.country;
+      if (Object.keys(addr).length > 0) payload.address = addr;
+    }
+    if (pictureUrl) payload.picture = pictureUrl;
     if (data.studentData) {
       const sd: Record<string, unknown> = {};
       if (data.studentData.formOfStudy) sd.formOfStudy = data.studentData.formOfStudy;
@@ -131,36 +217,108 @@ export default function CreateStudentPage() {
             <CardHeader>
               <CardTitle>Account Information</CardTitle>
               <CardDescription>
-                Name and email are required. The student will use these credentials to log in.
+                First and last name are required. Email auto-generates from name but can be edited.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField control={form.control} name="firstName" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
+                )} />
+                <FormField control={form.control} name="lastName" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} />
-                    </FormControl>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
+                )} />
+              </div>
+              <FormField control={form.control} name="email" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        if (e.target.value !== generatedEmailRef.current) {
+                          setEmailManuallyEdited(true);
+                        }
+                      }}
+                      className={!emailManuallyEdited && field.value ? 'text-muted-foreground' : ''}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Personal Information</CardTitle>
+              <CardDescription>All fields below are optional and can be completed later.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField control={form.control} name="dateOfBirth" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date of Birth</FormLabel>
+                    <FormControl><Input type="date" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="phone" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <FormControl><Input type="tel" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
+              <div className="space-y-4">
+                <p className="text-sm font-medium">Address</p>
+                <FormField control={form.control} name="address.street" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Street</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField control={form.control} name="address.city" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City</FormLabel>
+                      <FormControl><Input {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="address.country" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Country</FormLabel>
+                      <FormControl><Input {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Profile Photo</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 file:cursor-pointer"
+                />
+                {photoPreview && (
+                  <img src={photoPreview} alt="Preview" className="w-20 h-20 rounded-full object-cover mt-2" />
                 )}
-              />
+              </div>
             </CardContent>
           </Card>
 
@@ -301,11 +459,11 @@ export default function CreateStudentPage() {
           </Card>
 
           <div className="flex justify-end">
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending && (
+            <Button type="submit" disabled={mutation.isPending || isUploading}>
+              {(mutation.isPending || isUploading) && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
               )}
-              {mutation.isPending ? 'Creating...' : 'Create Student'}
+              {mutation.isPending || isUploading ? 'Creating...' : 'Create Student'}
             </Button>
           </div>
         </form>
