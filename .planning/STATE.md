@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready for execution
-stopped_at: Completed 03-04-PLAN.md
-last_updated: "2026-03-19T21:23:18.752Z"
+stopped_at: Completed 03-enrollment-03-PLAN.md
+last_updated: "2026-03-19T21:25:52.602Z"
 last_activity: 2026-03-19 — Completed 03-02 enrollment backend.
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 10
-  completed_plans: 8
+  completed_plans: 9
   percent: 44
 ---
 
@@ -57,6 +57,7 @@ Progress: [▓▓▓▓░░░░░░] 44%
 | Phase 03-enrollment P01 | 15 | 4 tasks | 8 files |
 | Phase 03-enrollment P02 | 15 | 3 tasks | 5 files |
 | Phase 03-enrollment P04 | 20 | 3 tasks | 11 files |
+| Phase 03-enrollment P03 | 4 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,7 @@ Recent decisions affecting current work:
 - [Phase 03-enrollment]: Node.js built-in fetch used for user-service profile call — avoids adding axios dependency to academy-service
 - [Phase 03-enrollment]: bulkEnroll uses deleteMany+insertMany for clean semester replacement semantics
 - [Phase 03-enrollment]: Native HTML checkbox used for enrollment page (Shadcn Checkbox not installed); isMandatory subjects default-checked but remain toggleable per UI-SPEC
+- [Phase 03-enrollment]: Curriculum page fetches majors from user-service /api/admin/vocabulary/majors (existing endpoint) not a new /api/v1/majors alias
 
 ### Pending Todos
 
@@ -96,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T21:23:18.749Z
-Stopped at: Completed 03-04-PLAN.md
+Last session: 2026-03-19T21:25:52.599Z
+Stopped at: Completed 03-enrollment-03-PLAN.md
 Resume file: None

@@ -18,9 +18,9 @@ const semesterEnum = z.enum(['first', 'second', 'summer']);
 const createAcademicYearSchema = z.object({
   name: z.string().min(1),
   semester: semesterEnum,
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
-  enrollmentDeadline: z.string().datetime().optional(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
+  enrollmentDeadline: z.coerce.date().optional(),
   isActive: z.boolean().optional(),
 });
 

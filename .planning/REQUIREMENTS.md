@@ -20,8 +20,8 @@
 
 ### Enrollment
 
-- [ ] **ENRL-01**: Admin can suggest a set of subjects for a specific student to enroll in
-- [ ] **ENRL-02**: Admin can set an enrollment deadline per academic period
+- [x] **ENRL-01**: Admin can suggest a set of subjects for a specific student to enroll in
+- [x] **ENRL-02**: Admin can set an enrollment deadline per academic period
 - [x] **ENRL-03**: Student can view their suggested subjects and enroll in chosen ones before the deadline
 - [x] **ENRL-04**: Student cannot enroll after the enrollment deadline has passed
 
@@ -72,8 +72,8 @@
 | PROF-05 | Phase 1 | Complete |
 | ACCT-01 | Phase 2 | Complete |
 | ACCT-02 | Phase 2 | Complete |
-| ENRL-01 | Phase 3 | Pending |
-| ENRL-02 | Phase 3 | Pending |
+| ENRL-01 | Phase 3 | Complete |
+| ENRL-02 | Phase 3 | Complete |
 | ENRL-03 | Phase 3 | Complete |
 | ENRL-04 | Phase 3 | Complete |
 | SCHED-01 | Phase 4 | Pending |
