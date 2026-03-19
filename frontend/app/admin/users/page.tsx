@@ -29,7 +29,8 @@ import { useAdminUsers } from '@/hooks/use-user';
 
 type User = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: string;
   status: string;
@@ -50,11 +51,11 @@ export default function AdminUsersPage() {
 
   const columns: ColumnDef<User>[] = [
     {
-      accessorKey: 'name',
+      id: 'name',
       header: 'Name',
       cell: ({ row }) => (
         <div className='font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2'>
-          {row.getValue('name')}
+          {row.original.firstName} {row.original.lastName}
         </div>
       ),
     },

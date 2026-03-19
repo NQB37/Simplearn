@@ -40,8 +40,17 @@ export interface Major {
 }
 
 export interface CreateStudentPayload {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
+  dateOfBirth?: string;
+  phone?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    country?: string;
+  };
+  picture?: string;
   studentData?: {
     formOfStudy?: FormOfStudy;
     fieldOfStudyId?: string;
