@@ -7,6 +7,17 @@ import { AddYearModal } from './add-year-modal';
 import { EditYearModal } from './edit-year-modal';
 import { DeleteYearModal } from './delete-year-modal';
 
+const SEMESTER_LABELS: Record<string, string> = {
+  first: 'First',
+  second: 'Second',
+  summer: 'Summer',
+};
+
+function formatDate(iso: string | undefined) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString();
+}
+
 export function AcademicYearsManager() {
   const { data: academicYears = [], isLoading } = useAcademicYears();
 
@@ -22,8 +33,10 @@ export function AcademicYearsManager() {
             <thead className='text-xs font-bold uppercase text-slate-500 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800'>
               <tr>
                 <th className='px-4 py-3'>Name</th>
+                <th className='px-4 py-3'>Semester</th>
                 <th className='px-4 py-3'>Start Date</th>
                 <th className='px-4 py-3'>End Date</th>
+                <th className='px-4 py-3'>Enrollment Deadline</th>
                 <th className='px-4 py-3'>Status</th>
                 <th className='px-4 py-3 text-right'>Actions</th>
               </tr>
@@ -31,13 +44,13 @@ export function AcademicYearsManager() {
             <tbody className='divide-y divide-slate-100 dark:divide-slate-800/80'>
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className='p-4 text-center'>
+                  <td colSpan={7} className='p-4 text-center'>
                     Loading...
                   </td>
                 </tr>
               ) : academicYears.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className='p-4 text-center'>
+                  <td colSpan={7} className='p-4 text-center'>
                     No academic years found.
                   </td>
                 </tr>
@@ -49,10 +62,16 @@ export function AcademicYearsManager() {
                   >
                     <td className='px-4 py-3 font-semibold'>{yr.name}</td>
                     <td className='px-4 py-3 font-medium text-slate-500'>
-                      {yr.startDate}
+                      {SEMESTER_LABELS[yr.semester] ?? yr.semester}
                     </td>
                     <td className='px-4 py-3 font-medium text-slate-500'>
-                      {yr.endDate}
+                      {formatDate(yr.startDate)}
+                    </td>
+                    <td className='px-4 py-3 font-medium text-slate-500'>
+                      {formatDate(yr.endDate)}
+                    </td>
+                    <td className='px-4 py-3 font-medium text-slate-500'>
+                      {yr.enrollmentDeadline ? formatDate(yr.enrollmentDeadline) : '—'}
                     </td>
                     <td className='px-4 py-3'>
                       {yr.isActive ? (

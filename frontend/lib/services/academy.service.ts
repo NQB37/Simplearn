@@ -1,5 +1,5 @@
 import axiosInstance from '@/api/axios.api';
-import { AcademicYear, Room, Subject, ClassModel, EligibleSubjectsResponse, Enrollment } from '@/types/academics.type';
+import { AcademicYear, Room, Subject, ClassModel, EligibleSubjectsResponse, Enrollment, MajorSubject } from '@/types/academics.type';
 
 const ACADEMY_BASE_URL = process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL;
 
@@ -69,6 +69,25 @@ export const academyService = {
   getMyEnrollments: async (): Promise<Enrollment[]> => {
     const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/enrollments/me`);
     return data;
+  },
+
+  // Curriculum
+  getCurriculum: async (majorId: string): Promise<MajorSubject[]> => {
+    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/curriculum/${majorId}`);
+    return data;
+  },
+  addCurriculumEntry: async (payload: {
+    majorId: string;
+    subjectId: string;
+    studyYear: number;
+    semester: 'first' | 'second' | 'summer';
+    isMandatory?: boolean;
+  }): Promise<MajorSubject> => {
+    const { data } = await axiosInstance.post(`${ACADEMY_BASE_URL}/api/v1/curriculum`, payload);
+    return data;
+  },
+  deleteCurriculumEntry: async (id: string): Promise<void> => {
+    await axiosInstance.delete(`${ACADEMY_BASE_URL}/api/v1/curriculum/${id}`);
   },
 
   // Classes
