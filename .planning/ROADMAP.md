@@ -13,7 +13,7 @@ This roadmap expands the existing Simplearn LMS to deliver the complete student 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: User Profiles** - Extended profile data for all users with role-specific fields
-- [ ] **Phase 2: Student Account Creation** - Admin can create student accounts with full profile via a form (revised for firstName/lastName split, email auto-generation, expanded personal fields)
+- [x] **Phase 2: Student Account Creation** - Admin can create student accounts with full profile via a form (revised for firstName/lastName split, email auto-generation, expanded personal fields) (completed 2026-03-19)
 - [ ] **Phase 3: Enrollment** - Admin suggests subjects and students enroll before a deadline
 - [ ] **Phase 4: Schedule** - Students can view their enrolled subjects for the semester
 - [ ] **Phase 5: Assignments & Grading** - Instructors create assignments; students submit; instructors grade
@@ -40,7 +40,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. Admin can fill and submit a "Create Student" form that includes firstName, lastName, auto-generated email, personal fields (DOB, phone, address, photo), and academic profile
   2. The created student account appears in the user list immediately after creation
   3. The new student can log in using their email and the default password without any additional setup
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 Plans:
 - [x] 02-01-PLAN.md — Backend: original name-based endpoint (superseded by 02-03)
 - [x] 02-02-PLAN.md — Frontend: original name-based form (superseded by 02-04)
@@ -87,7 +87,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. User Profiles | 2/2 | Completed | 2026-03-18 |
-| 2. Student Account Creation | 3/4 | In Progress|  |
+| 2. Student Account Creation | 4/4 | Complete   | 2026-03-19 |
 | 3. Enrollment | 0/TBD | Not started | - |
 | 4. Schedule | 0/TBD | Not started | - |
 | 5. Assignments and Grading | 0/TBD | Not started | - |

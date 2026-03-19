@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-student-account-creation-03-PLAN.md
-last_updated: "2026-03-19T09:31:55.475Z"
+stopped_at: Completed 02-student-account-creation-04-PLAN.md
+last_updated: "2026-03-19T09:35:54.467Z"
 last_activity: "2026-03-18 — Phase 1 completed: backend models/services, role-specific forms, and admin vocabulary UI implemented."
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
   percent: 20
 ---
 
@@ -53,6 +53,7 @@ Progress: [▓▓░░░░░░░░] 20%
 | Phase 02-student-account-creation P01 | 8 | 2 tasks | 4 files |
 | Phase 02-student-account-creation P02 | 15 | 2 tasks | 4 files |
 | Phase 02-student-account-creation P03 | 8 | 2 tasks | 4 files |
+| Phase 02-student-account-creation P04 | 8 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Recent decisions affecting current work:
 - [Phase 02-student-account-creation]: Duplicate email mapped to inline form.setError on email field, not toast, per UX spec
 - [Phase 02-student-account-creation]: Split name field into firstName+lastName in User model for proper name handling
 - [Phase 02-student-account-creation]: Profile upsert combines personal fields and studentData into a single profileData object, avoiding multiple DB calls
+- [Phase 02-student-account-creation]: Email auto-generation uses lastName prefix (3 chars) + firstName fill + 4 random digits + @simplearn.com; stops on manual edit via emailManuallyEdited flag
+- [Phase 02-student-account-creation]: Photo upload is separate state outside Zod schema — uploaded to Cloudinary on submit, URL added to CreateStudentPayload.picture
 
 ### Pending Todos
 
@@ -84,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T09:31:55.472Z
-Stopped at: Completed 02-student-account-creation-03-PLAN.md
+Last session: 2026-03-19T09:35:54.464Z
+Stopped at: Completed 02-student-account-creation-04-PLAN.md
 Resume file: None
