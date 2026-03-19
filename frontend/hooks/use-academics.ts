@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { academyService } from '@/lib/services/academy.service';
-import { AcademicYear, Room, Subject, ClassModel } from '@/types/academics.type';
+import { AcademicYear, Room, Subject, ClassModel, Semester } from '@/types/academics.type';
 import { toast } from 'sonner';
 
 export function useAcademicYears() {
@@ -42,6 +42,48 @@ export function useAcademicYearMutations() {
   });
 
   return { createMutation, updateMutation, deleteMutation };
+}
+
+export function useCurriculum(majorId: string | null) {
+  return useQuery({
+    queryKey: ['curriculum', majorId],
+    queryFn: () => academyService.getCurriculum(majorId!),
+    enabled: !!majorId,
+  });
+}
+
+export function useCurriculumMutations() {
+  const queryClient = useQueryClient();
+
+  const addMutation = useMutation({
+    mutationFn: (payload: {
+      majorId: string;
+      subjectId: string;
+      studyYear: number;
+      semester: Semester;
+      isMandatory?: boolean;
+    }) => academyService.addCurriculumEntry(payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['curriculum', variables.majorId] });
+      toast.success('Subject added to curriculum');
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.error ?? 'Failed to add subject';
+      toast.error(msg);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: ({ id, majorId }: { id: string; majorId: string }) =>
+      academyService.deleteCurriculumEntry(id),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['curriculum', variables.majorId] });
+      toast.success('Subject removed from curriculum');
+    },
+    onError: () => toast.error('Failed to remove subject'),
+  });
+
+  return { addMutation, deleteMutation };
 }
 
 export function useRooms() {
