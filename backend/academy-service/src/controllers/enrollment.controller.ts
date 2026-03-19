@@ -1,6 +1,17 @@
 import { Request, Response } from 'express';
 import * as enrollmentService from '../services/enrollment.service.js';
 
+export const getMyEnrollments = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id ?? req.user?.userId;
+    const enrollments = await enrollmentService.getMyEnrollments(userId);
+    res.json(enrollments);
+  } catch (err: any) {
+    console.error('Error fetching enrollments', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export const getEligibleSubjects = async (req: Request, res: Response) => {
   try {
     const token = req.headers['authorization']!.split(' ')[1];

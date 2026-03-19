@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { getEligibleSubjects, bulkEnroll } from '../controllers/enrollment.controller.js';
+import { getEligibleSubjects, bulkEnroll, getMyEnrollments } from '../controllers/enrollment.controller.js';
 import { requireAuth, requireRole } from '@simplearn/middlewares';
 import { config } from '../config/env.config.js';
 import { z } from 'zod';
@@ -23,6 +23,13 @@ function validate(schema: z.ZodType) {
     next();
   };
 }
+
+router.get(
+  '/me',
+  requireAuth(JWT_SECRET),
+  requireRole(['student'], JWT_SECRET),
+  getMyEnrollments,
+);
 
 router.get(
   '/eligible',

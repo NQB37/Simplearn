@@ -48,6 +48,11 @@ export const getEligibleSubjects = async (token: string) => {
   };
 };
 
+export const getMyEnrollments = async (userId: string) => {
+  const enrollments = await Enrollment.find({ userId }).populate('subjectId').populate('academicYearId');
+  return enrollments;
+};
+
 export const bulkEnroll = async (
   userId: string,
   subjectIds: string[],
