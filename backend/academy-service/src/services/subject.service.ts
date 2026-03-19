@@ -1,4 +1,4 @@
-import Subject, { ISubject } from '../models/subject.model.ts';
+import Subject, { ISubject } from '../models/subject.model.js';
 
 export const getSubjects = async () => {
   return Subject.find().populate('classIds');
