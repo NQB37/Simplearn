@@ -56,12 +56,13 @@ Plans:
   2. Admin can set or update an enrollment deadline for an academic period
   3. A student can view their suggested subjects and click to enroll in chosen ones before the deadline
   4. A student who tries to enroll after the deadline sees an error and is blocked from enrolling
-**Plans**: 4 plans created
+**Plans**: 5 plans (4 complete + 1 gap closure)
 Plans:
-- [ ] 03-01-PLAN.md — Backend: Academic Year updates and Curriculum Base
-- [ ] 03-02-PLAN.md — Backend: Student Enrollment logic
-- [ ] 03-03-PLAN.md — Frontend: Admin Curriculum setup and Academic Year modal
-- [ ] 03-04-PLAN.md — Frontend: Student Enrollment Page and Study Plan Page
+- [x] 03-01-PLAN.md — Backend: Academic Year updates and Curriculum Base
+- [x] 03-02-PLAN.md — Backend: Student Enrollment logic
+- [x] 03-03-PLAN.md — Frontend: Admin Curriculum setup and Academic Year modal
+- [x] 03-04-PLAN.md — Frontend: Student Enrollment Page and Study Plan Page
+- [ ] 03-05-PLAN.md — Gap closure: Fix date format mismatch in Academic Year Zod schema
 
 ### Phase 4: Schedule
 **Goal**: Students can see which subjects they are enrolled in for their current academic year
@@ -93,6 +94,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. User Profiles | 2/2 | Completed | 2026-03-18 |
 | 2. Student Account Creation | 4/4 | Complete   | 2026-03-19 |
-| 3. Enrollment | 4/4 | Complete   | 2026-03-19 |
+| 3. Enrollment | 5/5 | Complete   | 2026-03-19 |
 | 4. Schedule | 0/TBD | Not started | - |
 | 5. Assignments and Grading | 0/TBD | Not started | - |
