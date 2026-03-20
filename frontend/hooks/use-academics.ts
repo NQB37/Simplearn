@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { academyService } from '@/lib/services/academy.service';
-import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, Semester, TypeOfStudy } from '@/types/academics.type';
+import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, Semester, TypeOfStudy, BulkSubjectRow } from '@/types/academics.type';
 import { toast } from 'sonner';
 
 interface SubjectCurriculumPayload {
@@ -178,6 +178,20 @@ export function useSubjectMutations() {
   });
 
   return { createMutation, updateMutation, deleteMutation };
+}
+
+export function useBulkImportSubjects() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (subjects: BulkSubjectRow[]) => academyService.bulkCreateSubjects(subjects),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      queryClient.invalidateQueries({ queryKey: ['curriculum'] });
+      toast.success(`${data.created} subject(s) created successfully`);
+    },
+    onError: () => toast.error('Failed to import subjects'),
+  });
 }
 
 export function useClasses() {

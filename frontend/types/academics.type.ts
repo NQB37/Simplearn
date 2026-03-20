@@ -76,3 +76,19 @@ export interface ClassModel {
   maxCapacity: number;
   status: 'active' | 'inactive' | 'archived';
 }
+
+export interface BulkSubjectRow {
+  name: string;
+  code: string;
+  credits: number;
+  majorId?: string;
+  typeOfStudy?: TypeOfStudy;
+  studyYear?: number;
+  semester?: Semester;
+}
+
+export interface BulkImportResult {
+  created: number;
+  skipped: number;
+  errors: { row: number; code: string; reason: string }[];
+}

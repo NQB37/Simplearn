@@ -67,6 +67,20 @@ export const updateSubject = async (req: Request, res: Response) => {
   }
 };
 
+export const bulkCreateSubjects = async (req: Request, res: Response) => {
+  try {
+    const { subjects } = req.body;
+    if (!Array.isArray(subjects) || subjects.length === 0) {
+      return res.status(400).json({ error: 'Request body must contain a non-empty "subjects" array' });
+    }
+    const result = await subjectService.bulkCreateSubjects(subjects);
+    res.json(result);
+  } catch (err) {
+    console.error('Error bulk creating subjects', err);
+    res.status(500).json({ error: 'Server error during bulk import' });
+  }
+};
+
 export const deleteSubject = async (req: Request, res: Response) => {
   try {
     const deletedSubject = await subjectService.deleteSubject(req.params.id as string);

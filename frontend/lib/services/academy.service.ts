@@ -1,5 +1,5 @@
 import axiosInstance from '@/api/axios.api';
-import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, EligibleSubjectsResponse, Enrollment, MajorSubject, Semester, TypeOfStudy } from '@/types/academics.type';
+import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, EligibleSubjectsResponse, Enrollment, MajorSubject, Semester, TypeOfStudy, BulkSubjectRow, BulkImportResult } from '@/types/academics.type';
 
 interface SubjectCurriculumFields {
   majorId?: string;
@@ -63,6 +63,10 @@ export const academyService = {
   },
   deleteSubject: async (id: string) => {
     const { data } = await axiosInstance.delete(`${ACADEMY_BASE_URL}/api/academy/subjects/${id}`);
+    return data;
+  },
+  bulkCreateSubjects: async (subjects: BulkSubjectRow[]): Promise<BulkImportResult> => {
+    const { data } = await axiosInstance.post(`${ACADEMY_BASE_URL}/api/academy/subjects/bulk`, { subjects });
     return data;
   },
 

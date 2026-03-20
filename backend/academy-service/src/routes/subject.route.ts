@@ -2,6 +2,7 @@ import express from 'express';
 import {
   getSubjects,
   createSubject,
+  bulkCreateSubjects,
   getSubject,
   updateSubject,
   deleteSubject,
@@ -14,6 +15,12 @@ const JWT_SECRET = config.jwtSecret;
 
 // Public / Protected Routes
 router.get('/', getSubjects);
+router.post(
+  '/bulk',
+  requireAuth(JWT_SECRET),
+  requireRole(['admin'], JWT_SECRET),
+  bulkCreateSubjects,
+);
 router.get('/:id', getSubject);
 router.post(
   '/',

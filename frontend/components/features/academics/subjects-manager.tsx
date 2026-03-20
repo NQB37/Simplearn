@@ -13,6 +13,7 @@ import { useSubjects } from '@/hooks/use-academics';
 import { useFaculties, useMajors } from '@/hooks/use-user';
 import { TypeOfStudy } from '@/types/academics.type';
 import { AddSubjectModal } from './add-subject-modal';
+import { ImportSubjectsModal } from './import-subjects-modal';
 import { EditSubjectModal } from './edit-subject-modal';
 import { DeleteSubjectModal } from './delete-subject-modal';
 
@@ -37,6 +38,12 @@ export function SubjectsManager() {
 
   const getMajorName = (majorId: string) =>
     allMajors.find((m) => m._id === majorId)?.name ?? majorId;
+
+  const getFacultyName = (majorId: string) => {
+    const major = allMajors.find((m) => m._id === majorId);
+    if (!major?.facultyId) return '-';
+    return faculties.find((f) => f._id === major.facultyId)?.name ?? '-';
+  };
 
   const formatSemester = (semester: string) =>
     semester.charAt(0).toUpperCase() + semester.slice(1);
@@ -63,7 +70,10 @@ export function SubjectsManager() {
     <Card className='rounded-2xl shadow-sm border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900'>
       <CardHeader className='pb-4 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between'>
         <CardTitle className='text-lg font-bold'>Subjects Catalog</CardTitle>
-        <AddSubjectModal />
+        <div className='flex items-center gap-2'>
+          <ImportSubjectsModal />
+          <AddSubjectModal />
+        </div>
       </CardHeader>
 
       <div className='px-4 py-3 bg-slate-50 border-b border-slate-100 dark:bg-slate-900/60 dark:border-slate-800 flex flex-wrap gap-4 items-end'>
@@ -127,6 +137,7 @@ export function SubjectsManager() {
                 <th className='px-4 py-3'>Code</th>
                 <th className='px-4 py-3'>Course Name</th>
                 <th className='px-4 py-3'>Credits</th>
+                <th className='px-4 py-3'>Faculty</th>
                 <th className='px-4 py-3'>Major</th>
                 <th className='px-4 py-3'>Year</th>
                 <th className='px-4 py-3'>Semester</th>
@@ -137,13 +148,13 @@ export function SubjectsManager() {
             <tbody className='divide-y divide-slate-100 dark:divide-slate-800/80'>
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className='p-4 text-center'>
+                  <td colSpan={9} className='p-4 text-center'>
                     Loading...
                   </td>
                 </tr>
               ) : filteredSubjects.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className='p-4 text-center'>
+                  <td colSpan={9} className='p-4 text-center'>
                     No subjects found.
                   </td>
                 </tr>
@@ -160,6 +171,9 @@ export function SubjectsManager() {
                       </td>
                       <td className='px-4 py-3 font-semibold'>{s.name}</td>
                       <td className='px-4 py-3'>{s.credits}</td>
+                      <td className='px-4 py-3'>
+                        {entry?.majorId ? getFacultyName(entry.majorId) : '-'}
+                      </td>
                       <td className='px-4 py-3'>
                         {entry?.majorId ? getMajorName(entry.majorId) : '-'}
                       </td>
