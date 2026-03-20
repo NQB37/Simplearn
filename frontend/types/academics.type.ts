@@ -15,6 +15,7 @@ export interface AcademicYear {
   semester: Semester;
   startDate: string;
   endDate: string;
+  enrollmentStartDate?: string;
   enrollmentDeadline?: string;
   isActive: boolean;
 }

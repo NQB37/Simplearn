@@ -43,6 +43,7 @@ export function EditYearModal({ year }: EditYearModalProps) {
     semester: '' as Semester | '',
     startDate: '',
     endDate: '',
+    enrollmentStartDate: '',
     enrollmentDeadline: '',
     isActive: false,
   });
@@ -56,6 +57,7 @@ export function EditYearModal({ year }: EditYearModalProps) {
         semester: year.semester,
         startDate: toLocalDateString(year.startDate),
         endDate: toLocalDateString(year.endDate),
+        enrollmentStartDate: year.enrollmentStartDate ? toLocalDatetimeString(year.enrollmentStartDate) : '',
         enrollmentDeadline: year.enrollmentDeadline ? toLocalDatetimeString(year.enrollmentDeadline) : '',
         isActive: year.isActive,
       });
@@ -74,6 +76,7 @@ export function EditYearModal({ year }: EditYearModalProps) {
       startDate: yearForm.startDate,
       endDate: yearForm.endDate,
       isActive: yearForm.isActive,
+      ...(yearForm.enrollmentStartDate && { enrollmentStartDate: yearForm.enrollmentStartDate }),
       ...(yearForm.enrollmentDeadline && { enrollmentDeadline: yearForm.enrollmentDeadline }),
     };
 
@@ -144,6 +147,15 @@ export function EditYearModal({ year }: EditYearModalProps) {
               type='date'
               value={yearForm.endDate}
               onChange={(e) => setYearForm({ ...yearForm, endDate: e.target.value })}
+            />
+          </div>
+          <div className='flex flex-col gap-2'>
+            <Label htmlFor='edit-enrollmentStartDate'>Enrollment Start Date <span className='text-slate-400 font-normal'>(optional)</span></Label>
+            <Input
+              id='edit-enrollmentStartDate'
+              type='datetime-local'
+              value={yearForm.enrollmentStartDate}
+              onChange={(e) => setYearForm({ ...yearForm, enrollmentStartDate: e.target.value })}
             />
           </div>
           <div className='flex flex-col gap-2'>

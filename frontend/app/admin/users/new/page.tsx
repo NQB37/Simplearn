@@ -32,6 +32,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useCreateStudent, useFaculties, useMajors } from '@/hooks/use-user';
+import { useAcademicYears } from '@/hooks/use-academics';
 import { CreateStudentPayload } from '@/lib/services/user.service';
 import axiosInstance from '@/api/axios.api';
 
@@ -64,6 +65,8 @@ export default function CreateStudentPage() {
   const router = useRouter();
   const mutation = useCreateStudent();
   const { data: faculties } = useFaculties();
+  const { data: academicYears } = useAcademicYears();
+  const firstSemesters = academicYears?.filter((ay) => ay.semester === 'first') ?? [];
 
   const form = useForm<CreateStudentFormValues>({
     resolver: zodResolver(createStudentSchema) as any,
@@ -443,17 +446,26 @@ export default function CreateStudentPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Start Year</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="e.g. 2023"
-                        {...field}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          field.onChange(val === '' ? '' : Number(val));
-                        }}
-                      />
-                    </FormControl>
+                    <Select
+                      onValueChange={(val) => field.onChange(Number(val))}
+                      value={field.value ? String(field.value) : ''}
+                    >
+                      <FormControl>
+                        <SelectTrigger aria-label="Select start year">
+                          <SelectValue placeholder="Select a semester" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {firstSemesters.map((ay) => (
+                          <SelectItem
+                            key={ay._id}
+                            value={String(new Date(ay.startDate).getFullYear())}
+                          >
+                            {ay.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

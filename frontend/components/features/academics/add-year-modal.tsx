@@ -29,6 +29,7 @@ export function AddYearModal() {
     semester: '' as Semester | '',
     startDate: '',
     endDate: '',
+    enrollmentStartDate: '',
     enrollmentDeadline: '',
     isActive: false,
   });
@@ -47,12 +48,13 @@ export function AddYearModal() {
       startDate: yearForm.startDate,
       endDate: yearForm.endDate,
       isActive: yearForm.isActive,
+      ...(yearForm.enrollmentStartDate && { enrollmentStartDate: yearForm.enrollmentStartDate }),
       ...(yearForm.enrollmentDeadline && { enrollmentDeadline: yearForm.enrollmentDeadline }),
     };
 
     createMutation.mutate(payload, {
       onSuccess: () => {
-        setYearForm({ name: '', semester: '', startDate: '', endDate: '', enrollmentDeadline: '', isActive: false });
+        setYearForm({ name: '', semester: '', startDate: '', endDate: '', enrollmentStartDate: '', enrollmentDeadline: '', isActive: false });
         setIsOpen(false);
       },
     });
@@ -114,6 +116,15 @@ export function AddYearModal() {
               type='date'
               value={yearForm.endDate}
               onChange={(e) => setYearForm({ ...yearForm, endDate: e.target.value })}
+            />
+          </div>
+          <div className='flex flex-col gap-2'>
+            <Label htmlFor='add-enrollmentStartDate'>Enrollment Start Date <span className='text-slate-400 font-normal'>(optional)</span></Label>
+            <Input
+              id='add-enrollmentStartDate'
+              type='datetime-local'
+              value={yearForm.enrollmentStartDate}
+              onChange={(e) => setYearForm({ ...yearForm, enrollmentStartDate: e.target.value })}
             />
           </div>
           <div className='flex flex-col gap-2'>

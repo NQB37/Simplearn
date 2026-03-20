@@ -5,6 +5,7 @@ export interface IAcademicYear extends Document {
   semester: 'first' | 'second' | 'summer';
   startDate: Date;
   endDate: Date;
+  enrollmentStartDate?: Date;
   enrollmentDeadline?: Date;
   isActive: boolean;
   createdAt: Date;
@@ -21,6 +22,7 @@ const AcademicYearSchema: Schema = new Schema(
     },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
+    enrollmentStartDate: { type: Date },
     enrollmentDeadline: { type: Date },
     isActive: { type: Boolean, default: false },
   },

@@ -36,6 +36,7 @@ export function AcademicYearsManager() {
                 <th className='px-4 py-3'>Semester</th>
                 <th className='px-4 py-3'>Start Date</th>
                 <th className='px-4 py-3'>End Date</th>
+                <th className='px-4 py-3'>Enrollment Start</th>
                 <th className='px-4 py-3'>Enrollment Deadline</th>
                 <th className='px-4 py-3'>Status</th>
                 <th className='px-4 py-3 text-right'>Actions</th>
@@ -44,13 +45,13 @@ export function AcademicYearsManager() {
             <tbody className='divide-y divide-slate-100 dark:divide-slate-800/80'>
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className='p-4 text-center'>
+                  <td colSpan={8} className='p-4 text-center'>
                     Loading...
                   </td>
                 </tr>
               ) : academicYears.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className='p-4 text-center'>
+                  <td colSpan={8} className='p-4 text-center'>
                     No academic years found.
                   </td>
                 </tr>
@@ -69,6 +70,9 @@ export function AcademicYearsManager() {
                     </td>
                     <td className='px-4 py-3 font-medium text-slate-500'>
                       {formatDate(yr.endDate)}
+                    </td>
+                    <td className='px-4 py-3 font-medium text-slate-500'>
+                      {yr.enrollmentStartDate ? formatDate(yr.enrollmentStartDate) : '—'}
                     </td>
                     <td className='px-4 py-3 font-medium text-slate-500'>
                       {yr.enrollmentDeadline ? formatDate(yr.enrollmentDeadline) : '—'}

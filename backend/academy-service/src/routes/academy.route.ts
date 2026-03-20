@@ -20,6 +20,7 @@ const createAcademicYearSchema = z.object({
   semester: semesterEnum,
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
+  enrollmentStartDate: z.coerce.date().optional(),
   enrollmentDeadline: z.coerce.date().optional(),
   isActive: z.boolean().optional(),
 });

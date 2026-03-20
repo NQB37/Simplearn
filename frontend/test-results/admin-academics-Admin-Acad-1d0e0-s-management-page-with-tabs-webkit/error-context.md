@@ -1,0 +1,54 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - link "Simplearn" [ref=e10]:
+          - /url: /
+          - img [ref=e11]
+          - text: Simplearn
+        - blockquote [ref=e14]:
+          - paragraph [ref=e15]: “This platform has completely transformed how I learn new technologies. The structured courses and hands-on projects are exactly what I needed to accelerate my career.”
+          - generic [ref=e16]:
+            - generic [ref=e17]: SD
+            - generic [ref=e18]:
+              - generic [ref=e19]: Sofia Davis
+              - generic [ref=e20]: Senior Frontend Developer
+      - generic [ref=e21]:
+        - link "Back to Home" [ref=e23]:
+          - /url: /
+          - img [ref=e24]
+          - text: Back to Home
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - heading "Welcome back" [level=1] [ref=e28]
+            - paragraph [ref=e29]: Enter your email and password to sign in
+          - generic [ref=e31]:
+            - generic [ref=e32]:
+              - generic [ref=e33]:
+                - generic [ref=e34]: Email
+                - textbox "Email" [ref=e35]:
+                  - /placeholder: name@example.com
+              - generic [ref=e36]:
+                - generic [ref=e37]: Password
+                - generic [ref=e38]:
+                  - textbox "********" [ref=e39]
+                  - button "Toggle password visibility" [ref=e40]:
+                    - img
+                    - generic [ref=e41]: Toggle password visibility
+              - button "Sign In with Email" [ref=e42]
+            - generic [ref=e47]: Or continue with
+            - button "Google" [ref=e48]:
+              - img
+              - text: Google
+          - paragraph [ref=e49]:
+            - text: Don't have an account?
+            - link "Sign Up" [ref=e50]:
+              - /url: /register
+  - button "Open Next.js Dev Tools" [ref=e56] [cursor=pointer]:
+    - img [ref=e57]
+  - alert [ref=e62]
+  - region "Notifications alt+T"
+```

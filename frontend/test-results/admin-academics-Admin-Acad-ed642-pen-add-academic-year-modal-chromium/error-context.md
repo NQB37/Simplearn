@@ -1,0 +1,114 @@
+# Page snapshot
+
+```yaml
+- generic:
+  - main:
+    - generic:
+      - complementary:
+        - generic:
+          - heading [level=2]: Admin Console
+          - navigation:
+            - link:
+              - /url: /admin
+              - img
+              - text: Platform Analytics
+            - link:
+              - /url: /admin/users
+              - img
+              - text: User Management
+            - link:
+              - /url: /admin/academics
+              - img
+              - text: Academics
+            - link:
+              - /url: /admin/curriculum
+              - img
+              - text: Curriculum
+            - link:
+              - /url: /admin/vocabulary
+              - img
+              - text: Vocabulary
+            - link:
+              - /url: /admin/catalog
+              - img
+              - text: Courses
+        - generic:
+          - button:
+            - img
+            - generic: Toggle theme
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - heading [level=1]: Academics Management
+              - paragraph: Manage Academic Years, Rooms, and Subjects.
+          - generic:
+            - tablist:
+              - tab [selected]: Academic Years
+              - tab: Rooms
+              - tab: Subjects
+            - tabpanel:
+              - generic:
+                - generic:
+                  - generic: Academic Years
+                  - button [expanded]:
+                    - img
+                    - text: Add Year
+                - generic:
+                  - generic:
+                    - table:
+                      - rowgroup:
+                        - row:
+                          - columnheader: Name
+                          - columnheader: Semester
+                          - columnheader: Start Date
+                          - columnheader: End Date
+                          - columnheader: Enrollment Start
+                          - columnheader: Enrollment Deadline
+                          - columnheader: Status
+                          - columnheader: Actions
+                      - rowgroup:
+                        - row:
+                          - cell: Loading...
+  - button "Open Next.js Dev Tools" [ref=e6] [cursor=pointer]:
+    - img [ref=e7]
+  - alert
+  - region "Notifications alt+T"
+  - dialog "Add Academic Year" [ref=e11]:
+    - heading "Add Academic Year" [level=2] [ref=e13]
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: Year Name
+        - textbox "Year Name" [active] [ref=e17]:
+          - /placeholder: e.g., 2025-2026
+      - generic [ref=e18]:
+        - generic [ref=e19]: Semester
+        - combobox "Semester" [ref=e20]:
+          - generic: Select semester
+          - img
+      - generic [ref=e21]:
+        - generic [ref=e22]: Start Date
+        - textbox "Start Date" [ref=e23]
+      - generic [ref=e24]:
+        - generic [ref=e25]: End Date
+        - textbox "End Date" [ref=e26]
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - text: Enrollment Start Date
+          - generic [ref=e29]: (optional)
+        - textbox "Enrollment Start Date (optional)" [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - text: Enrollment Deadline
+          - generic [ref=e33]: (optional)
+        - textbox "Enrollment Deadline (optional)" [ref=e34]
+      - generic [ref=e35]:
+        - checkbox "Set as Active Year" [ref=e36]
+        - generic [ref=e37] [cursor=pointer]: Set as Active Year
+    - generic [ref=e38]:
+      - button "Cancel" [ref=e39]
+      - button "Save" [ref=e40]
+    - button "Close" [ref=e41]:
+      - img
+      - generic [ref=e42]: Close
+```
