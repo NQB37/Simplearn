@@ -48,5 +48,5 @@ This roadmap delivers the complete student academic lifecycle. We've pivoted to 
 | 2. Student Account Creation | 4/4 | Complete | 2026-03-19 |
 | 3. Academic Infrastructure | 5/5 | Complete | 2026-03-19 |
 | 4. Class Catalog & Enrollment | 0/TBD | In Refactor | - |
-| 5. Class Management (Admin) | 1/3 | In Progress|  |
+| 5. Class Management (Admin) | 2/3 | In Progress|  |
 | 6. Assignments and Grading | 0/TBD | Not started | - |

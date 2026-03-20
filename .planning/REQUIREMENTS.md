@@ -20,9 +20,9 @@
 
 ### Class Management (Admin)
 
-- [ ] **CLAS-01**: Admin can pre-create "Class Shells" by selecting a Subject, a Room, an Instructor, and specific Time Shifts.
-- [ ] **CLAS-02**: Admin UI includes a Time-Grid (Mon-Fri, 7 Shifts) that shows existing Room bookings to prevent overlaps.
-- [ ] **CLAS-03**: System prevents Room and Instructor conflicts during Class creation.
+- [x] **CLAS-01**: Admin can pre-create "Class Shells" by selecting a Subject, a Room, an Instructor, and specific Time Shifts.
+- [x] **CLAS-02**: Admin UI includes a Time-Grid (Mon-Fri, 7 Shifts) that shows existing Room bookings to prevent overlaps.
+- [x] **CLAS-03**: System prevents Room and Instructor conflicts during Class creation.
 - [x] **CLAS-04**: Shifts are defined as 7 fixed 90-minute slots stored in the database.
 
 ### Enrollment & Schedule (Student)
@@ -53,9 +53,9 @@
 | PROF-05 | Phase 1 | Complete |
 | ACCT-01 | Phase 2 | Complete |
 | ACCT-02 | Phase 2 | Complete |
-| CLAS-01 | Phase 5 | Pending |
-| CLAS-02 | Phase 5 | Pending |
-| CLAS-03 | Phase 5 | Pending |
+| CLAS-01 | Phase 5 | Complete |
+| CLAS-02 | Phase 5 | Complete |
+| CLAS-03 | Phase 5 | Complete |
 | CLAS-04 | Phase 5 | Complete |
 | ENRL-01 | Phase 4 | Refactor |
 | ENRL-02 | Phase 4 | Refactor |

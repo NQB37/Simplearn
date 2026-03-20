@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: In Progress
-stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-03-20T21:55:00.000Z"
-last_activity: 2026-03-20 — Shift model and seed logic added to academy-service.
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-20T21:57:20.000Z"
+last_activity: 2026-03-20 — Shift-based Class model, conflict detection service, and availability API implemented.
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 11
-  completed_plans: 12
-  percent: 52
+  completed_plans: 13
+  percent: 55
 ---
 
 # Project State
@@ -26,15 +26,17 @@ See: .planning/PROJECT.md (updated 2026-03-18)
 ## Current Position
 
 Phase: 5 of 6 (Class Management)
-Plan: 3 of TBD in current phase
+Plan: 1 of TBD in current phase (05-01 complete)
 Status: In Progress
-Last activity: 2026-03-20 — Completed 05-03: Shift model and seed (7 shifts) added to academy-service.
+Last activity: 2026-03-20 — Completed 05-01: Shift-based Class model with conflict detection and availability API.
 
 Progress: [▓▓▓▓▓░░░░░] 52%
 
 ## Decisions
 
 - 05-03: Shift seed is idempotent (countDocuments check), chained on connectDB().then() to ensure DB ready.
+- 05-01: Shift definitions kept as TypeScript constants to avoid DB round-trips; compound unique indexes use sparse:true for empty schedules arrays.
+- 05-01: Availability grid uses nested Record<dayOfWeek, Record<shiftId, Cell>> for O(1) slot lookup on frontend.
 
 ## Performance Metrics
 
@@ -46,6 +48,6 @@ Progress: [▓▓▓▓▓░░░░░] 52%
 - 2: 4 plans
 - 3: 5 plans
 - 4: [REFACTORED]
-- 5: 3 plans (in progress)
+- 5: 4 plans (in progress, 05-01 complete)
 
 *Updated after each plan completion*
