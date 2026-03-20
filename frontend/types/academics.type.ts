@@ -79,9 +79,9 @@ export interface ClassModel {
   code: string;
   roomId: Room | string;
   subjectId: Subject | string;
-  instructorId: string;
+  instructorId?: string;
   academicYearId: AcademicYear | string;
-  schedules: ClassSchedule[];
+  schedules?: ClassSchedule[];
   maxCapacity: number;
   status: 'active' | 'inactive' | 'archived';
 }
