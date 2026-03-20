@@ -18,16 +18,20 @@
 - [x] **ACCT-01**: Admin can create a student account via a form (name, email, full profile fields, academic year, class); account is created with a fixed default password
 - [x] **ACCT-02**: Newly created student can log in with their email and default password
 
-### Enrollment
+### Class Management (Admin)
 
-- [x] **ENRL-01**: Admin can suggest a set of subjects for a specific student to enroll in
-- [x] **ENRL-02**: Admin can set an enrollment deadline per academic period
-- [x] **ENRL-03**: Student can view their suggested subjects and enroll in chosen ones before the deadline
-- [x] **ENRL-04**: Student cannot enroll after the enrollment deadline has passed
+- [ ] **CLAS-01**: Admin can pre-create "Class Shells" by selecting a Subject, a Room, an Instructor, and specific Time Shifts.
+- [ ] **CLAS-02**: Admin UI includes a Time-Grid (Mon-Fri, 7 Shifts) that shows existing Room bookings to prevent overlaps.
+- [ ] **CLAS-03**: System prevents Room and Instructor conflicts during Class creation.
+- [x] **CLAS-04**: Shifts are defined as 7 fixed 90-minute slots stored in the database.
 
-### Schedule
+### Enrollment & Schedule (Student)
 
-- [x] **SCHED-01**: Student can view a list of their enrolled subjects for their current academic year/semester
+- [ ] **ENRL-01**: Students can browse a catalog of available Classes matching their Major/Faculty.
+- [ ] **ENRL-02**: System enforces a hard capacity limit based on Room size; full classes are disabled.
+- [ ] **ENRL-03**: Student can only enroll in one Class per Subject per semester.
+- [ ] **ENRL-04**: System prevents Student schedule conflicts (cannot enroll in two classes during the same shift).
+- [ ] **SCHED-01**: Student can view their visual schedule of enrolled classes.
 
 ### Assignments
 
@@ -37,29 +41,6 @@
 - [ ] **ASGN-04**: Instructor can view all submissions for an assignment
 - [ ] **ASGN-05**: Instructor can grade a submission with a numeric score and written comment
 - [ ] **ASGN-06**: Student can see their grade and feedback after the instructor grades
-
-## v2 Requirements
-
-### Notifications
-
-- **NOTF-01**: Student receives notification when new assignment is posted
-- **NOTF-02**: Student receives notification when assignment is graded
-- **NOTF-03**: Student receives notification when enrollment period opens
-
-### Grade Book
-
-- **GRADE-01**: Student can view all grades across all subjects in one place
-- **GRADE-02**: Instructor can view grade summary per subject
-
-## Out of Scope
-
-| Feature | Reason |
-|---------|--------|
-| Student self-registration | Admin creates all student accounts |
-| Timetable/weekly schedule view | Semester subject list is sufficient for v1 |
-| Assignment auto-grading / rubrics | Manual grading only in v1 |
-| Grade book / transcript | Per-assignment grades sufficient for v1 |
-| Real-time notifications | Deferred; polling acceptable for v1 |
 
 ## Traceability
 
@@ -72,23 +53,21 @@
 | PROF-05 | Phase 1 | Complete |
 | ACCT-01 | Phase 2 | Complete |
 | ACCT-02 | Phase 2 | Complete |
-| ENRL-01 | Phase 3 | Complete |
-| ENRL-02 | Phase 3 | Complete |
-| ENRL-03 | Phase 3 | Complete |
-| ENRL-04 | Phase 3 | Complete |
-| SCHED-01 | Phase 4 | Complete |
-| ASGN-01 | Phase 5 | Pending |
-| ASGN-02 | Phase 5 | Pending |
-| ASGN-03 | Phase 5 | Pending |
-| ASGN-04 | Phase 5 | Pending |
-| ASGN-05 | Phase 5 | Pending |
-| ASGN-06 | Phase 5 | Pending |
-
-**Coverage:**
-- v1 requirements: 18 total
-- Mapped to phases: 18
-- Unmapped: 0
+| CLAS-01 | Phase 5 | Pending |
+| CLAS-02 | Phase 5 | Pending |
+| CLAS-03 | Phase 5 | Pending |
+| CLAS-04 | Phase 5 | Complete |
+| ENRL-01 | Phase 4 | Refactor |
+| ENRL-02 | Phase 4 | Refactor |
+| ENRL-03 | Phase 4 | Refactor |
+| ENRL-04 | Phase 4 | Refactor |
+| SCHED-01 | Phase 4 | Refactor |
+| ASGN-01 | Phase 6 | Pending |
+| ASGN-02 | Phase 6 | Pending |
+| ASGN-03 | Phase 6 | Pending |
+| ASGN-04 | Phase 6 | Pending |
+| ASGN-05 | Phase 6 | Pending |
+| ASGN-06 | Phase 6 | Pending |
 
 ---
-*Requirements defined: 2026-03-18*
-*Last updated: 2026-03-18 — traceability confirmed after roadmap creation*
+*Requirements updated: 2026-03-20 — Refactored for Class-First Enrollment*

@@ -6,6 +6,13 @@ import {
   deleteAcademicYear,
   enrollUser,
 } from '../controllers/academy.controller.js';
+import {
+  getAvailableRooms,
+  getAvailableInstructors,
+  getRoomGrid,
+  getRoomAvailabilityGrid,
+  getInstructorAvailabilityGrid,
+} from '../controllers/availability.controller.js';
 import { requireAuth, requireRole } from '@simplearn/middlewares';
 import { config } from '../config/env.config.js';
 import { z } from 'zod';
@@ -70,6 +77,38 @@ router.post(
   requireAuth(JWT_SECRET),
   requireRole(['admin'], JWT_SECRET),
   enrollUser,
+);
+
+// Availability endpoints
+router.get(
+  '/availability/rooms',
+  requireAuth(JWT_SECRET),
+  requireRole(['admin'], JWT_SECRET),
+  getAvailableRooms,
+);
+router.get(
+  '/availability/instructors',
+  requireAuth(JWT_SECRET),
+  requireRole(['admin'], JWT_SECRET),
+  getAvailableInstructors,
+);
+router.get(
+  '/availability/grid/:roomId',
+  requireAuth(JWT_SECRET),
+  requireRole(['admin'], JWT_SECRET),
+  getRoomGrid,
+);
+router.get(
+  '/availability/room-slots/:roomId',
+  requireAuth(JWT_SECRET),
+  requireRole(['admin'], JWT_SECRET),
+  getRoomAvailabilityGrid,
+);
+router.get(
+  '/availability/instructor-slots/:instructorId',
+  requireAuth(JWT_SECRET),
+  requireRole(['admin'], JWT_SECRET),
+  getInstructorAvailabilityGrid,
 );
 
 export default router;

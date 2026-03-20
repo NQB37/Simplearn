@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Planned
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-20T14:16:40.313Z"
-last_activity: 2026-03-20 — Phase 4 planned.
+status: In Progress
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-03-20T21:55:00.000Z"
+last_activity: 2026-03-20 — Shift model and seed logic added to academy-service.
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 3
-  total_plans: 12
-  completed_plans: 11
-  percent: 44
+  total_plans: 11
+  completed_plans: 12
+  percent: 52
 ---
 
 # Project State
@@ -20,88 +20,32 @@ progress:
 
 See: .planning/PROJECT.md (updated 2026-03-18)
 
-**Core value:** Students can manage their academic life in one place: see their semester schedule, do their assignments, and access course content — all tied to their enrolled classes.  
-**Current focus:** Phase 4 — Schedule
+**Core value:** Students enroll in specific classes (time/room/instructor) for their semester catalog.
+**Current focus:** Phase 5 — Class Management (Admin Setup)
 
 ## Current Position
 
-Phase: 4 of 5 (Schedule)
-Plan: 1 of 1 in current phase
-Status: Planned
-Last activity: 2026-03-20 — Phase 4 planned.
+Phase: 5 of 6 (Class Management)
+Plan: 3 of TBD in current phase
+Status: In Progress
+Last activity: 2026-03-20 — Completed 05-03: Shift model and seed (7 shifts) added to academy-service.
 
-Progress: [▓▓▓▓░░░░░░] 44%
+Progress: [▓▓▓▓▓░░░░░] 52%
+
+## Decisions
+
+- 05-03: Shift seed is idempotent (countDocuments check), chained on connectDB().then() to ensure DB ready.
+
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
+- Total plans completed: 12
 
 **By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| - | - | - | - |
-
-**Recent Trend:**
-- Last 5 plans: -
-- Trend: -
+- 1: 2 plans
+- 2: 4 plans
+- 3: 5 plans
+- 4: [REFACTORED]
+- 5: 3 plans (in progress)
 
 *Updated after each plan completion*
-| Phase 01 P01 | 25 | 5 tasks | 11 files |
-| Phase 02-student-account-creation P01 | 8 | 2 tasks | 4 files |
-| Phase 02-student-account-creation P02 | 15 | 2 tasks | 4 files |
-| Phase 02-student-account-creation P03 | 8 | 2 tasks | 4 files |
-| Phase 02-student-account-creation P04 | 8 | 2 tasks | 3 files |
-| Phase 03-enrollment P01 | 15 | 4 tasks | 8 files |
-| Phase 03-enrollment P02 | 15 | 3 tasks | 5 files |
-| Phase 03-enrollment P04 | 20 | 3 tasks | 11 files |
-| Phase 03-enrollment P03 | 4 | 3 tasks | 8 files |
-| Phase 03-enrollment P05 | 5 | 1 tasks | 1 files |
-| Phase 04 P01 | 8 | 3 tasks | 3 files |
-
-## Accumulated Context
-
-### Decisions
-
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- New assignment-service (port 8005) planned for Phase 5 — keeps course-service focused on curriculum
-- Enrollment logic to live in academy-service — subjects/classes already reside there
-- Default student password will be a fixed string (e.g., `simplearn123`) — simple for school setting
-- [Phase 01]: Extended profile stored in separate Profile collection (not embedded in User) for clean separation of auth vs profile data
-- [Phase 01]: Profile endpoints at /profile/extended to avoid collision with existing /profile basic info endpoint
-- [Phase 01]: Vocabulary reads open to all authenticated roles; writes restricted to admin
-- [Phase 02-student-account-creation]: Use err.code = 'DUPLICATE_EMAIL' pattern for cross-layer error signaling; controller maps code to HTTP 409
-- [Phase 02-student-account-creation]: Profile upsert only when studentData provided and non-empty — avoids empty profile documents
-- [Phase 02-student-account-creation]: useAdminUsers hook uses useQuery with queryKey ['admin-users'] enabling query invalidation on student creation
-- [Phase 02-student-account-creation]: Duplicate email mapped to inline form.setError on email field, not toast, per UX spec
-- [Phase 02-student-account-creation]: Split name field into firstName+lastName in User model for proper name handling
-- [Phase 02-student-account-creation]: Profile upsert combines personal fields and studentData into a single profileData object, avoiding multiple DB calls
-- [Phase 02-student-account-creation]: Email auto-generation uses lastName prefix (3 chars) + firstName fill + 4 random digits + @simplearn.com; stops on manual edit via emailManuallyEdited flag
-- [Phase 02-student-account-creation]: Photo upload is separate state outside Zod schema — uploaded to Cloudinary on submit, URL added to CreateStudentPayload.picture
-- [Phase 03-enrollment]: AcademicYear uniqueness changed from name-only to composite name+semester since same year name can have multiple semesters
-- [Phase 03-enrollment]: Curriculum routes mounted at /api/v1/curriculum alongside existing /api/academy/* routes as specified
-- [Phase 03-enrollment]: Enrollment model refactored from classId to subjectId+academicYearId; no status or role fields needed
-- [Phase 03-enrollment]: Node.js built-in fetch used for user-service profile call — avoids adding axios dependency to academy-service
-- [Phase 03-enrollment]: bulkEnroll uses deleteMany+insertMany for clean semester replacement semantics
-- [Phase 03-enrollment]: Native HTML checkbox used for enrollment page (Shadcn Checkbox not installed); isMandatory subjects default-checked but remain toggleable per UI-SPEC
-- [Phase 03-enrollment]: Curriculum page fetches majors from user-service /api/admin/vocabulary/majors (existing endpoint) not a new /api/v1/majors alias
-- [Phase 03-enrollment]: z.coerce.date() for date fields that accept HTML date input (YYYY-MM-DD) strings — coerces to Date object, accepts both date-only and full ISO formats
-- [Phase 04]: Schedule page is read-only; empty state replaces table entirely; TBD placeholders for class/time
-
-### Pending Todos
-
-None yet.
-
-### Blockers/Concerns
-
-None yet.
-
-## Session Continuity
-
-Last session: 2026-03-20T14:13:50.763Z
-Stopped at: Completed 04-01-PLAN.md
-Resume file: None
