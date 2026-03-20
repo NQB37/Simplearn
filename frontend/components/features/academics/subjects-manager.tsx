@@ -29,6 +29,7 @@ const ALL = '__all__';
 export function SubjectsManager() {
   const [filterTypeOfStudy, setFilterTypeOfStudy] = useState(ALL);
   const [filterFacultyId, setFilterFacultyId] = useState(ALL);
+  const [filterMajorId, setFilterMajorId] = useState(ALL);
 
   const { data: subjects = [], isLoading } = useSubjects();
   const { data: allMajors = [] } = useMajors();
@@ -40,6 +41,10 @@ export function SubjectsManager() {
   const formatSemester = (semester: string) =>
     semester.charAt(0).toUpperCase() + semester.slice(1);
 
+  const availableMajors = filterFacultyId === ALL
+    ? allMajors
+    : allMajors.filter((m) => m.facultyId === filterFacultyId);
+
   const filteredSubjects = subjects.filter((s) => {
     if (filterTypeOfStudy !== ALL && s.curriculum?.[0]?.typeOfStudy !== filterTypeOfStudy)
       return false;
@@ -49,6 +54,8 @@ export function SubjectsManager() {
         .map((m) => m._id);
       if (!facultyMajorIds.includes(s.curriculum?.[0]?.majorId ?? '')) return false;
     }
+    if (filterMajorId !== ALL && s.curriculum?.[0]?.majorId !== filterMajorId)
+      return false;
     return true;
   });
 
@@ -59,34 +66,57 @@ export function SubjectsManager() {
         <AddSubjectModal />
       </CardHeader>
 
-      <div className='px-4 py-3 bg-slate-50 border-b border-slate-100 dark:bg-slate-900/60 dark:border-slate-800 flex flex-wrap gap-3 items-center'>
-        <Select value={filterTypeOfStudy} onValueChange={setFilterTypeOfStudy}>
-          <SelectTrigger className='w-48 h-8 text-xs'>
-            <SelectValue placeholder='Type of Study' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL}>All</SelectItem>
-            {Object.entries(TYPE_OF_STUDY_LABELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className='px-4 py-3 bg-slate-50 border-b border-slate-100 dark:bg-slate-900/60 dark:border-slate-800 flex flex-wrap gap-4 items-end'>
+        <div className='flex flex-col gap-1'>
+          <label className='text-xs font-medium text-slate-500 dark:text-slate-400'>Type of Study</label>
+          <Select value={filterTypeOfStudy} onValueChange={setFilterTypeOfStudy}>
+            <SelectTrigger className='w-48 h-8 text-xs'>
+              <SelectValue placeholder='Type of Study' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL}>All</SelectItem>
+              {Object.entries(TYPE_OF_STUDY_LABELS).map(([value, label]) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-        <Select value={filterFacultyId} onValueChange={setFilterFacultyId}>
-          <SelectTrigger className='w-48 h-8 text-xs'>
-            <SelectValue placeholder='Faculty' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL}>All</SelectItem>
-            {faculties.map((f) => (
-              <SelectItem key={f._id} value={f._id}>
-                {f.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className='flex flex-col gap-1'>
+          <label className='text-xs font-medium text-slate-500 dark:text-slate-400'>Faculty</label>
+          <Select value={filterFacultyId} onValueChange={(v) => { setFilterFacultyId(v); setFilterMajorId(ALL); }}>
+            <SelectTrigger className='w-48 h-8 text-xs'>
+              <SelectValue placeholder='Faculty' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL}>All</SelectItem>
+              {faculties.map((f) => (
+                <SelectItem key={f._id} value={f._id}>
+                  {f.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className='flex flex-col gap-1'>
+          <label className='text-xs font-medium text-slate-500 dark:text-slate-400'>Major</label>
+          <Select value={filterMajorId} onValueChange={setFilterMajorId}>
+            <SelectTrigger className='w-48 h-8 text-xs'>
+              <SelectValue placeholder='Major' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL}>All</SelectItem>
+              {availableMajors.map((m) => (
+                <SelectItem key={m._id} value={m._id}>
+                  {m.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <CardContent className='p-0'>
