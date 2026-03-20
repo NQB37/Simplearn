@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready for execution
-stopped_at: Completed 03-05-PLAN.md
-last_updated: "2026-03-19T22:36:33.906Z"
-last_activity: 2026-03-19 — Completed 03-02 enrollment backend.
+status: Planned
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-20T14:13:50.766Z"
+last_activity: 2026-03-20 — Phase 4 planned.
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 11
-  completed_plans: 10
+  completed_phases: 3
+  total_plans: 12
+  completed_plans: 11
   percent: 44
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Students can manage their academic life in one place: see their semester schedule, do their assignments, and access course content — all tied to their enrolled classes.  
-**Current focus:** Phase 3 — Enrollment
+**Current focus:** Phase 4 — Schedule
 
 ## Current Position
 
-Phase: 3 of 5 (Enrollment)
-Plan: 4 of 4 in current phase
-Status: Ready for execution
-Last activity: 2026-03-19 — Completed 03-02 enrollment backend.
+Phase: 4 of 5 (Schedule)
+Plan: 1 of 1 in current phase
+Status: Planned
+Last activity: 2026-03-20 — Phase 4 planned.
 
 Progress: [▓▓▓▓░░░░░░] 44%
 ## Performance Metrics
@@ -59,6 +59,7 @@ Progress: [▓▓▓▓░░░░░░] 44%
 | Phase 03-enrollment P04 | 20 | 3 tasks | 11 files |
 | Phase 03-enrollment P03 | 4 | 3 tasks | 8 files |
 | Phase 03-enrollment P05 | 5 | 1 tasks | 1 files |
+| Phase 04 P01 | 8 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,7 @@ Recent decisions affecting current work:
 - [Phase 03-enrollment]: Native HTML checkbox used for enrollment page (Shadcn Checkbox not installed); isMandatory subjects default-checked but remain toggleable per UI-SPEC
 - [Phase 03-enrollment]: Curriculum page fetches majors from user-service /api/admin/vocabulary/majors (existing endpoint) not a new /api/v1/majors alias
 - [Phase 03-enrollment]: z.coerce.date() for date fields that accept HTML date input (YYYY-MM-DD) strings — coerces to Date object, accepts both date-only and full ISO formats
+- [Phase 04]: Schedule page is read-only; empty state replaces table entirely; TBD placeholders for class/time
 
 ### Pending Todos
 
@@ -100,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T21:39:00.170Z
-Stopped at: Completed 03-05-PLAN.md
+Last session: 2026-03-20T14:13:50.763Z
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None

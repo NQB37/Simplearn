@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: User Profiles** - Extended profile data for all users with role-specific fields
 - [x] **Phase 2: Student Account Creation** - Admin can create student accounts with full profile via a form (revised for firstName/lastName split, email auto-generation, expanded personal fields) (completed 2026-03-19)
 - [x] **Phase 3: Enrollment** - Admin suggests subjects and students enroll before a deadline (completed 2026-03-19)
-- [ ] **Phase 4: Schedule** - Students can view their enrolled subjects for the semester
+- [x] **Phase 4: Schedule** - Students can view their enrolled subjects for the semester (completed 2026-03-20)
 - [ ] **Phase 5: Assignments & Grading** - Instructors create assignments; students submit; instructors grade
 
 ## Phase Details
@@ -95,5 +95,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. User Profiles | 2/2 | Completed | 2026-03-18 |
 | 2. Student Account Creation | 4/4 | Complete   | 2026-03-19 |
 | 3. Enrollment | 5/5 | Complete   | 2026-03-19 |
-| 4. Schedule | 0/TBD | Not started | - |
+| 4. Schedule | 1/1 | Complete   | 2026-03-20 |
 | 5. Assignments and Grading | 0/TBD | Not started | - |

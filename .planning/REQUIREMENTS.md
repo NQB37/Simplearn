@@ -27,7 +27,7 @@
 
 ### Schedule
 
-- [ ] **SCHED-01**: Student can view a list of their enrolled subjects for their current academic year/semester
+- [x] **SCHED-01**: Student can view a list of their enrolled subjects for their current academic year/semester
 
 ### Assignments
 
@@ -76,7 +76,7 @@
 | ENRL-02 | Phase 3 | Complete |
 | ENRL-03 | Phase 3 | Complete |
 | ENRL-04 | Phase 3 | Complete |
-| SCHED-01 | Phase 4 | Pending |
+| SCHED-01 | Phase 4 | Complete |
 | ASGN-01 | Phase 5 | Pending |
 | ASGN-02 | Phase 5 | Pending |
 | ASGN-03 | Phase 5 | Pending |
