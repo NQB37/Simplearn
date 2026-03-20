@@ -1,5 +1,5 @@
 import axiosInstance from '@/api/axios.api';
-import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, EligibleSubjectsResponse, Enrollment, MajorSubject, Semester, TypeOfStudy, BulkSubjectRow, BulkImportResult } from '@/types/academics.type';
+import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, EligibleSubjectsResponse, Enrollment, MajorSubject, Semester, TypeOfStudy, BulkSubjectRow, BulkImportResult, RoomGrid } from '@/types/academics.type';
 
 interface SubjectCurriculumFields {
   majorId?: string;
@@ -119,5 +119,30 @@ export const academyService = {
   deleteClass: async (id: string) => {
     const { data } = await axiosInstance.delete(`${ACADEMY_BASE_URL}/api/academy/classes/${id}`);
     return data;
+  },
+
+  // Availability
+  getRoomGrid: async (roomId: string, academicYearId: string): Promise<RoomGrid> => {
+    const { data } = await axiosInstance.get(
+      `${ACADEMY_BASE_URL}/api/academy/availability/grid/${roomId}`,
+      { params: { academicYearId } },
+    );
+    return data;
+  },
+  getBusyInstructorIds: async (
+    academicYearId: string,
+    schedules: Array<{ dayOfWeek: number; shiftId: number }>,
+  ): Promise<string[]> => {
+    // Union of busy instructor IDs across all selected slots
+    const results = await Promise.all(
+      schedules.map(({ dayOfWeek, shiftId }) =>
+        axiosInstance
+          .get(`${ACADEMY_BASE_URL}/api/academy/availability/instructors`, {
+            params: { academicYearId, day: dayOfWeek, shift: shiftId },
+          })
+          .then((r) => r.data.busyInstructorIds as string[]),
+      ),
+    );
+    return [...new Set(results.flat())];
   },
 };

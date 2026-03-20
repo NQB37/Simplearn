@@ -118,6 +118,19 @@ export function useAdminUsers() {
   });
 }
 
+export function useInstructors() {
+  return useQuery({
+    queryKey: ['instructors'],
+    queryFn: async () => {
+      const { data } = await (await import('@/api/axios.api')).default.get(
+        `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/api/admin/users`,
+        { params: { role: 'instructor' } },
+      );
+      return data as Array<{ _id: string; firstName: string; lastName: string; email: string }>;
+    },
+  });
+}
+
 export function useCreateStudent() {
   const queryClient = useQueryClient();
   return useMutation({

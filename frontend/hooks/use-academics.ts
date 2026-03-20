@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { academyService } from '@/lib/services/academy.service';
-import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, Semester, TypeOfStudy, BulkSubjectRow } from '@/types/academics.type';
+import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, Semester, TypeOfStudy, BulkSubjectRow, ClassSchedule } from '@/types/academics.type';
 import { toast } from 'sonner';
 
 interface SubjectCurriculumPayload {
@@ -198,6 +198,25 @@ export function useClasses() {
   return useQuery({
     queryKey: ['classes'],
     queryFn: academyService.getClasses,
+  });
+}
+
+export function useRoomAvailabilityGrid(roomId: string | null, academicYearId: string | null) {
+  return useQuery({
+    queryKey: ['room-grid', roomId, academicYearId],
+    queryFn: () => academyService.getRoomGrid(roomId!, academicYearId!),
+    enabled: !!roomId && !!academicYearId,
+  });
+}
+
+export function useBusyInstructorIds(
+  academicYearId: string | null,
+  schedules: ClassSchedule[],
+) {
+  return useQuery({
+    queryKey: ['busy-instructors', academicYearId, schedules],
+    queryFn: () => academyService.getBusyInstructorIds(academicYearId!, schedules),
+    enabled: !!academicYearId && schedules.length > 0,
   });
 }
 

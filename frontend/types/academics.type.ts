@@ -69,14 +69,37 @@ export interface Enrollment {
   createdAt: string;
 }
 
+export interface ClassSchedule {
+  dayOfWeek: number;
+  shiftId: number;
+}
+
 export interface ClassModel {
   _id: string;
   code: string;
   roomId: Room | string;
   subjectId: Subject | string;
+  instructorId: string;
   academicYearId: AcademicYear | string;
+  schedules: ClassSchedule[];
   maxCapacity: number;
   status: 'active' | 'inactive' | 'archived';
+}
+
+export interface GridCellData {
+  free: boolean;
+  classId?: string;
+  classCode?: string;
+  subjectName?: string;
+}
+
+export interface RoomGrid {
+  roomId: string;
+  roomName: string;
+  capacity: number;
+  grid: Record<number, Record<number, GridCellData>>;
+  shifts: Array<{ shiftId: number; startTime: string; endTime: string }>;
+  days: number[];
 }
 
 export interface BulkSubjectRow {
