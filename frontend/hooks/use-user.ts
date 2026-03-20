@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { userService, ExtendedProfile, FormOfStudy, TypeOfStudy, Sex, CreateStudentPayload } from '@/lib/services/user.service';
+import { userService, ExtendedProfile, FormOfStudy, TypeOfStudy, Sex, CreateStudentPayload, Faculty } from '@/lib/services/user.service';
 import { toast } from 'sonner';
 
-export type { FormOfStudy, TypeOfStudy, Sex };
+export type { FormOfStudy, TypeOfStudy, Sex, Faculty };
 
 export function useExtendedProfile() {
   return useQuery({
@@ -49,44 +49,44 @@ export function useUserProfileMutation(userId: string) {
   });
 }
 
-export function useFieldsOfStudy() {
+export function useFaculties() {
   return useQuery({
-    queryKey: ['fields-of-study'],
-    queryFn: userService.getFieldsOfStudy,
+    queryKey: ['faculties'],
+    queryFn: userService.getFaculties,
   });
 }
 
-export function useMajors(fieldOfStudyId?: string) {
+export function useMajors(facultyId?: string) {
   return useQuery({
-    queryKey: ['majors', fieldOfStudyId],
-    queryFn: () => userService.getMajors(fieldOfStudyId),
+    queryKey: ['majors', facultyId],
+    queryFn: () => userService.getMajors(facultyId),
   });
 }
 
 export function useVocabularyMutations() {
   const queryClient = useQueryClient();
 
-  const createFieldMutation = useMutation({
-    mutationFn: (name: string) => userService.createFieldOfStudy(name),
+  const createFacultyMutation = useMutation({
+    mutationFn: (name: string) => userService.createFaculty(name),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fields-of-study'] });
-      toast.success('Field of study created.');
+      queryClient.invalidateQueries({ queryKey: ['faculties'] });
+      toast.success('Faculty created.');
     },
-    onError: () => toast.error('Failed to create field of study.'),
+    onError: () => toast.error('Failed to create faculty.'),
   });
 
-  const deleteFieldMutation = useMutation({
-    mutationFn: (id: string) => userService.deleteFieldOfStudy(id),
+  const deleteFacultyMutation = useMutation({
+    mutationFn: (id: string) => userService.deleteFaculty(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fields-of-study'] });
+      queryClient.invalidateQueries({ queryKey: ['faculties'] });
       toast.success('Deleted.');
     },
     onError: (error: any) => toast.error(error.response?.data?.message || 'Failed to delete.'),
   });
 
   const createMajorMutation = useMutation({
-    mutationFn: ({ name, fieldOfStudyId }: { name: string; fieldOfStudyId: string }) => 
-      userService.createMajor(name, fieldOfStudyId),
+    mutationFn: ({ name, facultyId }: { name: string; facultyId: string }) =>
+      userService.createMajor(name, facultyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['majors'] });
       toast.success('Major created.');
@@ -103,7 +103,7 @@ export function useVocabularyMutations() {
     onError: () => toast.error('Failed to delete.'),
   });
 
-  return { createFieldMutation, deleteFieldMutation, createMajorMutation, deleteMajorMutation };
+  return { createFacultyMutation, deleteFacultyMutation, createMajorMutation, deleteMajorMutation };
 }
 
 export function useAdminUsers() {

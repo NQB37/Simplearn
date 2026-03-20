@@ -8,14 +8,14 @@ export interface IAddress {
 
 export interface IStudentData {
   formOfStudy?: 'full-time' | 'part-time' | 'online' | 'hybrid';
-  fieldOfStudyId?: mongoose.Types.ObjectId;
+  facultyId?: mongoose.Types.ObjectId;
   majorId?: mongoose.Types.ObjectId;
   typeOfStudy?: 'bachelor' | 'master' | 'phd' | 'associate' | 'certificate';
   startYear?: number;
 }
 
 export interface IInstructorData {
-  fieldOfStudyId?: mongoose.Types.ObjectId;
+  facultyId?: mongoose.Types.ObjectId;
   majorId?: mongoose.Types.ObjectId;
 }
 
@@ -46,7 +46,7 @@ const studentDataSchema = new Schema<IStudentData>(
       type: String,
       enum: ['full-time', 'part-time', 'online', 'hybrid'],
     },
-    fieldOfStudyId: { type: Schema.Types.ObjectId, ref: 'FieldOfStudy' },
+    facultyId: { type: Schema.Types.ObjectId, ref: 'Faculty' },
     majorId: { type: Schema.Types.ObjectId, ref: 'Major' },
     typeOfStudy: {
       type: String,
@@ -59,7 +59,7 @@ const studentDataSchema = new Schema<IStudentData>(
 
 const instructorDataSchema = new Schema<IInstructorData>(
   {
-    fieldOfStudyId: { type: Schema.Types.ObjectId, ref: 'FieldOfStudy' },
+    facultyId: { type: Schema.Types.ObjectId, ref: 'Faculty' },
     majorId: { type: Schema.Types.ObjectId, ref: 'Major' },
   },
   { _id: false },

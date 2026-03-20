@@ -23,7 +23,7 @@ describe('Profile model', () => {
     const studentSchema = (Profile.schema.path('studentData') as any).schema;
     const studentPaths = Object.keys(studentSchema.paths);
     expect(studentPaths).toContain('formOfStudy');
-    expect(studentPaths).toContain('fieldOfStudyId');
+    expect(studentPaths).toContain('facultyId');
     expect(studentPaths).toContain('majorId');
     expect(studentPaths).toContain('typeOfStudy');
     expect(studentPaths).toContain('startYear');
@@ -32,7 +32,7 @@ describe('Profile model', () => {
   it('should have nested instructorData sub-schema fields', () => {
     const instructorSchema = (Profile.schema.path('instructorData') as any).schema;
     const instructorPaths = Object.keys(instructorSchema.paths);
-    expect(instructorPaths).toContain('fieldOfStudyId');
+    expect(instructorPaths).toContain('facultyId');
     expect(instructorPaths).toContain('majorId');
   });
 

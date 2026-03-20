@@ -28,12 +28,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import { useExtendedProfile, useExtendedProfileMutation, useFieldsOfStudy, useMajors, useUserProfile, useUserProfileMutation } from '@/hooks/use-user';
+import { useExtendedProfile, useExtendedProfileMutation, useFaculties, useMajors, useUserProfile, useUserProfileMutation } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const teachingFormSchema = z.object({
   instructorData: z.object({
-    fieldOfStudyId: z.string().optional().or(z.literal('')),
+    facultyId: z.string().optional().or(z.literal('')),
     majorId: z.string().optional().or(z.literal('')),
   }),
 });
@@ -47,7 +47,7 @@ interface TeachingFormProps {
 export function TeachingForm({ userId }: TeachingFormProps) {
   const { data: ownProfile, isLoading: isOwnLoading } = useExtendedProfile();
   const { data: userProfile, isLoading: isUserLoading } = useUserProfile(userId || '');
-  const { data: fields, isLoading: isFieldsLoading } = useFieldsOfStudy();
+  const { data: faculties, isLoading: isFacultiesLoading } = useFaculties();
   
   const ownMutation = useExtendedProfileMutation();
   const userMutation = useUserProfileMutation(userId || '');
@@ -60,49 +60,49 @@ export function TeachingForm({ userId }: TeachingFormProps) {
     resolver: zodResolver(teachingFormSchema),
     defaultValues: {
       instructorData: {
-        fieldOfStudyId: '',
+        facultyId: '',
         majorId: '',
       },
     },
   });
 
-  const selectedFieldId = useWatch({
+  const selectedFacultyId = useWatch({
     control: form.control,
-    name: 'instructorData.fieldOfStudyId',
+    name: 'instructorData.facultyId',
   });
 
-  const { data: majors, isLoading: isMajorsLoading } = useMajors(selectedFieldId);
+  const { data: majors, isLoading: isMajorsLoading } = useMajors(selectedFacultyId);
 
   // Reset form when profile data is loaded
   useEffect(() => {
     if (profile?.instructorData) {
       form.reset({
         instructorData: {
-          fieldOfStudyId: profile.instructorData.fieldOfStudyId || '',
+          facultyId: profile.instructorData.facultyId || '',
           majorId: profile.instructorData.majorId || '',
         },
       });
     }
   }, [profile, form]);
 
-  // Reset major when field of study changes
+  // Reset major when faculty changes
   useEffect(() => {
     const currentMajorId = form.getValues('instructorData.majorId');
-    if (currentMajorId && selectedFieldId) {
-      const majorExistsInNewField = majors?.some(m => m._id === currentMajorId);
-      if (!majorExistsInNewField && !isMajorsLoading) {
+    if (currentMajorId && selectedFacultyId) {
+      const majorExistsInNewFaculty = majors?.some(m => m._id === currentMajorId);
+      if (!majorExistsInNewFaculty && !isMajorsLoading) {
          form.setValue('instructorData.majorId', '');
       }
-    } else if (!selectedFieldId) {
+    } else if (!selectedFacultyId) {
       form.setValue('instructorData.majorId', '');
     }
-  }, [selectedFieldId, majors, isMajorsLoading, form]);
+  }, [selectedFacultyId, majors, isMajorsLoading, form]);
 
   function onSubmit(data: TeachingFormValues) {
     mutation.mutate(data);
   }
 
-  if (isProfileLoading || isFieldsLoading) {
+  if (isProfileLoading || isFacultiesLoading) {
     return (
       <Card className="bg-transparent border-none shadow-none p-0">
         <CardHeader className="px-0">
@@ -131,18 +131,18 @@ export function TeachingForm({ userId }: TeachingFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="instructorData.fieldOfStudyId"
+                name="instructorData.facultyId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Field of Study</FormLabel>
+                    <FormLabel>Faculty</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger aria-label="Select field of study">
-                          <SelectValue placeholder="Select a field" />
+                        <SelectTrigger aria-label="Select faculty">
+                          <SelectValue placeholder="Select a faculty" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {fields?.map((f) => (
+                        {faculties?.map((f) => (
                           <SelectItem key={f._id} value={f._id}>
                             {f.name}
                           </SelectItem>
@@ -160,14 +160,14 @@ export function TeachingForm({ userId }: TeachingFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Major</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
+                    <Select
+                      onValueChange={field.onChange}
                       value={field.value}
-                      disabled={!selectedFieldId || isMajorsLoading}
+                      disabled={!selectedFacultyId || isMajorsLoading}
                     >
                       <FormControl>
                         <SelectTrigger aria-label="Select major">
-                          <SelectValue placeholder={!selectedFieldId ? "Select a field first" : "Select a major"} />
+                          <SelectValue placeholder={!selectedFacultyId ? "Select a faculty first" : "Select a major"} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

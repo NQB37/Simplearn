@@ -31,7 +31,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useCreateStudent, useFieldsOfStudy, useMajors } from '@/hooks/use-user';
+import { useCreateStudent, useFaculties, useMajors } from '@/hooks/use-user';
 import { CreateStudentPayload } from '@/lib/services/user.service';
 import axiosInstance from '@/api/axios.api';
 
@@ -48,7 +48,7 @@ const createStudentSchema = z.object({
   }).optional(),
   studentData: z.object({
     formOfStudy: z.enum(['full-time', 'part-time', 'online', 'hybrid', '']).optional(),
-    fieldOfStudyId: z.string().optional(),
+    facultyId: z.string().optional(),
     majorId: z.string().optional(),
     typeOfStudy: z.enum(['bachelor', 'master', 'phd', 'associate', 'certificate', '']).optional(),
     startYear: z.preprocess(
@@ -63,7 +63,7 @@ type CreateStudentFormValues = z.infer<typeof createStudentSchema>;
 export default function CreateStudentPage() {
   const router = useRouter();
   const mutation = useCreateStudent();
-  const { data: fields } = useFieldsOfStudy();
+  const { data: faculties } = useFaculties();
 
   const form = useForm<CreateStudentFormValues>({
     resolver: zodResolver(createStudentSchema) as any,
@@ -77,27 +77,27 @@ export default function CreateStudentPage() {
       studentData: {
         formOfStudy: '',
         typeOfStudy: '',
-        fieldOfStudyId: '',
+        facultyId: '',
         majorId: '',
         startYear: '' as unknown as number,
       },
     },
   });
 
-  const selectedFieldId = useWatch({ control: form.control, name: 'studentData.fieldOfStudyId' });
-  const { data: majors, isLoading: isMajorsLoading } = useMajors(selectedFieldId);
+  const selectedFacultyId = useWatch({ control: form.control, name: 'studentData.facultyId' });
+  const { data: majors, isLoading: isMajorsLoading } = useMajors(selectedFacultyId);
 
   useEffect(() => {
     const currentMajorId = form.getValues('studentData.majorId');
-    if (currentMajorId && selectedFieldId) {
-      const majorExistsInNewField = majors?.some((m) => m._id === currentMajorId);
-      if (!majorExistsInNewField && !isMajorsLoading) {
+    if (currentMajorId && selectedFacultyId) {
+      const majorExistsInNewFaculty = majors?.some((m) => m._id === currentMajorId);
+      if (!majorExistsInNewFaculty && !isMajorsLoading) {
         form.setValue('studentData.majorId', '');
       }
-    } else if (!selectedFieldId) {
+    } else if (!selectedFacultyId) {
       form.setValue('studentData.majorId', '');
     }
-  }, [selectedFieldId, majors, isMajorsLoading, form]);
+  }, [selectedFacultyId, majors, isMajorsLoading, form]);
 
   const [emailManuallyEdited, setEmailManuallyEdited] = useState(false);
   const generatedEmailRef = useRef('');
@@ -181,7 +181,7 @@ export default function CreateStudentPage() {
       const sd: Record<string, unknown> = {};
       if (data.studentData.formOfStudy) sd.formOfStudy = data.studentData.formOfStudy;
       if (data.studentData.typeOfStudy) sd.typeOfStudy = data.studentData.typeOfStudy;
-      if (data.studentData.fieldOfStudyId) sd.fieldOfStudyId = data.studentData.fieldOfStudyId;
+      if (data.studentData.facultyId) sd.facultyId = data.studentData.facultyId;
       if (data.studentData.majorId) sd.majorId = data.studentData.majorId;
       if (data.studentData.startYear) sd.startYear = data.studentData.startYear;
       if (Object.keys(sd).length > 0) payload.studentData = sd as CreateStudentPayload['studentData'];
@@ -383,18 +383,18 @@ export default function CreateStudentPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="studentData.fieldOfStudyId"
+                  name="studentData.facultyId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Field of Study</FormLabel>
+                      <FormLabel>Faculty</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger aria-label="Select field of study">
-                            <SelectValue placeholder="Select a field" />
+                          <SelectTrigger aria-label="Select faculty">
+                            <SelectValue placeholder="Select a faculty" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {fields?.map((f) => (
+                          {faculties?.map((f) => (
                             <SelectItem key={f._id} value={f._id}>
                               {f.name}
                             </SelectItem>
@@ -414,12 +414,12 @@ export default function CreateStudentPage() {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
-                        disabled={!selectedFieldId || isMajorsLoading}
+                        disabled={!selectedFacultyId || isMajorsLoading}
                       >
                         <FormControl>
                           <SelectTrigger aria-label="Select major">
                             <SelectValue
-                              placeholder={!selectedFieldId ? 'Select a field first' : 'Select a major'}
+                              placeholder={!selectedFacultyId ? 'Select a faculty first' : 'Select a major'}
                             />
                           </SelectTrigger>
                         </FormControl>

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Profile } from '../models/profile.model.js';
-import { FieldOfStudy } from '../models/field-of-study.model.js';
+import { Faculty } from '../models/faculty.model.js';
 import { Major } from '../models/major.model.js';
 import type { UpdateProfileInput } from '../validators/profile.validator.js';
 
@@ -25,29 +25,29 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput) =>
   ).lean();
 };
 
-export const getAllFieldsOfStudy = async () => {
-  return FieldOfStudy.find().sort({ name: 1 }).lean();
+export const getAllFaculties = async () => {
+  return Faculty.find().sort({ name: 1 }).lean();
 };
 
-export const createFieldOfStudy = async (name: string) => {
-  return FieldOfStudy.create({ name });
+export const createFaculty = async (name: string) => {
+  return Faculty.create({ name });
 };
 
-export const deleteFieldOfStudy = async (id: string) => {
-  const hasMajors = await Major.exists({ fieldOfStudyId: id });
+export const deleteFaculty = async (id: string) => {
+  const hasMajors = await Major.exists({ facultyId: id });
   if (hasMajors) {
     throw new Error('Cannot delete: remove dependent majors first.');
   }
-  return FieldOfStudy.findByIdAndDelete(id);
+  return Faculty.findByIdAndDelete(id);
 };
 
-export const getMajorsByField = async (fieldOfStudyId?: string) => {
-  const filter = fieldOfStudyId ? { fieldOfStudyId } : {};
+export const getMajorsByFaculty = async (facultyId?: string) => {
+  const filter = facultyId ? { facultyId } : {};
   return Major.find(filter).sort({ name: 1 }).lean();
 };
 
-export const createMajor = async (name: string, fieldOfStudyId: string) => {
-  return Major.create({ name, fieldOfStudyId });
+export const createMajor = async (name: string, facultyId: string) => {
+  return Major.create({ name, facultyId });
 };
 
 export const deleteMajor = async (id: string) => {

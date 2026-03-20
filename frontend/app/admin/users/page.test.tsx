@@ -20,7 +20,7 @@ const instructorA = makeUser({
   lastName: 'Jones',
   email: 'bob@example.com',
   instructorData: {
-    fieldOfStudyId: { _id: 'field1', name: 'Computer Science' },
+    facultyId: { _id: 'field1', name: 'Computer Science' },
     majorId: { _id: 'major1', name: 'Software Engineering' },
   },
 });
@@ -32,7 +32,7 @@ const instructorB = makeUser({
   lastName: 'White',
   email: 'carol@example.com',
   instructorData: {
-    fieldOfStudyId: { _id: 'field2', name: 'Mathematics' },
+    facultyId: { _id: 'field2', name: 'Mathematics' },
     majorId: { _id: 'major2', name: 'Pure Math' },
   },
 });
@@ -44,7 +44,7 @@ const studentA = makeUser({
   lastName: 'Brown',
   email: 'dave@example.com',
   studentData: {
-    fieldOfStudyId: { _id: 'field1', name: 'Computer Science' },
+    facultyId: { _id: 'field1', name: 'Computer Science' },
     majorId: { _id: 'major1', name: 'Software Engineering' },
     typeOfStudy: 'bachelor',
     startYear: 2022,
@@ -58,7 +58,7 @@ const studentB = makeUser({
   lastName: 'Green',
   email: 'eve@example.com',
   studentData: {
-    fieldOfStudyId: { _id: 'field2', name: 'Mathematics' },
+    facultyId: { _id: 'field2', name: 'Mathematics' },
     majorId: { _id: 'major2', name: 'Pure Math' },
     typeOfStudy: 'master',
     startYear: 2023,
@@ -117,9 +117,9 @@ describe('filterUsers — search', () => {
   });
 });
 
-describe('filterUsers — instructor field/major filters', () => {
-  it('filters instructors by fieldOfStudyId', () => {
-    const result = filterUsers(allUsers, { fieldOfStudyId: 'field1' }, 'INSTRUCTOR');
+describe('filterUsers — instructor faculty/major filters', () => {
+  it('filters instructors by facultyId', () => {
+    const result = filterUsers(allUsers, { facultyId: 'field1' }, 'INSTRUCTOR');
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('i1');
   });
@@ -130,20 +130,20 @@ describe('filterUsers — instructor field/major filters', () => {
     expect(result[0].id).toBe('i2');
   });
 
-  it('returns empty when field filter matches nothing', () => {
-    const result = filterUsers(allUsers, { fieldOfStudyId: 'field999' }, 'INSTRUCTOR');
+  it('returns empty when faculty filter matches nothing', () => {
+    const result = filterUsers(allUsers, { facultyId: 'field999' }, 'INSTRUCTOR');
     expect(result).toHaveLength(0);
   });
 
-  it('does not apply fieldOfStudy filter to ADMIN tab', () => {
-    const result = filterUsers(allUsers, { fieldOfStudyId: 'field1' }, 'ADMIN');
+  it('does not apply faculty filter to ADMIN tab', () => {
+    const result = filterUsers(allUsers, { facultyId: 'field1' }, 'ADMIN');
     expect(result).toHaveLength(1); // only the one admin, unaffected by the filter
   });
 });
 
-describe('filterUsers — student field/major/typeOfStudy/startYear filters', () => {
-  it('filters students by fieldOfStudyId', () => {
-    const result = filterUsers(allUsers, { fieldOfStudyId: 'field2' }, 'STUDENT');
+describe('filterUsers — student faculty/major/typeOfStudy/startYear filters', () => {
+  it('filters students by facultyId', () => {
+    const result = filterUsers(allUsers, { facultyId: 'field2' }, 'STUDENT');
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('s2');
   });
@@ -179,10 +179,10 @@ describe('filterUsers — student field/major/typeOfStudy/startYear filters', ()
 });
 
 describe('filterUsers — combined filters', () => {
-  it('combines search and fieldOfStudyId for students', () => {
+  it('combines search and facultyId for students', () => {
     const result = filterUsers(
       allUsers,
-      { search: 'dave', fieldOfStudyId: 'field1' },
+      { search: 'dave', facultyId: 'field1' },
       'STUDENT',
     );
     expect(result).toHaveLength(1);
@@ -192,7 +192,7 @@ describe('filterUsers — combined filters', () => {
   it('returns empty when combined filters produce no match', () => {
     const result = filterUsers(
       allUsers,
-      { search: 'dave', fieldOfStudyId: 'field2' },
+      { search: 'dave', facultyId: 'field2' },
       'STUDENT',
     );
     expect(result).toHaveLength(0);
@@ -202,7 +202,7 @@ describe('filterUsers — combined filters', () => {
     const result = filterUsers(
       allUsers,
       {
-        fieldOfStudyId: 'field1',
+        facultyId: 'field1',
         majorId: 'major1',
         typeOfStudy: 'bachelor',
         startYear: '2022',

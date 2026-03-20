@@ -27,32 +27,32 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<an
   }
 };
 
-// Vocabulary: Fields of Study
-export const getFieldsOfStudy = async (_req: Request, res: Response): Promise<any> => {
+// Vocabulary: Faculties
+export const getFaculties = async (_req: Request, res: Response): Promise<any> => {
   try {
-    const fields = await profileService.getAllFieldsOfStudy();
-    res.json(fields);
+    const faculties = await profileService.getAllFaculties();
+    res.json(faculties);
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
-export const createFieldOfStudy = async (req: Request, res: Response): Promise<any> => {
+export const createFaculty = async (req: Request, res: Response): Promise<any> => {
   try {
     const { name } = req.body;
     if (!name?.trim()) return res.status(400).json({ message: 'Name is required' });
-    const field = await profileService.createFieldOfStudy(name.trim());
-    res.status(201).json(field);
+    const faculty = await profileService.createFaculty(name.trim());
+    res.status(201).json(faculty);
   } catch (error: any) {
-    if (error.code === 11000) return res.status(409).json({ message: 'Field of study already exists' });
+    if (error.code === 11000) return res.status(409).json({ message: 'Faculty already exists' });
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
-export const deleteFieldOfStudy = async (req: Request, res: Response): Promise<any> => {
+export const deleteFaculty = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params['id'] as string;
-    await profileService.deleteFieldOfStudy(id);
+    await profileService.deleteFaculty(id);
     res.status(204).send();
   } catch (error: any) {
     if (error.message.includes('Cannot delete')) return res.status(409).json({ message: error.message });
@@ -63,9 +63,9 @@ export const deleteFieldOfStudy = async (req: Request, res: Response): Promise<a
 // Vocabulary: Majors
 export const getMajors = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { fieldOfStudyId } = req.query;
-    const majors = await profileService.getMajorsByField(
-      typeof fieldOfStudyId === 'string' ? fieldOfStudyId : undefined,
+    const { facultyId } = req.query;
+    const majors = await profileService.getMajorsByFaculty(
+      typeof facultyId === 'string' ? facultyId : undefined,
     );
     res.json(majors);
   } catch (error) {
@@ -75,13 +75,13 @@ export const getMajors = async (req: Request, res: Response): Promise<any> => {
 
 export const createMajor = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { name, fieldOfStudyId } = req.body;
+    const { name, facultyId } = req.body;
     if (!name?.trim()) return res.status(400).json({ message: 'Name is required' });
-    if (!fieldOfStudyId) return res.status(400).json({ message: 'fieldOfStudyId is required' });
-    const major = await profileService.createMajor(name.trim(), fieldOfStudyId);
+    if (!facultyId) return res.status(400).json({ message: 'facultyId is required' });
+    const major = await profileService.createMajor(name.trim(), facultyId);
     res.status(201).json(major);
   } catch (error: any) {
-    if (error.code === 11000) return res.status(409).json({ message: 'Major already exists for this field' });
+    if (error.code === 11000) return res.status(409).json({ message: 'Major already exists for this faculty' });
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };

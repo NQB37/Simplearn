@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AcademicYearsManager } from '@/components/features/academics/academic-years-manager';
 import { RoomsManager } from '@/components/features/academics/rooms-manager';
 import { SubjectsManager } from '@/components/features/academics/subjects-manager';
-import { ClassesManager } from '@/components/features/academics/classes-manager';
 
 export default function AcademicsAdminPage() {
   return (
@@ -15,17 +14,16 @@ export default function AcademicsAdminPage() {
             Academics Management
           </h1>
           <p className='text-slate-500 dark:text-slate-400 font-medium'>
-            Manage Academic Years, Rooms, Classes, and Subjects.
+            Manage Academic Years, Rooms, and Subjects.
           </p>
         </div>
       </div>
 
       <Tabs defaultValue='academic-years' className='w-full'>
-        <TabsList className='grid grid-cols-4 w-full md:w-[600px] bg-slate-100 dark:bg-slate-900 mb-6'>
+        <TabsList className='grid grid-cols-3 w-full md:w-[450px] bg-slate-100 dark:bg-slate-900 mb-6'>
           <TabsTrigger value='academic-years'>Academic Years</TabsTrigger>
           <TabsTrigger value='rooms'>Rooms</TabsTrigger>
           <TabsTrigger value='subjects'>Subjects</TabsTrigger>
-          <TabsTrigger value='classes'>Classes</TabsTrigger>
         </TabsList>
 
         <TabsContent value='academic-years'>
@@ -38,10 +36,6 @@ export default function AcademicsAdminPage() {
 
         <TabsContent value='subjects'>
           <SubjectsManager />
-        </TabsContent>
-
-        <TabsContent value='classes'>
-          <ClassesManager />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,9 +1,21 @@
 import { Request, Response } from 'express';
 import * as subjectService from '../services/subject.service.js';
 
+const extractCurriculumFields = (body: any): subjectService.CurriculumFields | undefined => {
+  const { majorId, studyYear, semester, isMandatory, typeOfStudy } = body;
+  if (!majorId && studyYear === undefined && !semester && isMandatory === undefined && !typeOfStudy) return undefined;
+  return { majorId, studyYear, semester, isMandatory, typeOfStudy };
+};
+
+const extractSubjectFields = (body: any) => {
+  const { majorId: _majorId, studyYear: _studyYear, semester: _semester, isMandatory: _isMandatory, typeOfStudy: _typeOfStudy, ...subjectData } = body;
+  return subjectData;
+};
+
 export const getSubjects = async (req: Request, res: Response) => {
   try {
-    const subjects = await subjectService.getSubjects();
+    const { typeOfStudy, majorId } = req.query as { typeOfStudy?: string; majorId?: string };
+    const subjects = await subjectService.getSubjects({ typeOfStudy, majorId });
     res.json(subjects);
   } catch (err) {
     console.error('Error fetching subjects', err);
@@ -13,9 +25,7 @@ export const getSubjects = async (req: Request, res: Response) => {
 
 export const getSubject = async (req: Request, res: Response) => {
   try {
-    const subject = await subjectService.getSubjectById(
-      req.params.id as string,
-    );
+    const subject = await subjectService.getSubjectById(req.params.id as string);
     if (!subject) {
       return res.status(404).json({ error: 'Subject not found' });
     }
@@ -28,7 +38,9 @@ export const getSubject = async (req: Request, res: Response) => {
 
 export const createSubject = async (req: Request, res: Response) => {
   try {
-    const newSubject = await subjectService.createSubject(req.body);
+    const subjectData = extractSubjectFields(req.body);
+    const curriculum = extractCurriculumFields(req.body);
+    const newSubject = await subjectService.createSubject(subjectData, curriculum);
     res.status(201).json(newSubject);
   } catch (err: any) {
     console.error('Error creating subject', err);
@@ -38,9 +50,12 @@ export const createSubject = async (req: Request, res: Response) => {
 
 export const updateSubject = async (req: Request, res: Response) => {
   try {
+    const subjectData = extractSubjectFields(req.body);
+    const curriculum = extractCurriculumFields(req.body);
     const updatedSubject = await subjectService.updateSubject(
       req.params.id as string,
-      req.body,
+      subjectData,
+      curriculum,
     );
     if (!updatedSubject) {
       return res.status(404).json({ error: 'Subject not found' });
@@ -54,9 +69,7 @@ export const updateSubject = async (req: Request, res: Response) => {
 
 export const deleteSubject = async (req: Request, res: Response) => {
   try {
-    const deletedSubject = await subjectService.deleteSubject(
-      req.params.id as string,
-    );
+    const deletedSubject = await subjectService.deleteSubject(req.params.id as string);
     if (!deletedSubject) {
       return res.status(404).json({ error: 'Subject not found' });
     }

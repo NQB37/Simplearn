@@ -37,7 +37,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   useAdminUsers,
-  useFieldsOfStudy,
+  useFaculties,
   useMajors,
   useUpdateUserStatus,
 } from '@/hooks/use-user';
@@ -53,13 +53,13 @@ export type User = {
   picture?: string;
   studentData?: {
     formOfStudy?: string;
-    fieldOfStudyId?: { _id: string; name: string };
+    facultyId?: { _id: string; name: string };
     majorId?: { _id: string; name: string };
     typeOfStudy?: string;
     startYear?: number;
   };
   instructorData?: {
-    fieldOfStudyId?: { _id: string; name: string };
+    facultyId?: { _id: string; name: string };
     majorId?: { _id: string; name: string };
   };
 };
@@ -69,7 +69,7 @@ export function filterUsers(
   filters: {
     search?: string;
     status?: string;
-    fieldOfStudyId?: string;
+    facultyId?: string;
     majorId?: string;
     typeOfStudy?: string;
     startYear?: string;
@@ -89,12 +89,12 @@ export function filterUsers(
       return fullName.includes(q) || u.email.toLowerCase().includes(q);
     })
     .filter((u) => {
-      if (!filters.fieldOfStudyId) return true;
+      if (!filters.facultyId) return true;
       if (role === 'INSTRUCTOR') {
-        return u.instructorData?.fieldOfStudyId?._id === filters.fieldOfStudyId;
+        return u.instructorData?.facultyId?._id === filters.facultyId;
       }
       if (role === 'STUDENT') {
-        return u.studentData?.fieldOfStudyId?._id === filters.fieldOfStudyId;
+        return u.studentData?.facultyId?._id === filters.facultyId;
       }
       return true;
     })
@@ -336,7 +336,7 @@ function FilterSelect({
 
 export default function AdminUsersPage() {
   const { data = [], isLoading: loading } = useAdminUsers();
-  const { data: fields = [] } = useFieldsOfStudy();
+  const { data: faculties = [] } = useFaculties();
 
   // Admin tab filters
   const [adminSearch, setAdminSearch] = useState('');
@@ -379,7 +379,7 @@ export default function AdminUsersPage() {
         {
           search: instructorSearch,
           status: instructorStatus,
-          fieldOfStudyId: instructorField,
+          facultyId: instructorField,
           majorId: instructorMajor,
         },
         'INSTRUCTOR',
@@ -400,7 +400,7 @@ export default function AdminUsersPage() {
         {
           search: studentSearch,
           status: studentStatus,
-          fieldOfStudyId: studentField,
+          facultyId: studentField,
           majorId: studentMajor,
           typeOfStudy: studentTypeOfStudy,
           startYear: studentStartYear,
@@ -431,7 +431,7 @@ export default function AdminUsersPage() {
     [data],
   );
 
-  const fieldOptions = fields.map((f) => ({ value: f._id, label: f.name }));
+  const fieldOptions = faculties.map((f) => ({ value: f._id, label: f.name }));
 
   const statusOptions = [
     { value: 'ACTIVE', label: 'Active' },
@@ -495,11 +495,11 @@ export default function AdminUsersPage() {
   const instructorColumns: ColumnDef<User>[] = [
     ...baseNameEmailColumns,
     {
-      id: 'fieldOfStudy',
-      header: 'Field of Study',
+      id: 'faculty',
+      header: 'Faculty',
       cell: ({ row }) => (
         <span className='text-slate-600 dark:text-slate-400'>
-          {row.original.instructorData?.fieldOfStudyId?.name ?? '—'}
+          {row.original.instructorData?.facultyId?.name ?? '—'}
         </span>
       ),
     },
@@ -519,11 +519,11 @@ export default function AdminUsersPage() {
   const studentColumns: ColumnDef<User>[] = [
     ...baseNameEmailColumns,
     {
-      id: 'fieldOfStudy',
-      header: 'Field of Study',
+      id: 'faculty',
+      header: 'Faculty',
       cell: ({ row }) => (
         <span className='text-slate-600 dark:text-slate-400'>
-          {row.original.studentData?.fieldOfStudyId?.name ?? '—'}
+          {row.original.studentData?.facultyId?.name ?? '—'}
         </span>
       ),
     },

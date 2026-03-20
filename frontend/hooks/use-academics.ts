@@ -1,7 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { academyService } from '@/lib/services/academy.service';
-import { AcademicYear, Room, Subject, ClassModel, Semester } from '@/types/academics.type';
+import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, Semester, TypeOfStudy } from '@/types/academics.type';
 import { toast } from 'sonner';
+
+interface SubjectCurriculumPayload {
+  majorId?: string;
+  studyYear?: number;
+  semester?: Semester;
+  isMandatory?: boolean;
+  typeOfStudy?: TypeOfStudy;
+}
 
 export function useAcademicYears() {
   return useQuery({
@@ -128,7 +136,7 @@ export function useRoomMutations() {
 }
 
 export function useSubjects() {
-  return useQuery({
+  return useQuery<SubjectWithCurriculum[]>({
     queryKey: ['subjects'],
     queryFn: academyService.getSubjects,
   });
@@ -138,19 +146,22 @@ export function useSubjectMutations() {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
-    mutationFn: (payload: Omit<Subject, '_id'>) => academyService.createSubject(payload),
+    mutationFn: (payload: Omit<Subject, '_id'> & SubjectCurriculumPayload) =>
+      academyService.createSubject(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      queryClient.invalidateQueries({ queryKey: ['curriculum'] });
       toast.success('Subject created successfully');
     },
     onError: () => toast.error('Failed to create subject'),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: Partial<Subject> }) =>
+    mutationFn: ({ id, payload }: { id: string; payload: Partial<Subject> & SubjectCurriculumPayload }) =>
       academyService.updateSubject(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      queryClient.invalidateQueries({ queryKey: ['curriculum'] });
       toast.success('Subject updated successfully');
     },
     onError: () => toast.error('Failed to update subject'),
@@ -160,6 +171,7 @@ export function useSubjectMutations() {
     mutationFn: (id: string) => academyService.deleteSubject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      queryClient.invalidateQueries({ queryKey: ['curriculum'] });
       toast.success('Subject deleted successfully');
     },
     onError: () => toast.error('Failed to delete subject'),

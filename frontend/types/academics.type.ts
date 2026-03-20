@@ -1,4 +1,13 @@
 export type Semester = 'first' | 'second' | 'summer';
+export type TypeOfStudy = 'bachelor' | 'master' | 'phd' | 'associate' | 'certificate';
+
+export const STUDY_YEAR_LIMITS: Record<TypeOfStudy, number> = {
+  bachelor: 3,
+  master: 2,
+  phd: 4,
+  associate: 3,
+  certificate: 1,
+};
 
 export interface AcademicYear {
   _id: string;
@@ -22,6 +31,17 @@ export interface Subject {
   name: string;
   code: string;
   credits: number;
+}
+
+export interface SubjectWithCurriculum extends Subject {
+  curriculum?: {
+    _id: string;
+    majorId: string;
+    studyYear: number;
+    semester: Semester;
+    isMandatory: boolean;
+    typeOfStudy?: TypeOfStudy;
+  }[];
 }
 
 export interface MajorSubject {

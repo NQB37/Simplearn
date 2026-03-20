@@ -1,11 +1,14 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export type TypeOfStudy = 'bachelor' | 'master' | 'phd' | 'associate' | 'certificate';
+
 export interface IMajorSubject extends Document {
   majorId: mongoose.Types.ObjectId;
   subjectId: mongoose.Types.ObjectId;
   studyYear: number;
   semester: 'first' | 'second' | 'summer';
   isMandatory: boolean;
+  typeOfStudy?: TypeOfStudy;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,6 +24,10 @@ const MajorSubjectSchema: Schema = new Schema(
       required: true,
     },
     isMandatory: { type: Boolean, default: true },
+    typeOfStudy: {
+      type: String,
+      enum: ['bachelor', 'master', 'phd', 'associate', 'certificate'],
+    },
   },
   {
     timestamps: true,

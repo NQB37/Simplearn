@@ -18,10 +18,10 @@ router.delete('/users/:id', isAuthenticated, isAdmin, adminController.deleteUser
 router.get('/users/:id/profile', isAuthenticated, isAdmin, adminProfileController.getUserProfile);
 router.patch('/users/:id/profile', isAuthenticated, isAdmin, validateRequest(updateProfileSchema), adminProfileController.updateUserProfile);
 
-// Vocabulary: Fields of Study (public read, admin write)
-router.get('/vocabulary/fields', isAuthenticated, adminProfileController.getFieldsOfStudy);
-router.post('/vocabulary/fields', isAuthenticated, isAdmin, adminProfileController.createFieldOfStudy);
-router.delete('/vocabulary/fields/:id', isAuthenticated, isAdmin, adminProfileController.deleteFieldOfStudy);
+// Vocabulary: Faculties (public read, admin write)
+router.get('/vocabulary/fields', isAuthenticated, adminProfileController.getFaculties);
+router.post('/vocabulary/fields', isAuthenticated, isAdmin, adminProfileController.createFaculty);
+router.delete('/vocabulary/fields/:id', isAuthenticated, isAdmin, adminProfileController.deleteFaculty);
 
 // Vocabulary: Majors (public read, admin write)
 router.get('/vocabulary/majors', isAuthenticated, adminProfileController.getMajors);

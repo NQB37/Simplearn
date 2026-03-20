@@ -4,7 +4,7 @@ import type { CreateUserInput } from '../validators/create-user.validator.js';
 
 export interface GetAllUsersFilters {
   role?: string;
-  fieldOfStudyId?: string;
+  facultyId?: string;
   majorId?: string;
   typeOfStudy?: string;
   startYear?: string;
@@ -28,10 +28,10 @@ export const getAllUsers = async (filters: GetAllUsersFilters = {}) => {
     { $unwind: { path: '$profile', preserveNullAndEmptyArrays: true } },
     {
       $lookup: {
-        from: 'fieldofstudies',
-        localField: 'profile.studentData.fieldOfStudyId',
+        from: 'faculties',
+        localField: 'profile.studentData.facultyId',
         foreignField: '_id',
-        as: 'studentFieldOfStudy',
+        as: 'studentFaculty',
       },
     },
     {
@@ -44,10 +44,10 @@ export const getAllUsers = async (filters: GetAllUsersFilters = {}) => {
     },
     {
       $lookup: {
-        from: 'fieldofstudies',
-        localField: 'profile.instructorData.fieldOfStudyId',
+        from: 'faculties',
+        localField: 'profile.instructorData.facultyId',
         foreignField: '_id',
-        as: 'instructorFieldOfStudy',
+        as: 'instructorFaculty',
       },
     },
     {
@@ -75,10 +75,10 @@ export const getAllUsers = async (filters: GetAllUsersFilters = {}) => {
               formOfStudy: '$profile.studentData.formOfStudy',
               typeOfStudy: '$profile.studentData.typeOfStudy',
               startYear: '$profile.studentData.startYear',
-              fieldOfStudyId: {
+              facultyId: {
                 $cond: {
-                  if: { $gt: [{ $size: '$studentFieldOfStudy' }, 0] },
-                  then: { $arrayElemAt: [{ $map: { input: '$studentFieldOfStudy', as: 'f', in: { _id: '$$f._id', name: '$$f.name' } } }, 0] },
+                  if: { $gt: [{ $size: '$studentFaculty' }, 0] },
+                  then: { $arrayElemAt: [{ $map: { input: '$studentFaculty', as: 'f', in: { _id: '$$f._id', name: '$$f.name' } } }, 0] },
                   else: '$$REMOVE',
                 },
               },
@@ -97,10 +97,10 @@ export const getAllUsers = async (filters: GetAllUsersFilters = {}) => {
           $cond: {
             if: { $ifNull: ['$profile.instructorData', false] },
             then: {
-              fieldOfStudyId: {
+              facultyId: {
                 $cond: {
-                  if: { $gt: [{ $size: '$instructorFieldOfStudy' }, 0] },
-                  then: { $arrayElemAt: [{ $map: { input: '$instructorFieldOfStudy', as: 'f', in: { _id: '$$f._id', name: '$$f.name' } } }, 0] },
+                  if: { $gt: [{ $size: '$instructorFaculty' }, 0] },
+                  then: { $arrayElemAt: [{ $map: { input: '$instructorFaculty', as: 'f', in: { _id: '$$f._id', name: '$$f.name' } } }, 0] },
                   else: '$$REMOVE',
                 },
               },
@@ -125,10 +125,10 @@ export const getAllUsers = async (filters: GetAllUsersFilters = {}) => {
     const id = u.instructorData;
     if (filters.typeOfStudy && sd?.typeOfStudy !== filters.typeOfStudy) return false;
     if (filters.startYear && sd?.startYear !== Number(filters.startYear)) return false;
-    if (filters.fieldOfStudyId) {
-      const fid = filters.fieldOfStudyId;
-      const studentMatch = sd?.fieldOfStudyId?._id?.toString() === fid;
-      const instructorMatch = id?.fieldOfStudyId?._id?.toString() === fid;
+    if (filters.facultyId) {
+      const fid = filters.facultyId;
+      const studentMatch = sd?.facultyId?._id?.toString() === fid;
+      const instructorMatch = id?.facultyId?._id?.toString() === fid;
       if (!studentMatch && !instructorMatch) return false;
     }
     if (filters.majorId) {

@@ -8,7 +8,7 @@ const addressSchema = z.object({
 
 const studentDataSchema = z.object({
   formOfStudy: z.enum(['full-time', 'part-time', 'online', 'hybrid']).optional(),
-  fieldOfStudyId: z.string().optional(),
+  facultyId: z.string().optional(),
   majorId: z.string().optional(),
   typeOfStudy: z.enum(['bachelor', 'master', 'phd', 'associate', 'certificate']).optional(),
   startYear: z.number().int().min(1900).max(2100).optional(),

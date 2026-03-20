@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 import * as profileService from './profile.service.js';
 import { Profile } from '../models/profile.model.js';
-import { FieldOfStudy } from '../models/field-of-study.model.js';
+import { Faculty } from '../models/faculty.model.js';
 import { Major } from '../models/major.model.js';
 
 vi.mock('../models/profile.model.js', () => ({
@@ -12,8 +12,8 @@ vi.mock('../models/profile.model.js', () => ({
   },
 }));
 
-vi.mock('../models/field-of-study.model.js', () => ({
-  FieldOfStudy: {
+vi.mock('../models/faculty.model.js', () => ({
+  Faculty: {
     find: vi.fn(),
     create: vi.fn(),
     findByIdAndDelete: vi.fn(),
@@ -79,50 +79,50 @@ describe('ProfileService', () => {
   });
 
   describe('vocabulary management', () => {
-    it('getAllFieldsOfStudy should call find with sort', async () => {
-      (FieldOfStudy.find as any).mockReturnValue({ sort: vi.fn().mockReturnValue({ lean: () => [] }) });
-      await profileService.getAllFieldsOfStudy();
-      expect(FieldOfStudy.find).toHaveBeenCalled();
+    it('getAllFaculties should call find with sort', async () => {
+      (Faculty.find as any).mockReturnValue({ sort: vi.fn().mockReturnValue({ lean: () => [] }) });
+      await profileService.getAllFaculties();
+      expect(Faculty.find).toHaveBeenCalled();
     });
 
-    it('createFieldOfStudy should call create', async () => {
-      (FieldOfStudy.create as any).mockResolvedValue({ name: 'Engineering' });
-      const result = await profileService.createFieldOfStudy('Engineering');
-      expect(FieldOfStudy.create).toHaveBeenCalledWith({ name: 'Engineering' });
+    it('createFaculty should call create', async () => {
+      (Faculty.create as any).mockResolvedValue({ name: 'Engineering' });
+      const result = await profileService.createFaculty('Engineering');
+      expect(Faculty.create).toHaveBeenCalledWith({ name: 'Engineering' });
       expect(result).toEqual({ name: 'Engineering' });
     });
 
-    it('deleteFieldOfStudy should throw if majors exist', async () => {
+    it('deleteFaculty should throw if majors exist', async () => {
       (Major.exists as any).mockResolvedValue(true);
-      await expect(profileService.deleteFieldOfStudy('someId')).rejects.toThrow(
+      await expect(profileService.deleteFaculty('someId')).rejects.toThrow(
         'Cannot delete: remove dependent majors first.',
       );
     });
 
-    it('deleteFieldOfStudy should delete when no majors exist', async () => {
+    it('deleteFaculty should delete when no majors exist', async () => {
       (Major.exists as any).mockResolvedValue(false);
-      (FieldOfStudy.findByIdAndDelete as any).mockResolvedValue({ name: 'Engineering' });
-      const result = await profileService.deleteFieldOfStudy('someId');
-      expect(FieldOfStudy.findByIdAndDelete).toHaveBeenCalledWith('someId');
+      (Faculty.findByIdAndDelete as any).mockResolvedValue({ name: 'Engineering' });
+      const result = await profileService.deleteFaculty('someId');
+      expect(Faculty.findByIdAndDelete).toHaveBeenCalledWith('someId');
       expect(result).toEqual({ name: 'Engineering' });
     });
 
     it('createMajor should call create with correct args', async () => {
-      (Major.create as any).mockResolvedValue({ name: 'Software Engineering', fieldOfStudyId: 'fid' });
+      (Major.create as any).mockResolvedValue({ name: 'Software Engineering', facultyId: 'fid' });
       const result = await profileService.createMajor('Software Engineering', 'fid');
-      expect(Major.create).toHaveBeenCalledWith({ name: 'Software Engineering', fieldOfStudyId: 'fid' });
-      expect(result).toEqual({ name: 'Software Engineering', fieldOfStudyId: 'fid' });
+      expect(Major.create).toHaveBeenCalledWith({ name: 'Software Engineering', facultyId: 'fid' });
+      expect(result).toEqual({ name: 'Software Engineering', facultyId: 'fid' });
     });
 
-    it('getMajorsByField with fieldOfStudyId should filter by field', async () => {
+    it('getMajorsByFaculty with facultyId should filter by faculty', async () => {
       (Major.find as any).mockReturnValue({ sort: vi.fn().mockReturnValue({ lean: () => [] }) });
-      await profileService.getMajorsByField('fid');
-      expect(Major.find).toHaveBeenCalledWith({ fieldOfStudyId: 'fid' });
+      await profileService.getMajorsByFaculty('fid');
+      expect(Major.find).toHaveBeenCalledWith({ facultyId: 'fid' });
     });
 
-    it('getMajorsByField without fieldOfStudyId should return all majors', async () => {
+    it('getMajorsByFaculty without facultyId should return all majors', async () => {
       (Major.find as any).mockReturnValue({ sort: vi.fn().mockReturnValue({ lean: () => [] }) });
-      await profileService.getMajorsByField();
+      await profileService.getMajorsByFaculty();
       expect(Major.find).toHaveBeenCalledWith({});
     });
   });

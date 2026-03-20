@@ -34,7 +34,7 @@ const makeUser = (overrides: Record<string, any> = {}) => ({
     formOfStudy: 'full-time',
     typeOfStudy: 'bachelor',
     startYear: 2024,
-    fieldOfStudyId: { _id: fid, name: 'Computer Science' },
+    facultyId: { _id: fid, name: 'Computer Science' },
     majorId: { _id: mid, name: 'Software Engineering' },
   },
   ...overrides,
@@ -95,18 +95,18 @@ describe('adminService.getAllUsers', () => {
     expect(result[0].studentData.startYear).toBe(2024);
   });
 
-  it('filters by fieldOfStudyId post-aggregation', async () => {
+  it('filters by facultyId post-aggregation', async () => {
     const otherId = new mongoose.Types.ObjectId();
     const users = [
       makeUser(),
-      makeUser({ studentData: { fieldOfStudyId: { _id: otherId, name: 'Physics' } } }),
+      makeUser({ studentData: { facultyId: { _id: otherId, name: 'Physics' } } }),
     ];
     (User.aggregate as any).mockResolvedValue(users);
 
-    const result = await adminService.getAllUsers({ fieldOfStudyId: fid.toString() });
+    const result = await adminService.getAllUsers({ facultyId: fid.toString() });
 
     expect(result).toHaveLength(1);
-    expect(result[0].studentData.fieldOfStudyId._id.toString()).toBe(fid.toString());
+    expect(result[0].studentData.facultyId._id.toString()).toBe(fid.toString());
   });
 
   it('filters by majorId post-aggregation', async () => {
@@ -142,15 +142,15 @@ describe('adminService.getAllUsers', () => {
     expect(result[0].role).toBe('STUDENT');
   });
 
-  it('fieldOfStudyId filter matches instructorData as well', async () => {
+  it('facultyId filter matches instructorData as well', async () => {
     const instructorUser = makeUser({
       role: 'INSTRUCTOR',
       studentData: undefined,
-      instructorData: { fieldOfStudyId: { _id: fid, name: 'Computer Science' } },
+      instructorData: { facultyId: { _id: fid, name: 'Computer Science' } },
     });
     (User.aggregate as any).mockResolvedValue([instructorUser]);
 
-    const result = await adminService.getAllUsers({ fieldOfStudyId: fid.toString() });
+    const result = await adminService.getAllUsers({ facultyId: fid.toString() });
 
     expect(result).toHaveLength(1);
     expect(result[0].role).toBe('INSTRUCTOR');

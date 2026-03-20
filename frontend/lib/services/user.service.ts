@@ -17,18 +17,18 @@ export interface ExtendedProfile {
   };
   studentData?: {
     formOfStudy?: FormOfStudy;
-    fieldOfStudyId?: string;
+    facultyId?: string;
     majorId?: string;
     typeOfStudy?: TypeOfStudy;
     startYear?: number;
   };
   instructorData?: {
-    fieldOfStudyId?: string;
+    facultyId?: string;
     majorId?: string;
   };
 }
 
-export interface FieldOfStudy {
+export interface Faculty {
   _id: string;
   name: string;
 }
@@ -36,7 +36,7 @@ export interface FieldOfStudy {
 export interface Major {
   _id: string;
   name: string;
-  fieldOfStudyId: string;
+  facultyId: string;
 }
 
 export interface CreateStudentPayload {
@@ -53,7 +53,7 @@ export interface CreateStudentPayload {
   picture?: string;
   studentData?: {
     formOfStudy?: FormOfStudy;
-    fieldOfStudyId?: string;
+    facultyId?: string;
     majorId?: string;
     typeOfStudy?: TypeOfStudy;
     startYear?: number;
@@ -81,27 +81,27 @@ export const userService = {
     return data.profile;
   },
 
-  // Vocabulary: Fields of Study
-  getFieldsOfStudy: async (): Promise<FieldOfStudy[]> => {
+  // Vocabulary: Faculties
+  getFaculties: async (): Promise<Faculty[]> => {
     const { data } = await axiosInstance.get(`${AUTH_BASE_URL}/api/admin/vocabulary/fields`);
     return data;
   },
-  createFieldOfStudy: async (name: string): Promise<FieldOfStudy> => {
+  createFaculty: async (name: string): Promise<Faculty> => {
     const { data } = await axiosInstance.post(`${AUTH_BASE_URL}/api/admin/vocabulary/fields`, { name });
     return data;
   },
-  deleteFieldOfStudy: async (id: string): Promise<void> => {
+  deleteFaculty: async (id: string): Promise<void> => {
     await axiosInstance.delete(`${AUTH_BASE_URL}/api/admin/vocabulary/fields/${id}`);
   },
 
   // Vocabulary: Majors
-  getMajors: async (fieldOfStudyId?: string): Promise<Major[]> => {
-    const params = fieldOfStudyId ? { fieldOfStudyId } : {};
+  getMajors: async (facultyId?: string): Promise<Major[]> => {
+    const params = facultyId ? { facultyId } : {};
     const { data } = await axiosInstance.get(`${AUTH_BASE_URL}/api/admin/vocabulary/majors`, { params });
     return data;
   },
-  createMajor: async (name: string, fieldOfStudyId: string): Promise<Major> => {
-    const { data } = await axiosInstance.post(`${AUTH_BASE_URL}/api/admin/vocabulary/majors`, { name, fieldOfStudyId });
+  createMajor: async (name: string, facultyId: string): Promise<Major> => {
+    const { data } = await axiosInstance.post(`${AUTH_BASE_URL}/api/admin/vocabulary/majors`, { name, facultyId });
     return data;
   },
   deleteMajor: async (id: string): Promise<void> => {

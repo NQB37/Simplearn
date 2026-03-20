@@ -1,5 +1,13 @@
 import axiosInstance from '@/api/axios.api';
-import { AcademicYear, Room, Subject, ClassModel, EligibleSubjectsResponse, Enrollment, MajorSubject } from '@/types/academics.type';
+import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, EligibleSubjectsResponse, Enrollment, MajorSubject, Semester, TypeOfStudy } from '@/types/academics.type';
+
+interface SubjectCurriculumFields {
+  majorId?: string;
+  studyYear?: number;
+  semester?: Semester;
+  isMandatory?: boolean;
+  typeOfStudy?: TypeOfStudy;
+}
 
 const ACADEMY_BASE_URL = process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL;
 
@@ -41,15 +49,15 @@ export const academyService = {
   },
 
   // Subjects
-  getSubjects: async (): Promise<Subject[]> => {
+  getSubjects: async (): Promise<SubjectWithCurriculum[]> => {
     const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/academy/subjects`);
     return data;
   },
-  createSubject: async (payload: Omit<Subject, '_id'>) => {
+  createSubject: async (payload: Omit<Subject, '_id'> & SubjectCurriculumFields) => {
     const { data } = await axiosInstance.post(`${ACADEMY_BASE_URL}/api/academy/subjects`, payload);
     return data;
   },
-  updateSubject: async (id: string, payload: Partial<Subject>) => {
+  updateSubject: async (id: string, payload: Partial<Subject> & SubjectCurriculumFields) => {
     const { data } = await axiosInstance.put(`${ACADEMY_BASE_URL}/api/academy/subjects/${id}`, payload);
     return data;
   },
