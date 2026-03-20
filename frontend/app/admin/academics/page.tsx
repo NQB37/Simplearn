@@ -7,7 +7,7 @@ import { SubjectsManager } from '@/components/features/academics/subjects-manage
 
 export default function AcademicsAdminPage() {
   return (
-    <div className='max-w-7xl mx-auto space-y-8'>
+    <div className='max-w-full mx-auto space-y-8'>
       <div className='flex flex-col md:flex-row md:items-center justify-between gap-4'>
         <div>
           <h1 className='text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50'>

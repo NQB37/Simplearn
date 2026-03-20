@@ -15,7 +15,7 @@ export default function AdminCatalogPage() {
     subjects.find((s) => s._id === id)?.name ?? id;
 
   return (
-    <div className='max-w-7xl mx-auto space-y-8'>
+    <div className='max-w-full mx-auto space-y-8'>
       <div>
         <h1 className='text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50'>
           Course Catalog
@@ -38,7 +38,9 @@ export default function AdminCatalogPage() {
           {isLoading ? (
             <p className='text-center py-12 text-slate-500'>Loading...</p>
           ) : courses.length === 0 ? (
-            <p className='text-center py-12 text-slate-500'>No courses found.</p>
+            <p className='text-center py-12 text-slate-500'>
+              No courses found.
+            </p>
           ) : (
             <div className='overflow-x-auto'>
               <table className='w-full text-sm text-left align-middle'>

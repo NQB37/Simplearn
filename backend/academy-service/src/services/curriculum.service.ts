@@ -2,8 +2,11 @@ import MajorSubject, { IMajorSubject } from '../models/major-subject.model.js';
 
 export const getCurriculumByMajor = async (
   majorId: string,
+  typeOfStudy?: string,
 ): Promise<IMajorSubject[]> => {
-  return MajorSubject.find({ majorId }).populate('subjectId').sort({ studyYear: 1, semester: 1 });
+  const filter: Record<string, string> = { majorId };
+  if (typeOfStudy) filter.typeOfStudy = typeOfStudy;
+  return MajorSubject.find(filter).populate('subjectId').sort({ studyYear: 1, semester: 1 });
 };
 
 export const addMajorSubject = async (data: {

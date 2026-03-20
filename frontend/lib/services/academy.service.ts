@@ -84,8 +84,9 @@ export const academyService = {
   },
 
   // Curriculum
-  getCurriculum: async (majorId: string): Promise<MajorSubject[]> => {
-    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/curriculum/${majorId}`);
+  getCurriculum: async (majorId: string, typeOfStudy?: string): Promise<MajorSubject[]> => {
+    const params = typeOfStudy ? { typeOfStudy } : {};
+    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/curriculum/${majorId}`, { params });
     return data;
   },
   addCurriculumEntry: async (payload: {

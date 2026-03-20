@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -41,6 +42,7 @@ export function AddSubjectModal() {
     name: '',
     code: '',
     credits: 3,
+    optional: false,
     facultyId: '',
     majorId: '',
     typeOfStudy: '' as TypeOfStudy | '',
@@ -84,6 +86,7 @@ export function AddSubjectModal() {
       name: subjectForm.name,
       code: subjectForm.code,
       credits: subjectForm.credits,
+      optional: subjectForm.optional,
       ...(subjectForm.majorId && { majorId: subjectForm.majorId }),
       ...(subjectForm.studyYear !== '' && {
         studyYear: subjectForm.studyYear as number,
@@ -99,6 +102,7 @@ export function AddSubjectModal() {
           name: '',
           code: '',
           credits: 3,
+          optional: false,
           facultyId: '',
           majorId: '',
           typeOfStudy: '',
@@ -198,6 +202,19 @@ export function AddSubjectModal() {
                   className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-600 h-9 text-sm focus-visible:ring-zinc-600'
                 />
               </div>
+            </div>
+            <div className='flex items-center gap-2 mt-3'>
+              <Checkbox
+                id='subject-optional'
+                checked={subjectForm.optional}
+                onCheckedChange={(checked) =>
+                  setSubjectForm({ ...subjectForm, optional: checked === true })
+                }
+                className='border-zinc-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600'
+              />
+              <Label htmlFor='subject-optional' className='text-xs text-zinc-400 cursor-pointer'>
+                Optional
+              </Label>
             </div>
           </div>
 

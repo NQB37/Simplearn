@@ -31,6 +31,7 @@ export interface Subject {
   name: string;
   code: string;
   credits: number;
+  optional?: boolean;
 }
 
 export interface SubjectWithCurriculum extends Subject {
@@ -81,6 +82,7 @@ export interface BulkSubjectRow {
   name: string;
   code: string;
   credits: number;
+  optional?: boolean;
   majorId?: string;
   typeOfStudy?: TypeOfStudy;
   studyYear?: number;

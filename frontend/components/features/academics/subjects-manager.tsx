@@ -137,6 +137,7 @@ export function SubjectsManager() {
                 <th className='px-4 py-3'>Code</th>
                 <th className='px-4 py-3'>Course Name</th>
                 <th className='px-4 py-3'>Credits</th>
+                <th className='px-4 py-3'>Optional</th>
                 <th className='px-4 py-3'>Faculty</th>
                 <th className='px-4 py-3'>Major</th>
                 <th className='px-4 py-3'>Year</th>
@@ -148,13 +149,13 @@ export function SubjectsManager() {
             <tbody className='divide-y divide-slate-100 dark:divide-slate-800/80'>
               {isLoading ? (
                 <tr>
-                  <td colSpan={9} className='p-4 text-center'>
+                  <td colSpan={10} className='p-4 text-center'>
                     Loading...
                   </td>
                 </tr>
               ) : filteredSubjects.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className='p-4 text-center'>
+                  <td colSpan={10} className='p-4 text-center'>
                     No subjects found.
                   </td>
                 </tr>
@@ -171,6 +172,9 @@ export function SubjectsManager() {
                       </td>
                       <td className='px-4 py-3 font-semibold'>{s.name}</td>
                       <td className='px-4 py-3'>{s.credits}</td>
+                      <td className='px-4 py-3'>
+                        {s.optional ? 'Yes' : 'No'}
+                      </td>
                       <td className='px-4 py-3'>
                         {entry?.majorId ? getFacultyName(entry.majorId) : '-'}
                       </td>

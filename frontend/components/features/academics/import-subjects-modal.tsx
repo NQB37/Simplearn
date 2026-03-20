@@ -2,12 +2,30 @@ import { useState, useRef, useMemo } from 'react';
 import Papa from 'papaparse';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Upload, FileText, X, CheckCircle, AlertCircle, AlertTriangle } from 'lucide-react';
+import {
+  Upload,
+  FileText,
+  X,
+  CheckCircle,
+  AlertCircle,
+  AlertTriangle,
+} from 'lucide-react';
 import { useBulkImportSubjects } from '@/hooks/use-academics';
 import { useFaculties, useMajors } from '@/hooks/use-user';
-import { BulkSubjectRow, BulkImportResult, TypeOfStudy, Semester } from '@/types/academics.type';
+import {
+  BulkSubjectRow,
+  BulkImportResult,
+  TypeOfStudy,
+  Semester,
+} from '@/types/academics.type';
 
-const VALID_TYPE_OF_STUDY: TypeOfStudy[] = ['bachelor', 'master', 'phd', 'associate', 'certificate'];
+const VALID_TYPE_OF_STUDY: TypeOfStudy[] = [
+  'bachelor',
+  'master',
+  'phd',
+  'associate',
+  'certificate',
+];
 const VALID_SEMESTERS: Semester[] = ['first', 'second', 'summer'];
 
 type RowStatus = 'valid' | 'invalid' | 'warning';
@@ -33,12 +51,14 @@ function validateAndResolve(
   const typeOfStudy = (raw.typeOfStudy ?? '').trim().toLowerCase();
   const studyYearStr = (raw.studyYear ?? '').trim();
   const semester = (raw.semester ?? '').trim().toLowerCase();
+  const optionalStr = (raw.optional ?? '').trim().toLowerCase();
 
   if (!name) errors.push('name is required');
   if (!code) errors.push('code is required');
 
   const credits = parseInt(creditsStr, 10);
-  if (!creditsStr || isNaN(credits) || credits < 1) errors.push('credits must be a positive integer');
+  if (!creditsStr || isNaN(credits))
+    errors.push('credits must be a positive integer');
 
   if (typeOfStudy && !VALID_TYPE_OF_STUDY.includes(typeOfStudy as TypeOfStudy))
     errors.push(`invalid typeOfStudy: ${typeOfStudy}`);
@@ -65,7 +85,9 @@ function validateAndResolve(
       warnings.push(`faculty "${facultyName}" not found`);
     } else if (majorName && !facultyMajors.has(majorName.toLowerCase())) {
       hasWarning = true;
-      warnings.push(`major "${majorName}" not found in faculty "${facultyName}"`);
+      warnings.push(
+        `major "${majorName}" not found in faculty "${facultyName}"`,
+      );
     }
   }
 
@@ -79,10 +101,13 @@ function validateAndResolve(
     }
   }
 
+  const optional = ['true', 'yes', '1'].includes(optionalStr);
+
   const resolved: BulkSubjectRow = {
     name,
     code,
     credits,
+    optional,
     ...(majorId && { majorId }),
     ...(typeOfStudy && { typeOfStudy: typeOfStudy as TypeOfStudy }),
     ...(studyYear && { studyYear }),
@@ -182,11 +207,7 @@ export function ImportSubjectsModal() {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogTrigger asChild>
-        <Button
-          size='sm'
-          variant='outline'
-          className='h-8 text-xs rounded-lg'
-        >
+        <Button size='sm' variant='outline' className='h-8 text-xs rounded-lg'>
           <Upload className='h-4 w-4 mr-1' /> Import CSV
         </Button>
       </DialogTrigger>
@@ -223,7 +244,8 @@ export function ImportSubjectsModal() {
               <div className='border-2 border-dashed border-zinc-700 rounded-lg p-8 text-center'>
                 <Upload className='h-8 w-8 text-zinc-500 mx-auto mb-3' />
                 <p className='text-sm text-zinc-400 mb-3'>
-                  Select a CSV file with columns: name, code, credits, facultyName, majorName, typeOfStudy, studyYear, semester
+                  Select a CSV file with columns: name, code, credits, optional,
+                  facultyName, majorName, typeOfStudy, studyYear, semester
                 </p>
                 <input
                   ref={fileRef}
@@ -252,7 +274,9 @@ export function ImportSubjectsModal() {
               {/* Summary */}
               <div className='flex gap-4 text-xs'>
                 <span className='text-green-400'>{counts.valid} valid</span>
-                <span className='text-yellow-400'>{counts.warning} warnings</span>
+                <span className='text-yellow-400'>
+                  {counts.warning} warnings
+                </span>
                 <span className='text-red-400'>{counts.invalid} invalid</span>
               </div>
 
@@ -261,14 +285,33 @@ export function ImportSubjectsModal() {
                 <table className='w-full text-xs'>
                   <thead className='bg-zinc-800 sticky top-0'>
                     <tr>
-                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>#</th>
-                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Status</th>
-                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Name</th>
-                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Code</th>
-                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Credits</th>
-                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Faculty</th>
-                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Major</th>
-                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Issues</th>
+                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                        #
+                      </th>
+                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                        Status
+                      </th>
+                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                        Name
+                      </th>
+                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                        Code
+                      </th>
+                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                        Credits
+                      </th>
+                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                        Optional
+                      </th>
+                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                        Faculty
+                      </th>
+                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                        Major
+                      </th>
+                      <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                        Issues
+                      </th>
                     </tr>
                   </thead>
                   <tbody className='divide-y divide-zinc-800'>
@@ -295,11 +338,24 @@ export function ImportSubjectsModal() {
                             <AlertCircle className='h-3.5 w-3.5 text-red-400' />
                           )}
                         </td>
-                        <td className='px-3 py-2 text-zinc-200'>{row.raw.name}</td>
-                        <td className='px-3 py-2 text-zinc-200'>{row.raw.code}</td>
-                        <td className='px-3 py-2 text-zinc-200'>{row.raw.credits}</td>
-                        <td className='px-3 py-2 text-zinc-200'>{row.raw.facultyName}</td>
-                        <td className='px-3 py-2 text-zinc-200'>{row.raw.majorName}</td>
+                        <td className='px-3 py-2 text-zinc-200'>
+                          {row.raw.name}
+                        </td>
+                        <td className='px-3 py-2 text-zinc-200'>
+                          {row.raw.code}
+                        </td>
+                        <td className='px-3 py-2 text-zinc-200'>
+                          {row.raw.credits}
+                        </td>
+                        <td className='px-3 py-2 text-zinc-200'>
+                          {row.raw.optional || 'No'}
+                        </td>
+                        <td className='px-3 py-2 text-zinc-200'>
+                          {row.raw.facultyName}
+                        </td>
+                        <td className='px-3 py-2 text-zinc-200'>
+                          {row.raw.majorName}
+                        </td>
                         <td className='px-3 py-2 text-zinc-400'>
                           {row.errors.join('; ')}
                         </td>
@@ -321,16 +377,22 @@ export function ImportSubjectsModal() {
               <div className='flex gap-6 text-sm'>
                 <div>
                   <span className='text-zinc-500'>Created: </span>
-                  <span className='text-green-400 font-medium'>{result.created}</span>
+                  <span className='text-green-400 font-medium'>
+                    {result.created}
+                  </span>
                 </div>
                 <div>
                   <span className='text-zinc-500'>Skipped: </span>
-                  <span className='text-yellow-400 font-medium'>{result.skipped}</span>
+                  <span className='text-yellow-400 font-medium'>
+                    {result.skipped}
+                  </span>
                 </div>
                 {result.errors.length > 0 && (
                   <div>
                     <span className='text-zinc-500'>Errors: </span>
-                    <span className='text-red-400 font-medium'>{result.errors.length}</span>
+                    <span className='text-red-400 font-medium'>
+                      {result.errors.length}
+                    </span>
                   </div>
                 )}
               </div>
@@ -340,17 +402,27 @@ export function ImportSubjectsModal() {
                   <table className='w-full text-xs'>
                     <thead className='bg-zinc-800 sticky top-0'>
                       <tr>
-                        <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Row</th>
-                        <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Code</th>
-                        <th className='px-3 py-2 text-left text-zinc-400 font-medium'>Reason</th>
+                        <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                          Row
+                        </th>
+                        <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                          Code
+                        </th>
+                        <th className='px-3 py-2 text-left text-zinc-400 font-medium'>
+                          Reason
+                        </th>
                       </tr>
                     </thead>
                     <tbody className='divide-y divide-zinc-800'>
                       {result.errors.map((err, i) => (
                         <tr key={i}>
                           <td className='px-3 py-2 text-zinc-500'>{err.row}</td>
-                          <td className='px-3 py-2 text-zinc-200'>{err.code}</td>
-                          <td className='px-3 py-2 text-zinc-400'>{err.reason}</td>
+                          <td className='px-3 py-2 text-zinc-200'>
+                            {err.code}
+                          </td>
+                          <td className='px-3 py-2 text-zinc-400'>
+                            {err.reason}
+                          </td>
                         </tr>
                       ))}
                     </tbody>

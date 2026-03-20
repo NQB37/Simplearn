@@ -52,10 +52,10 @@ export function useAcademicYearMutations() {
   return { createMutation, updateMutation, deleteMutation };
 }
 
-export function useCurriculum(majorId: string | null) {
+export function useCurriculum(majorId: string | null, typeOfStudy?: string | null) {
   return useQuery({
-    queryKey: ['curriculum', majorId],
-    queryFn: () => academyService.getCurriculum(majorId!),
+    queryKey: ['curriculum', majorId, typeOfStudy],
+    queryFn: () => academyService.getCurriculum(majorId!, typeOfStudy || undefined),
     enabled: !!majorId,
   });
 }

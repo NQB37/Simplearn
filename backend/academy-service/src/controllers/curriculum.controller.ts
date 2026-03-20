@@ -3,7 +3,8 @@ import * as curriculumService from '../services/curriculum.service.js';
 
 export const getCurriculum = async (req: Request, res: Response) => {
   try {
-    const entries = await curriculumService.getCurriculumByMajor(req.params.majorId as string);
+    const typeOfStudy = req.query.typeOfStudy as string | undefined;
+    const entries = await curriculumService.getCurriculumByMajor(req.params.majorId as string, typeOfStudy);
     res.json(entries);
   } catch (err: any) {
     console.error('Error fetching curriculum', err);

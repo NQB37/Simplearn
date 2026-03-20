@@ -96,6 +96,7 @@ export interface BulkSubjectRow {
   name: string;
   code: string;
   credits: number;
+  optional?: boolean;
   majorId?: string;
   typeOfStudy?: 'bachelor' | 'master' | 'phd' | 'associate' | 'certificate';
   studyYear?: number;
@@ -137,7 +138,7 @@ export const bulkCreateSubjects = async (rows: BulkSubjectRow[]): Promise<BulkIm
         ? { majorId: row.majorId, studyYear: row.studyYear, semester: row.semester, typeOfStudy: row.typeOfStudy }
         : undefined;
 
-      await createSubject({ name: row.name, code: row.code, credits: row.credits }, curriculum);
+      await createSubject({ name: row.name, code: row.code, credits: row.credits, optional: row.optional ?? false }, curriculum);
       existingCodes.add(row.code);
       created++;
     } catch (err: any) {
