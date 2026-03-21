@@ -14,4 +14,3 @@ pids
 *.pid
 *.seed
 *.pid.lock
-.planning/

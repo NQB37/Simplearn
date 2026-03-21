@@ -1,7 +1,5 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { ClassesManager } from '@/components/features/academics/classes-manager';
-import { Plus } from 'lucide-react';
+import { CreateClassModal } from '@/components/features/academics/create-class-modal';
 
 export default function ClassesAdminPage() {
   return (
@@ -15,12 +13,7 @@ export default function ClassesAdminPage() {
             Create and manage class schedules for the semester.
           </p>
         </div>
-        <Link href='/admin/classes/create'>
-          <Button className='bg-blue-600 hover:bg-blue-700 text-white font-bold'>
-            <Plus className='h-4 w-4 mr-2' />
-            Create Class
-          </Button>
-        </Link>
+        <CreateClassModal />
       </div>
       <ClassesManager />
     </div>

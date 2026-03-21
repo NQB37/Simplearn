@@ -25,22 +25,30 @@ import {
 } from '@/components/ui/select';
 import { TimeGrid } from './time-grid';
 import { useSubjects, useRooms, useAcademicYears, useRoomAvailabilityGrid, useBusyInstructorIds, useClassMutations } from '@/hooks/use-academics';
-import { useInstructors } from '@/hooks/use-user';
+import { useInstructors, useFaculties, useMajors } from '@/hooks/use-user';
 
 const classFormSchema = z.object({
   code: z.string().min(1, 'Class code is required'),
   subjectId: z.string().min(1, 'Subject is required'),
   roomId: z.string().min(1, 'Room is required'),
   academicYearId: z.string().min(1, 'Academic year is required'),
-  instructorId: z.string().min(1, 'Instructor is required'),
+  instructorId: z.string().optional(),
   maxCapacity: z.number().min(1, 'Max capacity must be at least 1'),
 });
 
 type ClassFormValues = z.infer<typeof classFormSchema>;
 
-export function ClassForm() {
+const ALL = '__all__';
+
+interface ClassFormProps {
+  onSuccess?: () => void;
+}
+
+export function ClassForm({ onSuccess }: ClassFormProps = {}) {
   const router = useRouter();
   const [selectedSlots, setSelectedSlots] = useState<Array<[number, number]>>([]);
+  const [filterFacultyId, setFilterFacultyId] = useState(ALL);
+  const [filterMajorId, setFilterMajorId] = useState(ALL);
 
   const form = useForm<ClassFormValues>({
     resolver: zodResolver(classFormSchema),
@@ -61,6 +69,23 @@ export function ClassForm() {
   const { data: rooms = [], isLoading: roomsLoading } = useRooms();
   const { data: academicYears = [], isLoading: yearsLoading } = useAcademicYears();
   const { data: instructors = [], isLoading: instructorsLoading } = useInstructors();
+  const { data: faculties = [] } = useFaculties();
+  const { data: allMajors = [] } = useMajors();
+
+  const availableMajors = filterFacultyId === ALL
+    ? allMajors
+    : allMajors.filter((m) => m.facultyId === filterFacultyId);
+
+  const filteredSubjects = useMemo(() => {
+    if (filterMajorId !== ALL) {
+      return subjects.filter((s) => s.curriculum?.[0]?.majorId === filterMajorId);
+    }
+    if (filterFacultyId !== ALL) {
+      const facultyMajorIds = allMajors.filter((m) => m.facultyId === filterFacultyId).map((m) => m._id);
+      return subjects.filter((s) => facultyMajorIds.includes(s.curriculum?.[0]?.majorId ?? ''));
+    }
+    return subjects;
+  }, [subjects, filterFacultyId, filterMajorId, allMajors]);
 
   const { data: roomGrid, isLoading: gridLoading } = useRoomAvailabilityGrid(
     watchedRoomId || null,
@@ -106,15 +131,18 @@ export function ClassForm() {
       return;
     }
 
+    const payload: any = { ...values, schedules: schedulePayload, status: 'active' };
+    if (!payload.instructorId) delete payload.instructorId;
+
     createMutation.mutate(
-      {
-        ...values,
-        schedules: schedulePayload,
-        status: 'active',
-      } as any,
+      payload,
       {
         onSuccess: () => {
-          router.push('/admin/classes');
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            router.push('/admin/classes');
+          }
         },
       },
     );
@@ -187,6 +215,47 @@ export function ClassForm() {
                 </FormItem>
               )}
             />
+            <FormItem>
+              <FormLabel>Faculty</FormLabel>
+              <Select
+                value={filterFacultyId}
+                onValueChange={(val) => {
+                  setFilterFacultyId(val);
+                  setFilterMajorId(ALL);
+                  form.setValue('subjectId', '');
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder='All faculties' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>All faculties</SelectItem>
+                  {faculties.map((f) => (
+                    <SelectItem key={f._id} value={f._id}>{f.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormItem>
+            <FormItem>
+              <FormLabel>Major</FormLabel>
+              <Select
+                value={filterMajorId}
+                onValueChange={(val) => {
+                  setFilterMajorId(val);
+                  form.setValue('subjectId', '');
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder='All majors' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>All majors</SelectItem>
+                  {availableMajors.map((m) => (
+                    <SelectItem key={m._id} value={m._id}>{m.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormItem>
             <FormField
               control={form.control}
               name='subjectId'
@@ -200,7 +269,7 @@ export function ClassForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {subjects.map((subject) => (
+                      {filteredSubjects.map((subject) => (
                         <SelectItem key={subject._id} value={subject._id}>
                           {subject.name} ({subject.code})
                         </SelectItem>
@@ -272,7 +341,7 @@ export function ClassForm() {
         {selectedSlots.length > 0 && (
           <div className='space-y-4'>
             <h3 className='text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>
-              Step 3 — Assign Instructor
+              Step 3 — Assign Instructor <span className='normal-case font-normal text-slate-400'>(Optional)</span>
             </h3>
             <FormField
               control={form.control}

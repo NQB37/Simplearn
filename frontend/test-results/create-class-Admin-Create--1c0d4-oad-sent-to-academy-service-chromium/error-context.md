@@ -1,0 +1,77 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - heading "Admin Console" [level=2] [ref=e6]
+          - navigation [ref=e7]:
+            - link "Platform Analytics" [ref=e8] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=e9]
+              - text: Platform Analytics
+            - link "User Management" [ref=e14] [cursor=pointer]:
+              - /url: /admin/users
+              - img [ref=e15]
+              - text: User Management
+            - link "Academics" [ref=e20] [cursor=pointer]:
+              - /url: /admin/academics
+              - img [ref=e21]
+              - text: Academics
+            - link "Curriculum" [ref=e24] [cursor=pointer]:
+              - /url: /admin/curriculum
+              - img [ref=e25]
+              - text: Curriculum
+            - link "Vocabulary" [ref=e28] [cursor=pointer]:
+              - /url: /admin/vocabulary
+              - img [ref=e29]
+              - text: Vocabulary
+            - link "Classes" [ref=e32] [cursor=pointer]:
+              - /url: /admin/classes
+              - img [ref=e33]
+              - text: Classes
+            - link "Courses" [ref=e35] [cursor=pointer]:
+              - /url: /admin/catalog
+              - img [ref=e36]
+              - text: Courses
+        - generic [ref=e38]:
+          - button "E2E Admin" [ref=e39]:
+            - img "E2E Admin" [ref=e41]
+          - button "Toggle theme" [ref=e42]:
+            - img
+            - generic [ref=e43]: Toggle theme
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - heading "Class Management" [level=1] [ref=e48]
+            - paragraph [ref=e49]: Create and manage class schedules for the semester.
+          - link "Create Class" [ref=e50] [cursor=pointer]:
+            - /url: /admin/classes/create
+            - button "Create Class" [ref=e51]:
+              - img
+              - text: Create Class
+        - generic [ref=e52]:
+          - generic [ref=e54]: Active Classes
+          - table [ref=e57]:
+            - rowgroup [ref=e58]:
+              - row "Class Code Subject Room Year Max Cap Actions" [ref=e59]:
+                - columnheader "Class Code" [ref=e60]
+                - columnheader "Subject" [ref=e61]
+                - columnheader "Room" [ref=e62]
+                - columnheader "Year" [ref=e63]
+                - columnheader "Max Cap" [ref=e64]
+                - columnheader "Actions" [ref=e65]
+            - rowgroup [ref=e66]:
+              - row "Loading..." [ref=e67]:
+                - cell "Loading..." [ref=e68]
+  - button "Open Next.js Dev Tools" [ref=e74] [cursor=pointer]:
+    - img [ref=e75]
+  - alert [ref=e78]
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e79]:
+        - img [ref=e81]
+        - generic [ref=e85]: Class created successfully
+```

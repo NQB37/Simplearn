@@ -5,7 +5,7 @@ export interface IClass extends Document {
   roomId: mongoose.Types.ObjectId;
   schedules: Array<{ dayOfWeek: number; shiftId: number }>;
   subjectId: mongoose.Types.ObjectId;
-  instructorId: mongoose.Types.ObjectId;
+  instructorId?: mongoose.Types.ObjectId;
   academicYearId: mongoose.Types.ObjectId;
   maxCapacity: number;
   status: 'active' | 'inactive' | 'archived';
@@ -27,7 +27,7 @@ const ClassSchema: Schema = new Schema(
     instructorId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
     },
     academicYearId: {
       type: Schema.Types.ObjectId,

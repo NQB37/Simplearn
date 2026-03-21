@@ -2,9 +2,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useClasses } from '@/hooks/use-academics';
-import { AddClassModal } from './add-class-modal';
 import { EditClassModal } from './edit-class-modal';
 import { DeleteClassModal } from './delete-class-modal';
+import { ClassScheduleModal } from './class-schedule-modal';
 import { Subject, Room, AcademicYear } from '@/types/academics.type';
 
 export function ClassesManager() {
@@ -14,7 +14,6 @@ export function ClassesManager() {
     <Card className='rounded-2xl shadow-sm border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900'>
       <CardHeader className='pb-4 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between'>
         <CardTitle className='text-lg font-bold'>Active Classes</CardTitle>
-        <AddClassModal />
       </CardHeader>
       <CardContent className='p-0'>
         <div className='overflow-x-auto'>
@@ -54,20 +53,21 @@ export function ClassesManager() {
                     <td className='px-4 py-3 font-semibold'>
                       {typeof c.subjectId === 'string'
                         ? c.subjectId
-                        : (c.subjectId as Subject).name}
+                        : (c.subjectId as Subject)?.name}
                     </td>
                     <td className='px-4 py-3 font-medium text-slate-500'>
                       {typeof c.roomId === 'string'
                         ? c.roomId
-                        : (c.roomId as Room).name}
+                        : (c.roomId as Room)?.name}
                     </td>
                     <td className='px-4 py-3 text-slate-500'>
                       {typeof c.academicYearId === 'string'
                         ? c.academicYearId
-                        : (c.academicYearId as AcademicYear).name}
+                        : (c.academicYearId as AcademicYear)?.name}
                     </td>
                     <td className='px-4 py-3'>{c.maxCapacity}</td>
                     <td className='px-4 py-3 text-right space-x-2'>
+                      <ClassScheduleModal classData={c} />
                       <EditClassModal classData={c} />
                       <DeleteClassModal classData={c} />
                     </td>

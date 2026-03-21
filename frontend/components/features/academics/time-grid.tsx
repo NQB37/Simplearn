@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { Fragment, useCallback, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 export interface ShiftDefinition {
@@ -122,10 +122,9 @@ export function TimeGrid({
 
         {/* Shift rows */}
         {shifts.map((shift) => (
-          <>
+          <Fragment key={shift.shiftId}>
             {/* Shift label */}
             <div
-              key={`label-${shift.shiftId}`}
               className='p-2 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-b border-r border-slate-200 dark:border-slate-700 last:border-b-0'
             >
               <div className='font-medium'>Shift {shift.shiftId}</div>
@@ -166,7 +165,7 @@ export function TimeGrid({
                 </div>
               );
             })}
-          </>
+          </Fragment>
         ))}
       </div>
     </div>
