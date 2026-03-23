@@ -23,6 +23,18 @@ export const getEligibleSubjects = async (req: Request, res: Response) => {
   }
 };
 
+export const enrollStudent = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id ?? req.user?.userId;
+    const { classId } = req.body;
+    const enrollment = await enrollmentService.enrollStudent(userId, classId);
+    res.status(201).json(enrollment);
+  } catch (err: any) {
+    console.error('Error enrolling student', err);
+    res.status(err.statusCode ?? 500).json({ error: err.message, conflicts: err.conflicts });
+  }
+};
+
 export const bulkEnroll = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id ?? req.user?.userId;
