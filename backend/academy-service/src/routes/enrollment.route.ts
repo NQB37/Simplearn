@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import {
   getEligibleSubjects,
+  getClassCatalog,
   bulkEnroll,
   getMyEnrollments,
   enrollStudent,
@@ -46,6 +47,14 @@ router.get(
   requireAuth(JWT_SECRET),
   requireRole(['student'], JWT_SECRET),
   getEligibleSubjects,
+);
+
+// GET /api/v1/enrollments/catalog — active classes for the student's eligible subjects
+router.get(
+  '/catalog',
+  requireAuth(JWT_SECRET),
+  requireRole(['student'], JWT_SECRET),
+  getClassCatalog,
 );
 
 // POST /api/v1/enrollments — enroll in a class by classId

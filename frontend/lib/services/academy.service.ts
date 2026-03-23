@@ -1,5 +1,5 @@
 import axiosInstance from '@/api/axios.api';
-import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, EligibleSubjectsResponse, Enrollment, MajorSubject, Semester, TypeOfStudy, BulkSubjectRow, BulkImportResult, RoomGrid } from '@/types/academics.type';
+import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, ClassCatalogResponse, EligibleSubjectsResponse, Enrollment, MajorSubject, Semester, TypeOfStudy, BulkSubjectRow, BulkImportResult, RoomGrid } from '@/types/academics.type';
 
 interface SubjectCurriculumFields {
   majorId?: string;
@@ -74,6 +74,13 @@ export const academyService = {
   getEligibleSubjects: async (): Promise<EligibleSubjectsResponse> => {
     const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/enrollments/eligible`);
     return data;
+  },
+  getClassCatalog: async (): Promise<ClassCatalogResponse> => {
+    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/enrollments/catalog`);
+    return data;
+  },
+  enrollInClass: async (classId: string): Promise<void> => {
+    await axiosInstance.post(`${ACADEMY_BASE_URL}/api/v1/enrollments`, { classId });
   },
   bulkEnroll: async (subjectIds: string[], academicYearId: string): Promise<void> => {
     await axiosInstance.post(`${ACADEMY_BASE_URL}/api/v1/enrollments/bulk`, { subjectIds, academicYearId });

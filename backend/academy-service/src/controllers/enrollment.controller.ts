@@ -23,6 +23,17 @@ export const getEligibleSubjects = async (req: Request, res: Response) => {
   }
 };
 
+export const getClassCatalog = async (req: Request, res: Response) => {
+  try {
+    const token = req.headers['authorization']!.split(' ')[1];
+    const result = await enrollmentService.getClassCatalog(token);
+    res.json(result);
+  } catch (err: any) {
+    console.error('Error fetching class catalog', err);
+    res.status(err.statusCode ?? 500).json({ error: err.message });
+  }
+};
+
 export const enrollStudent = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id ?? req.user?.userId;

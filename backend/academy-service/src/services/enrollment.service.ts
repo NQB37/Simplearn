@@ -108,6 +108,48 @@ export const enrollStudent = async (userId: string, classId: string) => {
   }
 };
 
+export const getClassCatalog = async (token: string) => {
+  const activeYear = await AcademicYear.findOne({ isActive: true });
+  if (!activeYear) {
+    const err: any = new Error('No active academic year found');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const profile = await fetchStudentProfile(token);
+  const studentData = profile?.studentData;
+  const majorId = studentData?.majorId;
+  const startYear = studentData?.startYear;
+
+  if (!majorId || !startYear) {
+    const err: any = new Error('Student profile missing majorId or startYear');
+    err.statusCode = 422;
+    throw err;
+  }
+
+  const currentYear = activeYear.startDate.getFullYear() - startYear + 1;
+
+  const entries = await MajorSubject.find({
+    majorId,
+    studyYear: { $lte: currentYear },
+    semester: activeYear.semester,
+  }).select('subjectId isMandatory').lean();
+
+  const subjectIds = entries.map((e) => e.subjectId);
+
+  const classes = await Class.find({
+    subjectId: { $in: subjectIds },
+    academicYearId: activeYear._id,
+    status: 'active',
+  }).populate('subjectId roomId academicYearId').lean();
+
+  return {
+    enrollmentDeadline: activeYear.enrollmentDeadline ?? null,
+    academicYearId: activeYear._id,
+    classes,
+  };
+};
+
 export const bulkEnroll = async (
   userId: string,
   subjectIds: string[],
