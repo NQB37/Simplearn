@@ -20,7 +20,7 @@ export default function SchedulePage() {
   }, []);
 
   return (
-    <div className='max-w-5xl mx-auto py-8 px-4 space-y-6'>
+    <div className='container mx-auto py-8 px-4 space-y-6'>
       <div>
         <h1 className='text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50'>
           Class Schedule

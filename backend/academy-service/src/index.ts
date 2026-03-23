@@ -12,18 +12,9 @@ import enrollmentRoutes from './routes/enrollment.route.js';
 import Shift from './models/shift.model.js';
 
 import dns from 'node:dns/promises';
+import { SHIFTS } from './constants/shifts.js';
 
 dns.setServers(['8.8.8.8', '8.8.4.4']);
-
-const SHIFTS = [
-  { shiftId: 1, startTime: '07:15', endTime: '08:45' },
-  { shiftId: 2, startTime: '09:00', endTime: '10:30' },
-  { shiftId: 3, startTime: '10:45', endTime: '12:15' },
-  { shiftId: 4, startTime: '12:30', endTime: '14:00' },
-  { shiftId: 5, startTime: '14:15', endTime: '15:45' },
-  { shiftId: 6, startTime: '16:00', endTime: '17:30' },
-  { shiftId: 7, startTime: '17:45', endTime: '19:15' },
-];
 
 async function seedShifts() {
   const count = await Shift.countDocuments();
@@ -54,8 +45,8 @@ app.use('/api/academy', academyRoutes);
 app.use('/api/academy/rooms', roomRoutes);
 app.use('/api/academy/classes', classRoutes);
 app.use('/api/academy/subjects', subjectRoutes);
-app.use('/api/v1/curriculum', curriculumRoutes);
-app.use('/api/v1/enrollments', enrollmentRoutes);
+app.use('/api/academy/curriculum', curriculumRoutes);
+app.use('/api/academy/enrollments', enrollmentRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Academy Service is running' });

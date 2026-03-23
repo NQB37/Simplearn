@@ -27,11 +27,11 @@
 
 ### Enrollment & Schedule (Student)
 
-- [ ] **ENRL-01**: Students can browse a catalog of available Classes matching their Major/Faculty.
-- [ ] **ENRL-02**: System enforces a hard capacity limit based on Room size; full classes are disabled.
-- [ ] **ENRL-03**: Student can only enroll in one Class per Subject per semester.
-- [ ] **ENRL-04**: System prevents Student schedule conflicts (cannot enroll in two classes during the same shift).
-- [ ] **SCHED-01**: Student can view their visual schedule of enrolled classes.
+- [x] **ENRL-01**: Students can browse a catalog of available Classes matching their Major/Faculty.
+- [x] **ENRL-02**: System enforces a hard capacity limit based on Room size; full classes are disabled.
+- [x] **ENRL-03**: Student can only enroll in one Class per Subject per semester.
+- [x] **ENRL-04**: System prevents Student schedule conflicts (cannot enroll in two classes during the same shift).
+- [x] **SCHED-01**: Student can view their visual schedule of enrolled classes.
 
 ### Assignments
 

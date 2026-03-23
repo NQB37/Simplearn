@@ -12,7 +12,10 @@ export default function EnrollmentPage() {
   useEffect(() => {
     if (!catalog) return;
 
-    if (catalog.enrollmentDeadline && new Date() > new Date(catalog.enrollmentDeadline)) {
+    if (
+      catalog.enrollmentDeadline &&
+      new Date() > new Date(catalog.enrollmentDeadline)
+    ) {
       router.replace('/student/study-plan');
     }
   }, [catalog, router]);
@@ -26,27 +29,28 @@ export default function EnrollmentPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto py-12 text-center text-slate-500">
+      <div className='max-w-2xl mx-auto py-12 text-center text-slate-500'>
         Loading...
       </div>
     );
   }
 
   const deadlinePassed =
-    catalog?.enrollmentDeadline && new Date() > new Date(catalog.enrollmentDeadline);
+    catalog?.enrollmentDeadline &&
+    new Date() > new Date(catalog.enrollmentDeadline);
 
   if (deadlinePassed) {
     return null;
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4 space-y-6">
+    <div className='container mx-auto py-8 px-4 space-y-6'>
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
+        <h1 className='text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50'>
           Enrollment
         </h1>
         {catalog?.enrollmentDeadline && (
-          <p className="text-sm font-medium text-slate-500 mt-1">
+          <p className='text-sm font-medium text-slate-500 mt-1'>
             Deadline:{' '}
             {new Date(catalog.enrollmentDeadline).toLocaleDateString('en-US', {
               year: 'numeric',

@@ -13,7 +13,7 @@ import { PasswordForm } from '@/components/features/profile/password-form';
 
 export default function ProfilePage() {
   return (
-    <div className='space-y-6'>
+    <div className='container mx-auto py-8 px-4 space-y-6'>
       <div>
         <h3 className='text-2xl font-bold tracking-tight'>Profile</h3>
         <p className='text-muted-foreground'>

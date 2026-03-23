@@ -32,7 +32,9 @@ export default function StudyPlanPage() {
 
       <Card className='rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm'>
         <CardHeader className='border-b border-slate-100 dark:border-slate-800'>
-          <CardTitle className='text-base font-bold'>Enrolled Subjects</CardTitle>
+          <CardTitle className='text-base font-bold'>
+            Enrolled Subjects
+          </CardTitle>
         </CardHeader>
         <CardContent className='p-0'>
           {loading ? (

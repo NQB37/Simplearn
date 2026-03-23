@@ -4,7 +4,8 @@ import Enrollment from '../models/enrollment.model.js';
 import Class from '../models/class.model.js';
 import { checkStudentConflicts } from './conflict-detection.service.js';
 
-const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:8001';
+const USER_SERVICE_URL =
+  process.env.USER_SERVICE_URL || 'http://localhost:8001';
 
 async function fetchStudentProfile(token: string) {
   const res = await fetch(`${USER_SERVICE_URL}/profile/extended`, {
@@ -52,7 +53,10 @@ export const getEligibleSubjects = async (token: string) => {
 
 export const getMyEnrollments = async (userId: string) => {
   const enrollments = await Enrollment.find({ userId })
-    .populate({ path: 'classId', populate: [{ path: 'roomId' }, { path: 'subjectId' }] })
+    .populate({
+      path: 'classId',
+      populate: [{ path: 'roomId' }, { path: 'subjectId' }],
+    })
     .populate('academicYearId');
   return enrollments;
 };
@@ -69,15 +73,24 @@ export const enrollStudent = async (userId: string, classId: string) => {
   // Check for shift conflicts
   const conflictResult = await checkStudentConflicts(userId, classId);
   if (conflictResult.hasConflict) {
-    const err: any = new Error('Schedule conflict: student is already enrolled in a class at the same time');
+    const err: any = new Error(
+      'Schedule conflict: student is already enrolled in a class at the same time',
+    );
     err.statusCode = 409;
     err.conflicts = conflictResult.conflicts;
     throw err;
   }
 
-  // Atomic capacity check: increment currentEnrollments only if under maxCapacity
+  // Atomic capacity check: increment currentEnrollments only if under maxCapacity.
+  // Also match documents where currentEnrollments is missing (treated as 0).
   const updated = await Class.findOneAndUpdate(
-    { _id: classId, currentEnrollments: { $lt: cls.maxCapacity } },
+    {
+      _id: classId,
+      $or: [
+        { currentEnrollments: { $lt: cls.maxCapacity } },
+        { currentEnrollments: { $exists: false } },
+      ],
+    },
     { $inc: { currentEnrollments: 1 } },
     { new: true },
   );
@@ -98,9 +111,13 @@ export const enrollStudent = async (userId: string, classId: string) => {
     return enrollment;
   } catch (err: any) {
     // Roll back capacity increment if enrollment creation fails (e.g. duplicate)
-    await Class.findByIdAndUpdate(classId, { $inc: { currentEnrollments: -1 } });
+    await Class.findByIdAndUpdate(classId, {
+      $inc: { currentEnrollments: -1 },
+    });
     if (err.code === 11000) {
-      const conflict: any = new Error('Already enrolled in this subject for the current academic year');
+      const conflict: any = new Error(
+        'Already enrolled in this subject for the current academic year',
+      );
       conflict.statusCode = 409;
       throw conflict;
     }
@@ -133,7 +150,9 @@ export const getClassCatalog = async (token: string) => {
     majorId,
     studyYear: { $lte: currentYear },
     semester: activeYear.semester,
-  }).select('subjectId isMandatory').lean();
+  })
+    .select('subjectId isMandatory')
+    .lean();
 
   const subjectIds = entries.map((e) => e.subjectId);
 
@@ -141,7 +160,9 @@ export const getClassCatalog = async (token: string) => {
     subjectId: { $in: subjectIds },
     academicYearId: activeYear._id,
     status: 'active',
-  }).populate('subjectId roomId academicYearId').lean();
+  })
+    .populate('subjectId roomId academicYearId')
+    .lean();
 
   return {
     enrollmentDeadline: activeYear.enrollmentDeadline ?? null,
@@ -162,7 +183,10 @@ export const bulkEnroll = async (
     throw err;
   }
 
-  if (activeYear.enrollmentDeadline && new Date() > activeYear.enrollmentDeadline) {
+  if (
+    activeYear.enrollmentDeadline &&
+    new Date() > activeYear.enrollmentDeadline
+  ) {
     const err: any = new Error('Enrollment period has ended');
     err.statusCode = 400;
     throw err;
@@ -170,7 +194,11 @@ export const bulkEnroll = async (
 
   await Enrollment.deleteMany({ userId, academicYearId });
 
-  const docs = subjectIds.map((subjectId) => ({ userId, subjectId, academicYearId }));
+  const docs = subjectIds.map((subjectId) => ({
+    userId,
+    subjectId,
+    academicYearId,
+  }));
   const inserted = await Enrollment.insertMany(docs);
 
   return inserted;

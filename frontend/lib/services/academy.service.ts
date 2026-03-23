@@ -1,5 +1,20 @@
 import axiosInstance from '@/api/axios.api';
-import { AcademicYear, Room, Subject, SubjectWithCurriculum, ClassModel, ClassCatalogResponse, EligibleSubjectsResponse, Enrollment, MajorSubject, Semester, TypeOfStudy, BulkSubjectRow, BulkImportResult, RoomGrid } from '@/types/academics.type';
+import {
+  AcademicYear,
+  Room,
+  Subject,
+  SubjectWithCurriculum,
+  ClassModel,
+  ClassCatalogResponse,
+  EligibleSubjectsResponse,
+  Enrollment,
+  MajorSubject,
+  Semester,
+  TypeOfStudy,
+  BulkSubjectRow,
+  BulkImportResult,
+  RoomGrid,
+} from '@/types/academics.type';
 
 interface SubjectCurriculumFields {
   majorId?: string;
@@ -14,86 +29,146 @@ const ACADEMY_BASE_URL = process.env.NEXT_PUBLIC_ACADEMY_SERVICE_URL;
 export const academyService = {
   // Academic Years
   getAcademicYears: async (): Promise<AcademicYear[]> => {
-    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/academy/academic-years`);
+    const { data } = await axiosInstance.get(
+      `${ACADEMY_BASE_URL}/api/academy/academic-years`,
+    );
     return data;
   },
   createAcademicYear: async (payload: Omit<AcademicYear, '_id'>) => {
-    const { data } = await axiosInstance.post(`${ACADEMY_BASE_URL}/api/academy/academic-years`, payload);
+    const { data } = await axiosInstance.post(
+      `${ACADEMY_BASE_URL}/api/academy/academic-years`,
+      payload,
+    );
     return data;
   },
   updateAcademicYear: async (id: string, payload: Partial<AcademicYear>) => {
-    const { data } = await axiosInstance.put(`${ACADEMY_BASE_URL}/api/academy/academic-years/${id}`, payload);
+    const { data } = await axiosInstance.put(
+      `${ACADEMY_BASE_URL}/api/academy/academic-years/${id}`,
+      payload,
+    );
     return data;
   },
   deleteAcademicYear: async (id: string) => {
-    const { data } = await axiosInstance.delete(`${ACADEMY_BASE_URL}/api/academy/academic-years/${id}`);
+    const { data } = await axiosInstance.delete(
+      `${ACADEMY_BASE_URL}/api/academy/academic-years/${id}`,
+    );
     return data;
   },
 
   // Rooms
   getRooms: async (): Promise<Room[]> => {
-    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/academy/rooms`);
+    const { data } = await axiosInstance.get(
+      `${ACADEMY_BASE_URL}/api/academy/rooms`,
+    );
     return data;
   },
   createRoom: async (payload: Omit<Room, '_id'>) => {
-    const { data } = await axiosInstance.post(`${ACADEMY_BASE_URL}/api/academy/rooms`, payload);
+    const { data } = await axiosInstance.post(
+      `${ACADEMY_BASE_URL}/api/academy/rooms`,
+      payload,
+    );
     return data;
   },
   updateRoom: async (id: string, payload: Partial<Room>) => {
-    const { data } = await axiosInstance.put(`${ACADEMY_BASE_URL}/api/academy/rooms/${id}`, payload);
+    const { data } = await axiosInstance.put(
+      `${ACADEMY_BASE_URL}/api/academy/rooms/${id}`,
+      payload,
+    );
     return data;
   },
   deleteRoom: async (id: string) => {
-    const { data } = await axiosInstance.delete(`${ACADEMY_BASE_URL}/api/academy/rooms/${id}`);
+    const { data } = await axiosInstance.delete(
+      `${ACADEMY_BASE_URL}/api/academy/rooms/${id}`,
+    );
     return data;
   },
 
   // Subjects
   getSubjects: async (): Promise<SubjectWithCurriculum[]> => {
-    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/academy/subjects`);
+    const { data } = await axiosInstance.get(
+      `${ACADEMY_BASE_URL}/api/academy/subjects`,
+    );
     return data;
   },
-  createSubject: async (payload: Omit<Subject, '_id'> & SubjectCurriculumFields) => {
-    const { data } = await axiosInstance.post(`${ACADEMY_BASE_URL}/api/academy/subjects`, payload);
+  createSubject: async (
+    payload: Omit<Subject, '_id'> & SubjectCurriculumFields,
+  ) => {
+    const { data } = await axiosInstance.post(
+      `${ACADEMY_BASE_URL}/api/academy/subjects`,
+      payload,
+    );
     return data;
   },
-  updateSubject: async (id: string, payload: Partial<Subject> & SubjectCurriculumFields) => {
-    const { data } = await axiosInstance.put(`${ACADEMY_BASE_URL}/api/academy/subjects/${id}`, payload);
+  updateSubject: async (
+    id: string,
+    payload: Partial<Subject> & SubjectCurriculumFields,
+  ) => {
+    const { data } = await axiosInstance.put(
+      `${ACADEMY_BASE_URL}/api/academy/subjects/${id}`,
+      payload,
+    );
     return data;
   },
   deleteSubject: async (id: string) => {
-    const { data } = await axiosInstance.delete(`${ACADEMY_BASE_URL}/api/academy/subjects/${id}`);
+    const { data } = await axiosInstance.delete(
+      `${ACADEMY_BASE_URL}/api/academy/subjects/${id}`,
+    );
     return data;
   },
-  bulkCreateSubjects: async (subjects: BulkSubjectRow[]): Promise<BulkImportResult> => {
-    const { data } = await axiosInstance.post(`${ACADEMY_BASE_URL}/api/academy/subjects/bulk`, { subjects });
+  bulkCreateSubjects: async (
+    subjects: BulkSubjectRow[],
+  ): Promise<BulkImportResult> => {
+    const { data } = await axiosInstance.post(
+      `${ACADEMY_BASE_URL}/api/academy/subjects/bulk`,
+      { subjects },
+    );
     return data;
   },
 
   // Enrollments
   getEligibleSubjects: async (): Promise<EligibleSubjectsResponse> => {
-    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/enrollments/eligible`);
+    const { data } = await axiosInstance.get(
+      `${ACADEMY_BASE_URL}/api/academy/enrollments/eligible`,
+    );
     return data;
   },
   getClassCatalog: async (): Promise<ClassCatalogResponse> => {
-    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/enrollments/catalog`);
+    const { data } = await axiosInstance.get(
+      `${ACADEMY_BASE_URL}/api/academy/enrollments/catalog`,
+    );
     return data;
   },
   enrollInClass: async (classId: string): Promise<void> => {
-    await axiosInstance.post(`${ACADEMY_BASE_URL}/api/v1/enrollments`, { classId });
+    await axiosInstance.post(`${ACADEMY_BASE_URL}/api/academy/enrollments`, {
+      classId,
+    });
   },
-  bulkEnroll: async (subjectIds: string[], academicYearId: string): Promise<void> => {
-    await axiosInstance.post(`${ACADEMY_BASE_URL}/api/v1/enrollments/bulk`, { subjectIds, academicYearId });
+  bulkEnroll: async (
+    subjectIds: string[],
+    academicYearId: string,
+  ): Promise<void> => {
+    await axiosInstance.post(
+      `${ACADEMY_BASE_URL}/api/academy/enrollments/bulk`,
+      { subjectIds, academicYearId },
+    );
   },
   getMyEnrollments: async (): Promise<Enrollment[]> => {
-    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/enrollments/me`);
+    const { data } = await axiosInstance.get(
+      `${ACADEMY_BASE_URL}/api/academy/enrollments/me`,
+    );
     return data;
   },
 
   // Curriculum
-  getCurriculum: async (majorId: string, typeOfStudy?: string): Promise<MajorSubject[]> => {
+  getCurriculum: async (
+    majorId: string,
+    typeOfStudy?: string,
+  ): Promise<MajorSubject[]> => {
     const params = typeOfStudy ? { typeOfStudy } : {};
-    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/v1/curriculum/${majorId}`, { params });
+    const { data } = await axiosInstance.get(
+      `${ACADEMY_BASE_URL}/api/academy/curriculum/${majorId}`,
+      { params },
+    );
     return data;
   },
   addCurriculumEntry: async (payload: {
@@ -103,33 +178,51 @@ export const academyService = {
     semester: 'first' | 'second' | 'summer';
     isMandatory?: boolean;
   }): Promise<MajorSubject> => {
-    const { data } = await axiosInstance.post(`${ACADEMY_BASE_URL}/api/v1/curriculum`, payload);
+    const { data } = await axiosInstance.post(
+      `${ACADEMY_BASE_URL}/api/academy/curriculum`,
+      payload,
+    );
     return data;
   },
   deleteCurriculumEntry: async (id: string): Promise<void> => {
-    await axiosInstance.delete(`${ACADEMY_BASE_URL}/api/v1/curriculum/${id}`);
+    await axiosInstance.delete(
+      `${ACADEMY_BASE_URL}/api/academy/curriculum/${id}`,
+    );
   },
 
   // Classes
   getClasses: async (): Promise<ClassModel[]> => {
-    const { data } = await axiosInstance.get(`${ACADEMY_BASE_URL}/api/academy/classes`);
+    const { data } = await axiosInstance.get(
+      `${ACADEMY_BASE_URL}/api/academy/classes`,
+    );
     return data;
   },
   createClass: async (payload: Omit<ClassModel, '_id'>) => {
-    const { data } = await axiosInstance.post(`${ACADEMY_BASE_URL}/api/academy/classes`, payload);
+    const { data } = await axiosInstance.post(
+      `${ACADEMY_BASE_URL}/api/academy/classes`,
+      payload,
+    );
     return data;
   },
   updateClass: async (id: string, payload: Partial<ClassModel>) => {
-    const { data } = await axiosInstance.put(`${ACADEMY_BASE_URL}/api/academy/classes/${id}`, payload);
+    const { data } = await axiosInstance.put(
+      `${ACADEMY_BASE_URL}/api/academy/classes/${id}`,
+      payload,
+    );
     return data;
   },
   deleteClass: async (id: string) => {
-    const { data } = await axiosInstance.delete(`${ACADEMY_BASE_URL}/api/academy/classes/${id}`);
+    const { data } = await axiosInstance.delete(
+      `${ACADEMY_BASE_URL}/api/academy/classes/${id}`,
+    );
     return data;
   },
 
   // Availability
-  getRoomGrid: async (roomId: string, academicYearId: string): Promise<RoomGrid> => {
+  getRoomGrid: async (
+    roomId: string,
+    academicYearId: string,
+  ): Promise<RoomGrid> => {
     const { data } = await axiosInstance.get(
       `${ACADEMY_BASE_URL}/api/academy/availability/grid/${roomId}`,
       { params: { academicYearId } },

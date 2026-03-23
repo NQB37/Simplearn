@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-23T22:27:49.817Z"
+last_updated: "2026-03-23T22:41:14.952Z"
 last_activity: "2026-03-23 — Completed 04-03: Interactive enrollment UI with class catalog, capacity indicators, and per-class enroll."
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 8
+  completed_plans: 8
   percent: 100
 ---
 
@@ -41,6 +41,7 @@ Progress: [██████████] 100%
 - [Phase 04]: 04-02: Atomic capacity uses findOneAndUpdate with $lt maxCapacity; enrollment creation failure rolls back via $inc -1 without transactions
 - [Phase 04-schedule]: 04-04: PopulatedClass interface for enrollment classId population; SHIFTS inlined in VisualSchedule; currentEnrollments optional in ClassModel
 - [Phase 04]: 04-03: Catalog endpoint filters classes server-side by student eligible subjects; shift conflict detection is client-side
+- [Phase 04-schedule]: 04-05: No architectural decisions; single gap-closure change adding ClipboardList nav link to enrollment page
 
 ## Performance Metrics
 

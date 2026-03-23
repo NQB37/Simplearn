@@ -79,7 +79,7 @@ export const UserNav = ({ user }: UserNavProps) => {
             onClick={() => {
               if (user.role === 'ADMIN') router.push('/admin');
               else if (user.role === 'INSTRUCTOR') router.push('/instructor');
-              else router.push('/student/dashboard');
+              else router.push('');
             }}
             className='cursor-pointer group'
           >
@@ -87,7 +87,7 @@ export const UserNav = ({ user }: UserNavProps) => {
             <span>Dashboard</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push('/student/dashboard/profile')}
+            onClick={() => router.push('/student/profile')}
             className='cursor-pointer group'
           >
             <UserIcon className='mr-2 h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors' />
