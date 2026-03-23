@@ -97,7 +97,7 @@ export interface ClassModel {
   academicYearId: AcademicYear | string;
   schedules?: ClassSchedule[];
   maxCapacity: number;
-  currentEnrollments: number;
+  currentEnrollments?: number;
   status: 'active' | 'inactive' | 'archived';
 }
 
