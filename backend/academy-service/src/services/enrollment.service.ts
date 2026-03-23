@@ -1,6 +1,8 @@
 import AcademicYear from '../models/academy-year.model.js';
 import MajorSubject from '../models/major-subject.model.js';
 import Enrollment from '../models/enrollment.model.js';
+import Class from '../models/class.model.js';
+import { checkStudentConflicts } from './conflict-detection.service.js';
 
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:8001';
 
@@ -49,8 +51,61 @@ export const getEligibleSubjects = async (token: string) => {
 };
 
 export const getMyEnrollments = async (userId: string) => {
-  const enrollments = await Enrollment.find({ userId }).populate('subjectId').populate('academicYearId');
+  const enrollments = await Enrollment.find({ userId })
+    .populate({ path: 'classId', populate: [{ path: 'roomId' }, { path: 'subjectId' }] })
+    .populate('academicYearId');
   return enrollments;
+};
+
+export const enrollStudent = async (userId: string, classId: string) => {
+  // Fetch the class to get subjectId, academicYearId, and capacity
+  const cls = await Class.findById(classId);
+  if (!cls) {
+    const err: any = new Error('Class not found');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  // Check for shift conflicts
+  const conflictResult = await checkStudentConflicts(userId, classId);
+  if (conflictResult.hasConflict) {
+    const err: any = new Error('Schedule conflict: student is already enrolled in a class at the same time');
+    err.statusCode = 409;
+    err.conflicts = conflictResult.conflicts;
+    throw err;
+  }
+
+  // Atomic capacity check: increment currentEnrollments only if under maxCapacity
+  const updated = await Class.findOneAndUpdate(
+    { _id: classId, currentEnrollments: { $lt: cls.maxCapacity } },
+    { $inc: { currentEnrollments: 1 } },
+    { new: true },
+  );
+
+  if (!updated) {
+    const err: any = new Error('Class is full');
+    err.statusCode = 409;
+    throw err;
+  }
+
+  try {
+    const enrollment = await Enrollment.create({
+      classId,
+      subjectId: cls.subjectId,
+      academicYearId: cls.academicYearId,
+      userId,
+    });
+    return enrollment;
+  } catch (err: any) {
+    // Roll back capacity increment if enrollment creation fails (e.g. duplicate)
+    await Class.findByIdAndUpdate(classId, { $inc: { currentEnrollments: -1 } });
+    if (err.code === 11000) {
+      const conflict: any = new Error('Already enrolled in this subject for the current academic year');
+      conflict.statusCode = 409;
+      throw conflict;
+    }
+    throw err;
+  }
 };
 
 export const bulkEnroll = async (
