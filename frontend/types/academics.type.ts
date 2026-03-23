@@ -61,9 +61,23 @@ export interface EligibleSubjectsResponse {
   subjects: MajorSubject[];
 }
 
+export interface PopulatedClass {
+  _id: string;
+  code: string;
+  roomId: Room;
+  subjectId: Subject;
+  instructorId?: string;
+  academicYearId: string;
+  schedules: ClassSchedule[];
+  maxCapacity: number;
+  currentEnrollments: number;
+  status: 'active' | 'inactive' | 'archived';
+}
+
 export interface Enrollment {
   _id: string;
   userId: string;
+  classId: PopulatedClass;
   subjectId: Subject;
   academicYearId: AcademicYear;
   createdAt: string;
