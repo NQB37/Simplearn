@@ -8,6 +8,7 @@ export interface IClass extends Document {
   instructorId?: mongoose.Types.ObjectId;
   academicYearId: mongoose.Types.ObjectId;
   maxCapacity: number;
+  currentEnrollments: number;
   status: 'active' | 'inactive' | 'archived';
   createdAt: Date;
   updatedAt: Date;
@@ -35,6 +36,7 @@ const ClassSchema: Schema = new Schema(
       required: true,
     },
     maxCapacity: { type: Number, required: true, default: 30 },
+    currentEnrollments: { type: Number, required: true, default: 0 },
     status: {
       type: String,
       enum: ['active', 'inactive', 'archived'],
