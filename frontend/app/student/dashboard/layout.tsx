@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LayoutDashboard, Compass, Archive, Bookmark, Calendar } from 'lucide-react';
+import { LayoutDashboard, Compass, Archive, Bookmark, Calendar, ClipboardList } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -34,6 +34,13 @@ export default function DashboardLayout({
             >
               <Calendar className='h-4 w-4' />
               Class Schedule
+            </Link>
+            <Link
+              href='/student/enrollment'
+              className='flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-slate-50 dark:hover:bg-slate-900 transition-colors'
+            >
+              <ClipboardList className='h-4 w-4' />
+              Enrollment
             </Link>
           </nav>
         </div>

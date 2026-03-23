@@ -9,7 +9,7 @@ This roadmap delivers the complete student academic lifecycle. We've pivoted to 
 - [x] **Phase 1: User Profiles** - Role-specific profile data (Completed 2026-03-18)
 - [x] **Phase 2: Student Account Creation** - Admin-provisioned accounts (Completed 2026-03-19)
 - [x] **Phase 3: Academic Infrastructure** - Years, Subjects, Rooms base (Completed 2026-03-19)
-- [ ] **Phase 4: Class Catalog & Enrollment** - [PIVOT] Students enroll in Classes directly based on Major/Faculty
+- [x] **Phase 4: Class Catalog & Enrollment** - [PIVOT] Students enroll in Classes directly based on Major/Faculty (completed 2026-03-23)
 - [x] **Phase 5: Class Management (Admin)** - Admin builds the class shell catalog with room/shift/instructor (completed 2026-03-20)
 - [ ] **Phase 6: Assignments & Grading** - Instructor/Student academic work cycle
 
@@ -47,6 +47,6 @@ This roadmap delivers the complete student academic lifecycle. We've pivoted to 
 | 1. User Profiles | 2/2 | Completed | 2026-03-18 |
 | 2. Student Account Creation | 4/4 | Complete | 2026-03-19 |
 | 3. Academic Infrastructure | 5/5 | Complete | 2026-03-19 |
-| 4. Class Catalog & Enrollment | 2/4 | In Progress|  |
+| 4. Class Catalog & Enrollment | 4/4 | Complete   | 2026-03-23 |
 | 5. Class Management (Admin) | 3/3 | Complete   | 2026-03-20 |
 | 6. Assignments and Grading | 0/TBD | Not started | - |

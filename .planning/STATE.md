@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-23T22:21:51.242Z"
-last_activity: "2026-03-23 — Completed 04-02: Backend enrollment with atomic capacity, shift conflict detection, and class-level enrollment persistence."
+last_updated: "2026-03-23T22:27:49.817Z"
+last_activity: "2026-03-23 — Completed 04-03: Interactive enrollment UI with class catalog, capacity indicators, and per-class enroll."
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 5
-  percent: 71
+  completed_plans: 7
+  percent: 100
 ---
 
 # Project State
@@ -27,9 +27,9 @@ See: .planning/PROJECT.md (updated 2026-03-18)
 Phase: 5 of 6 (Class Management)
 Plan: 2 of TBD in current phase (05-02 complete)
 Status: In Progress
-Last activity: 2026-03-23 — Completed 04-02: Backend enrollment with atomic capacity, shift conflict detection, and class-level enrollment persistence.
+Last activity: 2026-03-23 — Completed 04-03: Interactive enrollment UI with class catalog, capacity indicators, and per-class enroll.
 
-Progress: [███████░░░] 71%
+Progress: [██████████] 100%
 
 ## Decisions
 
@@ -39,6 +39,8 @@ Progress: [███████░░░] 71%
 - [Phase 05-class-management]: 05-02: TimeGrid renders busy slots from backend RoomGrid using CSS grid; ClassModel optional fields for backward compat
 - [Phase 04]: 04-02: Enrollment stores classId+subjectId; subjectId enables unique constraint on (userId,academicYearId,subjectId) preventing duplicate subject enrollment
 - [Phase 04]: 04-02: Atomic capacity uses findOneAndUpdate with $lt maxCapacity; enrollment creation failure rolls back via $inc -1 without transactions
+- [Phase 04-schedule]: 04-04: PopulatedClass interface for enrollment classId population; SHIFTS inlined in VisualSchedule; currentEnrollments optional in ClassModel
+- [Phase 04]: 04-03: Catalog endpoint filters classes server-side by student eligible subjects; shift conflict detection is client-side
 
 ## Performance Metrics
 
