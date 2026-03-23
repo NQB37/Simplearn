@@ -97,7 +97,14 @@ export interface ClassModel {
   academicYearId: AcademicYear | string;
   schedules?: ClassSchedule[];
   maxCapacity: number;
+  currentEnrollments: number;
   status: 'active' | 'inactive' | 'archived';
+}
+
+export interface ClassCatalogResponse {
+  enrollmentDeadline: string | null;
+  academicYearId: string;
+  classes: ClassModel[];
 }
 
 export interface GridCellData {
