@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Class from '../models/class.model.js';
+import Enrollment from '../models/enrollment.model.js';
 import { DAYS_OF_WEEK, SHIFT_IDS } from '../constants/shifts.js';
 
 export interface ScheduleSlot {
@@ -82,6 +83,54 @@ export const checkInstructorConflicts = async (
       if (isConflict) {
         conflicts.push({
           type: 'instructor',
+          dayOfWeek: slot.dayOfWeek,
+          shiftId: slot.shiftId,
+          classCode: cls.code,
+        });
+      }
+    }
+  }
+
+  return { hasConflict: conflicts.length > 0, conflicts };
+};
+
+// Returns conflicting schedules if a student is already enrolled in a class with overlapping shifts (ENRL-04)
+export const checkStudentConflicts = async (
+  userId: string,
+  classId: string,
+): Promise<ConflictResult> => {
+  const targetClass = await Class.findById(classId).select('schedules academicYearId').lean();
+  if (!targetClass) {
+    const err: any = new Error('Class not found');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const enrollments = await Enrollment.find({
+    userId,
+    academicYearId: targetClass.academicYearId,
+  })
+    .select('classId')
+    .lean();
+
+  if (enrollments.length === 0) {
+    return { hasConflict: false, conflicts: [] };
+  }
+
+  const enrolledClassIds = enrollments.map((e) => e.classId);
+  const enrolledClasses = await Class.find({ _id: { $in: enrolledClassIds } })
+    .select('code schedules')
+    .lean();
+
+  const conflicts: ConflictResult['conflicts'] = [];
+  for (const cls of enrolledClasses) {
+    for (const slot of cls.schedules) {
+      const isConflict = targetClass.schedules.some(
+        (s) => s.dayOfWeek === slot.dayOfWeek && s.shiftId === slot.shiftId,
+      );
+      if (isConflict) {
+        conflicts.push({
+          type: 'room',
           dayOfWeek: slot.dayOfWeek,
           shiftId: slot.shiftId,
           classCode: cls.code,
