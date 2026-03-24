@@ -8,7 +8,7 @@ import { useUserStore } from '@/store/user.store';
 import { UserNav } from '@/components/shared/user-nav';
 
 const studentNavLinks = [
-  { label: 'Class Schedule', href: '/student/schedule' },
+  { label: 'Schedule', href: '/student/schedule' },
   { label: 'Enrollment', href: '/student/enrollment' },
 ];
 
@@ -18,14 +18,14 @@ export function SiteHeader() {
   return (
     <header className='sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md'>
       <div className='container mx-auto px-4 flex h-14 items-center'>
-        <div className='mr-4 hidden md:flex'>
-          <Link href='/' className='mr-6 flex items-center space-x-2'>
+        <div className='space-x-6 hidden md:flex md:items-end'>
+          <Link href='/' className=''>
             <span className='hidden sm:inline-block font-extrabold text-xl tracking-tight text-transparent bg-clip-text bg-linear-to-r from-teal-600 to-emerald-400 dark:from-teal-400 dark:to-emerald-300'>
               Simplearn
             </span>
           </Link>
           {user?.role === 'STUDENT' && (
-            <nav className='flex items-center space-x-6 text-sm font-medium'>
+            <nav className='flex items-end space-x-6 text-sm font-medium'>
               {studentNavLinks.map(({ label, href }) => {
                 const isActive =
                   pathname === href || pathname.startsWith(href + '/');

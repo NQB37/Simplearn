@@ -9,18 +9,12 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { User } from '@/types/index.type';
 import { useRouter } from 'next/navigation';
 import axiosInstance from '@/api/axios.api';
-import {
-  LayoutDashboard,
-  User as UserIcon,
-  BookPlus,
-  LogOut,
-} from 'lucide-react';
+import { User as UserIcon, BookPlus, LogOut } from 'lucide-react';
 import { useUserStore } from '@/store/user.store';
 
 interface UserNavProps {
@@ -53,11 +47,11 @@ export const UserNav = ({ user }: UserNavProps) => {
           <Avatar className='h-8 w-8 hover:opacity-80 transition-opacity'>
             <AvatarImage
               src={user.picture || `https://avatar.vercel.sh/${user.email}`}
-              alt={user.name || user.email}
+              alt={user.firstName + ' ' + user.lastName || 'User'}
               className='object-cover'
             />
             <AvatarFallback className='bg-primary/10 text-primary font-medium'>
-              {(user.name?.[0] || user.email[0]).toUpperCase()}
+              {(user.lastName?.[0] || user.email[0]).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -66,7 +60,7 @@ export const UserNav = ({ user }: UserNavProps) => {
         <DropdownMenuLabel className='font-normal p-3'>
           <div className='flex flex-col space-y-1.5'>
             <p className='text-sm font-semibold leading-none'>
-              {user.name || 'User'}
+              {user.firstName + ' ' + user.lastName || 'User'}
             </p>
             <p className='text-xs leading-none text-muted-foreground'>
               {user.email}
@@ -75,17 +69,6 @@ export const UserNav = ({ user }: UserNavProps) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => {
-              if (user.role === 'ADMIN') router.push('/admin');
-              else if (user.role === 'INSTRUCTOR') router.push('/instructor');
-              else router.push('');
-            }}
-            className='cursor-pointer group'
-          >
-            <LayoutDashboard className='mr-2 h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors' />
-            <span>Dashboard</span>
-          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => router.push('/student/profile')}
             className='cursor-pointer group'
