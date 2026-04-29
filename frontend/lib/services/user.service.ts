@@ -64,7 +64,7 @@ export const userService = {
   // Own extended profile
   getExtendedProfile: async (): Promise<ExtendedProfile> => {
     const { data } = await axiosInstance.get(`${AUTH_BASE_URL}/api/users/profile/extended`);
-    return data.profile;
+    return data.profile ?? {};
   },
   updateExtendedProfile: async (payload: ExtendedProfile): Promise<ExtendedProfile> => {
     const { data } = await axiosInstance.patch(`${AUTH_BASE_URL}/api/users/profile/extended`, payload);

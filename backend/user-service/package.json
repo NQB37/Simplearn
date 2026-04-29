@@ -10,17 +10,17 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cookie-parser": "^1.4.7",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^25.3.0",
-    "@vitest/coverage-v8": "^4.1.0",
-    "nodemon": "^3.1.11",
+    "@types/node": "^25.5.0",
+    "@vitest/coverage-v8": "^4.1.2",
+    "nodemon": "^3.1.14",
     "tsx": "^4.21.0",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.2"
   },
   "dependencies": {
     "@simplearn/logger": "file:../shared/logger",
@@ -32,11 +32,11 @@
     "express": "^5.2.1",
     "googleapis": "^171.4.0",
     "jsonwebtoken": "^9.0.3",
-    "mongodb": "^7.1.0",
-    "mongoose": "^9.2.3",
+    "mongodb": "^7.1.1",
+    "mongoose": "^9.3.3",
     "morgan": "^1.10.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "winston": "^3.19.0",
     "zod": "^4.3.6"
   },

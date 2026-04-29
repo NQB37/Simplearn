@@ -32,7 +32,11 @@ const localPasswordSchema = z
 
 type PasswordFormValues = z.infer<typeof localPasswordSchema>;
 
-export function PasswordForm() {
+interface PasswordFormProps {
+  onSuccess?: () => void;
+}
+
+export function PasswordForm({ onSuccess }: PasswordFormProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<PasswordFormValues>({
@@ -53,6 +57,7 @@ export function PasswordForm() {
       });
       toast.success('Password changed successfully.');
       form.reset();
+      onSuccess?.();
 
       // Optionally handle forced logout here:
       // await axiosInstance.post('/api/auth/logout');
